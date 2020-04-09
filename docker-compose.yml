@@ -1,0 +1,14 @@
+version: '3.7'
+services:
+  api:
+    build: .
+    image: sahabee:${API_VERSION}
+    ports:
+      - 8000:8000
+    volumes:
+      - db_volume:/database/
+    environment:
+      - DJANGO_SETTINGS_MODULE=sahabee.settings-production
+
+volumes:
+  db_volume:
