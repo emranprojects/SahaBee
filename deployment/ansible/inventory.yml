@@ -1,0 +1,16 @@
+---
+all:
+  vars:
+    shecan_dns_1: 185.51.200.2
+    shecan_dns_2: 178.22.122.100
+    root_dir: ../..
+    api_version: '{{ lookup("env", "API_IMAGE_RELEASE_VERSION") }}'
+  children:
+    production:
+      hosts:
+        prod1:
+          ansible_host: '{{ lookup("env", "SERVER_PROD_IP") | mandatory }}'
+          ansible_user: '{{ lookup("env", "SERVER_PROD_USER") | mandatory }}'
+          ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o ProxyCommand="ssh -v -o StrictHostKeyChecking=no -W %h:%p {{ lookup("env", "SSH_PROXY_SERVER_USER") | mandatory }}@{{ lookup("env", "SSH_PROXY_IP") | mandatory }}"'
+          ansible_sudo_pass: '{{ sudo_pass }}'
+          ansible_become_pass: '{{ sudo_pass }}'

@@ -1,0 +1,20 @@
+---
+- hosts: all
+  tasks:
+    - name: 'Copy compose file'
+      copy:
+        src: '{{ root_dir }}/docker-compose.yml'
+        dest: '/home/{{ ansible_user }}/sahabee/'
+    - name: 'Tear down existing service'
+      docker_compose:
+        project_src: '/home/{{ ansible_user }}/sahabee/'
+        state: absent
+      environment:
+        API_VERSION: '{{ api_version }}'
+    - name: 'Start Service'
+      docker_compose:
+        project_src: '/home/{{ ansible_user }}/sahabee/'
+        pull: yes
+        state: present
+      environment:
+        API_VERSION: '{{ api_version }}'
