@@ -8,6 +8,8 @@ stages:
 variables:
   DOCKER_REGISTRY: "registry.gitlab.com"
   TEST_IMAGE: "$DOCKER_REGISTRY/$DOCKER_USERNAME/sahabee/test:0.1.0"
+  API_IMAGE_NAME: "registry.gitlab.com/emran.bm/sahabee/api"
+  API_IMAGE_RELEASE_VERSION: "0.1.0"
 
 
 build-test-image:
@@ -52,3 +54,22 @@ test:
     - docker-compose up -d --no-build
     - cd test/
     - docker run --net host -v `pwd`/test.py:/tmp/test.py $TEST_IMAGE /tmp/test.py
+
+release:
+  stage: release
+  image: docker/compose:1.25.4
+  services:
+    - docker:19.03.5-dind
+  tags:
+    - docker
+  before_script:
+    - export API_VERSION="snapshot-${CI_COMMIT_SHA}"
+  script:
+    - docker-compose pull api
+    - docker tag ${API_IMAGE_NAME}:${API_VERSION} ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin $DOCKER_REGISTRY
+    - docker push ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
+  only:
+    refs:
+      - master
+
