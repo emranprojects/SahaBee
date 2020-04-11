@@ -10,7 +10,7 @@ variables:
   TEST_IMAGE: "$DOCKER_REGISTRY/$DOCKER_USERNAME/sahabee/test:0.1.0"
   API_IMAGE_NAME: "registry.gitlab.com/emran.bm/sahabee/api"
   API_IMAGE_RELEASE_VERSION: "0.1.0"
-  DEPLOYMENT_DOCKER: "${DOCKER_REGISTRY}/$DOCKER_USERNAME/sahabee/deployment-image:0.2.0"
+  DEPLOYMENT_DOCKER: "${DOCKER_REGISTRY}/$DOCKER_USERNAME/sahabee/deployment-image:0.3.0"
 
 create-deployment-image:
   stage: prepare
@@ -131,7 +131,7 @@ deploy:
   script:
     - cd deployment/ansible/
     - ansible-playbook deploy.yml -i inventory.yml -vvv
-    - wget http://${SERVER_PROD_IP}:8000/ -O smoke-test-result.txt
+    - curl http://37.152.178.88:8000/ -o smoke-test-result.txt --fail
   artifacts:
     paths:
       - deployment/ansible/smoke-test-result.txt
