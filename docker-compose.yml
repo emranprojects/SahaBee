@@ -9,6 +9,8 @@ services:
       - db_volume:/database/
     environment:
       - DJANGO_SETTINGS_MODULE=sahabee.settings-production
+      - PRODUCTION_IP
+      - SECRET_KEY
 
 volumes:
   db_volume:

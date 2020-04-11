@@ -117,7 +117,7 @@ setup-infra:
   image: $DEPLOYMENT_DOCKER
   script:
     - cd deployment/ansible/
-    - ansible-playbook infra.yml -i inventory.yml --extra-vars "sudo_pass=${SERVER_PROD_PASS}"
+    - ansible-playbook infra.yml -i inventory.yml -vvv
   when: manual
   only:
     refs:
@@ -130,7 +130,7 @@ deploy:
   image: $DEPLOYMENT_DOCKER
   script:
     - cd deployment/ansible/
-    - ansible-playbook deploy.yml -i inventory.yml --extra-vars "sudo_pass=${SERVER_PROD_PASS}" -vvv
+    - ansible-playbook deploy.yml -i inventory.yml -vvv
   only:
     refs:
       - master

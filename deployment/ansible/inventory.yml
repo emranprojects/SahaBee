@@ -5,6 +5,8 @@ all:
     shecan_dns_2: 178.22.122.100
     root_dir: ../..
     api_version: '{{ lookup("env", "API_IMAGE_RELEASE_VERSION") }}'
+    secret_key: '{{ lookup("env", "SAHABEE_SECRET_KEY") }}'
+    sudo_pass: '{{ lookup("env", "SERVER_PROD_PASS") }}'
   children:
     production:
       hosts:
