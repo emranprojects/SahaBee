@@ -131,7 +131,6 @@ deploy:
   script:
     - cd deployment/ansible/
     - ansible-playbook deploy.yml -i inventory.yml -vvv
-    - curl http://37.152.178.88:8000/ -o smoke-test-result.txt --fail
   artifacts:
     paths:
       - deployment/ansible/smoke-test-result.txt
