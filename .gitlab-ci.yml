@@ -131,6 +131,12 @@ deploy:
   script:
     - cd deployment/ansible/
     - ansible-playbook deploy.yml -i inventory.yml -vvv
+    - wget http://${SERVER_PROD_IP}:8000/ -O smoke-test-result.txt
+  artifacts:
+    paths:
+      - deployment/ansible/smoke-test-result.txt
+    when: on_failure
+    expire_in: 1 week
   only:
     refs:
       - master
