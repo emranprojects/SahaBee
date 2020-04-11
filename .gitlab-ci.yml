@@ -25,9 +25,9 @@ create-deployment-image:
     - docker build -t $DEPLOYMENT_DOCKER .
     - docker push $DEPLOYMENT_DOCKER
   when: manual
-  # only:
-  #   refs:
-  #     - master
+  only:
+    refs:
+      - master
 
 add-public-key-to-machines:
   stage: deploy
@@ -45,9 +45,9 @@ add-public-key-to-machines:
     - scp ./add-public-key.sh ./id_rsa.pub ${SSH_PROXY_SERVER_USER}@${SSH_PROXY_IP}:/tmp/
     - ssh ${SSH_PROXY_SERVER_USER}@${SSH_PROXY_IP} "/tmp/add-public-key.sh --server $SERVER_PROD_IP --user $SERVER_PROD_USER --pass $SERVER_PROD_PASS --no-check-fingerprint"
   when: manual
-  # only:
-  #   refs:
-  #     - master
+  only:
+    refs:
+      - master
 
 build-test-image:
   stage: prepare
@@ -106,9 +106,9 @@ release:
     - docker tag ${API_IMAGE_NAME}:${API_VERSION} ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
     - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin $DOCKER_REGISTRY
     - docker push ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
-  # only:
-  #   refs:
-  #     - master
+  only:
+    refs:
+      - master
 
 setup-infra:
   stage: deploy
@@ -119,9 +119,9 @@ setup-infra:
     - cd deployment/ansible/
     - ansible-playbook infra.yml -i inventory.yml --extra-vars "sudo_pass=${SERVER_PROD_PASS}"
   when: manual
-  # only:
-  #   refs:
-  #     - master
+  only:
+    refs:
+      - master
 
 deploy:
   stage: deploy
@@ -131,6 +131,6 @@ deploy:
   script:
     - cd deployment/ansible/
     - ansible-playbook deploy.yml -i inventory.yml --extra-vars "sudo_pass=${SERVER_PROD_PASS}" -vvv
-  # only:
-  #   refs:
-  #     - master
+  only:
+    refs:
+      - master
