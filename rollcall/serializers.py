@@ -12,7 +12,7 @@ class RolloutSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Rollout
-        fields = ['time', 'user']
+        fields = ['id', 'time', 'user']
     
     def create(self, validated_data):
         validated_data['user'] = self.context["request"].user
