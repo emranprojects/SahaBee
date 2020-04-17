@@ -43,6 +43,6 @@ class ReportRollouts(APIView):
                     
         excel_file = ExcelConverter(rollouts, starting_date=date_from).get_excel_file()
         response = HttpResponse(File(excel_file), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename=timesheet.csv'
+        response['Content-Disposition'] = 'attachment; filename=timesheet.xlsx'
         return response
     
