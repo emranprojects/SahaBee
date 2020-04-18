@@ -15,6 +15,7 @@ function main(){
     gunicorn --bind 0.0.0.0:8000 \
     --access-logfile $ACCESS_LOG_FILE \
     --error-logfile $ERROR_LOG_FILE \
+    --workers 16 \
     sahabee.wsgi:application
     
 }
