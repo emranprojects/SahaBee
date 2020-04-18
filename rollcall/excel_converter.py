@@ -45,8 +45,8 @@ class ExcelConverter:
         return f"{openpyxl.utils.get_column_letter(col)}{row}"
 
     def __fill_header_info(self, sheet):
-        sheet[self.__get_cell_label(1,1)] = starting_date_jalali.month
-        sheet[self.__get_cell_label(2,1)] = starting_date_jalali.year
+        sheet[self.__get_cell_label(1,1)] = self.starting_date_jalali.month
+        sheet[self.__get_cell_label(2,1)] = self.starting_date_jalali.year
 
     def __fill_data(self, sheet):
         current_row_number = self.DATA_FIRST_ROW - 1
