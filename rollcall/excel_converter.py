@@ -22,6 +22,7 @@ class ExcelConverter:
     def __init__(self, rollouts, starting_date):
         self.rollouts = rollouts
         self.starting_date = starting_date
+        self.starting_date_jalali = JalaliDate(starting_date)
 
     def get_excel_file(self):
         workbook = openpyxl.load_workbook("./timesheet-template.xlsx")
@@ -33,9 +34,9 @@ class ExcelConverter:
 
     def __fill_days(self, sheet):
         total_days = JalaliDate.days_in_month(
-            month=self.starting_date.month, year=self.starting_date.year)
+            month=self.starting_date_jalali.month, year=self.starting_date_jalali.year)
         for i in range(0, total_days):
-            day = self.starting_date + datetime.timedelta(days=i)
+            day = self.starting_date_jalali + datetime.timedelta(days=i)
             week_day_str = self.WEEK_DAY_STRS[day.weekday()]
             sheet[self.__get_cell_label(self.DATA_FIRST_ROW + i, self.DATA_FIRST_COLUMN - 1)] = week_day_str
 
@@ -44,8 +45,8 @@ class ExcelConverter:
         return f"{openpyxl.utils.get_column_letter(col)}{row}"
 
     def __fill_header_info(self, sheet):
-        sheet[self.__get_cell_label(1,1)] = JalaliDate(self.starting_date).month
-        sheet[self.__get_cell_label(2,1)] = JalaliDate(self.starting_date).year
+        sheet[self.__get_cell_label(1,1)] = starting_date_jalali.month
+        sheet[self.__get_cell_label(2,1)] = starting_date_jalali.year
 
     def __fill_data(self, sheet):
         current_row_number = self.DATA_FIRST_ROW - 1
