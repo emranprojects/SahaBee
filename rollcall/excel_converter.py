@@ -36,7 +36,7 @@ class ExcelConverter:
         total_days = JalaliDate.days_in_month(
             month=self.starting_date_jalali.month, year=self.starting_date_jalali.year)
         for i in range(0, total_days):
-            day = self.starting_date + datetime.timedelta(days=i)
+            day = self.starting_date_jalali + datetime.timedelta(days=i)
             week_day_str = self.WEEK_DAY_STRS[day.weekday()]
             sheet[self.__get_cell_label(self.DATA_FIRST_ROW + i, self.DATA_FIRST_COLUMN - 1)] = week_day_str
 
@@ -49,6 +49,10 @@ class ExcelConverter:
         sheet[self.__get_cell_label(2,1)] = self.starting_date_jalali.year
 
     def __fill_data(self, sheet):
+        for row in range(self.DATA_FIRST_ROW, self.DATA_FIRST_ROW + 31):
+            for col in range(self.DATA_FIRST_COLUMN, self.DATA_FIRST_COLUMN + 11):
+                sheet[self.__get_cell_label(row,col)] = '00:00'
+        
         current_row_number = self.DATA_FIRST_ROW - 1
         last_day = -1
         current_column_number = self.DATA_FIRST_COLUMN
