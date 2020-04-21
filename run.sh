@@ -16,8 +16,8 @@ function main(){
     --access-logfile $ACCESS_LOG_FILE \
     --error-logfile $ERROR_LOG_FILE \
     --workers 16 \
-    --certfile=/etc/ssl-files/fullchain.pem
-    --keyfile=/etc/ssl-files/privkey.pem
+    --certfile=/etc/ssl-files/fullchain.pem \
+    --keyfile=/etc/ssl-files/privkey.pem \
     sahabee.wsgi:application
     
 }
