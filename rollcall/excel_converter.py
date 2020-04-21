@@ -1,6 +1,6 @@
 import io
 import openpyxl
-from persiantools.jdatetime import JalaliDate
+from persiantools.jdatetime import JalaliDate, JalaliDateTime
 import datetime
 import pytz
 from django.conf import settings
@@ -57,7 +57,8 @@ class ExcelConverter:
         last_day = -1
         current_column_number = self.DATA_FIRST_COLUMN
         for rollout in self.rollouts:
-            day_of_month = JalaliDate(rollout.time).day
+            rtime = rollout.time.astimezone(pytz.timezone(settings.TIME_ZONE))
+            day_of_month = JalaliDateTime(rtime).day
             if last_day != day_of_month:
                 current_row_number += 1
                 current_column_number = self.DATA_FIRST_COLUMN
@@ -67,5 +68,5 @@ class ExcelConverter:
                 current_row_number += 1
             sheet[self.__get_cell_label(current_row_number,
                                         current_column_number)] \
-                = rollout.time.astimezone(pytz.timezone(settings.TIME_ZONE)).strftime('%H:%M')
+                = rtime.strftime('%H:%M')
             current_column_number += 1
