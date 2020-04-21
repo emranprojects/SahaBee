@@ -11,13 +11,21 @@ function main(){
 
     create_file_if_not_exists $ACCESS_LOG_FILE
     create_file_if_not_exists $ERROR_LOG_FILE
-    
+
+    FULL_CHAIN_FILE=/etc/ssl-files/fullchain.pem
+    PRIVKEY_FILE=/etc/ssl-files/privkey.pem
+    if [ ! -f $FULL_CHAIN_FILE ] || [ ! -f $PRIVKEY_FILE ]; then
+        echo "Using temp ssl certificates..."
+        FULL_CHAIN_FILE=/sahabee/temp-certificate/localhost.cert.temp
+        PRIVKEY_FILE=/sahabee/temp-certificate/localhost.key.temp
+    fi
+
     gunicorn --bind 0.0.0.0:8000 \
     --access-logfile $ACCESS_LOG_FILE \
     --error-logfile $ERROR_LOG_FILE \
     --workers 16 \
-    --certfile=/etc/ssl-files/fullchain.pem \
-    --keyfile=/etc/ssl-files/privkey.pem \
+    --certfile=$FULL_CHAIN_FILE \
+    --keyfile=$PRIVKEY_FILE \
     sahabee.wsgi:application
     
 }
