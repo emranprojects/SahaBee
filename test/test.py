@@ -6,22 +6,22 @@ from persiantools.jdatetime import JalaliDate
 import openpyxl
 from io import BytesIO
 
-API_URL = 'http://localhost:8000'
+API_URL = 'https://localhost'
 USER = os.environ.get('TEST_USER')
 PASS = os.environ.get('TEST_PASS')
-API_URL_AUTHED = f'http://{USER}:{PASS}@localhost:8000'
+API_URL_AUTHED = f'https://{USER}:{PASS}@localhost'
 
 def test_service_available():
-    response = requests.get(API_URL)
+    response = requests.get(API_URL, verify=False)
     assert response.status_code == 200
 
 def test_excel_data():
-    response = requests.post(f"{API_URL_AUTHED}/rollouts/")
+    response = requests.post(f"{API_URL_AUTHED}/rollouts/", verify=False)
     response_json = json.loads(response.content)
     time = datetime.datetime.fromisoformat(response_json.get('time'))
     jdate = JalaliDate(time)
 
-    response = requests.get(f"{API_URL}/{USER}/{jdate.year}/{jdate.month}/timesheet.xlsx")
+    response = requests.get(f"{API_URL}/{USER}/{jdate.year}/{jdate.month}/timesheet.xlsx", verify=False)
     workbook = openpyxl.load_workbook(BytesIO(response.content))
     sheet = workbook.active
     assert sheet[f'D{4 + jdate.day}'].value == time.strftime('%H:%M')

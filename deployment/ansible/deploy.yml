@@ -5,6 +5,14 @@
       copy:
         src: '{{ root_dir }}/docker-compose.yml'
         dest: '/home/{{ ansible_user }}/sahabee/'
+    - name: 'Copy SSL private key'
+      copy:
+        src: '{{ lookup("env", "SSL_PRIVATE_KEY_FILE") }}'
+        dest: /etc/ssl-files/privkey.pem
+    - name: 'Copy SSL fullchain'
+      copy:
+        src: '{{ lookup("env", "SSL_FULL_CHAIN_FILE") }}'
+        dest: /etc/ssl-files/fullchain.pem
     - name: 'Tear down existing service'
       docker_compose:
         project_src: '/home/{{ ansible_user }}/sahabee/'

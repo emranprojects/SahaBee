@@ -4,9 +4,10 @@ services:
     build: .
     image: registry.gitlab.com/emran.bm/sahabee/api:${API_VERSION}
     ports:
-      - 8000:8000
+      - 443:8000
     volumes:
       - db_volume:/database/
+      - /etc/sahabee.ir/ssl-files/:/etc/ssl-files/
     environment:
       - DJANGO_SETTINGS_MODULE=sahabee.settings-production
       - PRODUCTION_IP
