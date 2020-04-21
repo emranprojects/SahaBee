@@ -5,6 +5,10 @@
       copy:
         src: '{{ root_dir }}/docker-compose.yml'
         dest: '/home/{{ ansible_user }}/sahabee/'
+    - name: 'Create SSL directory'
+      file:
+        path: /etc/ssl-files/
+        state: directory
     - name: 'Copy SSL private key'
       copy:
         src: '{{ lookup("env", "SSL_PRIVATE_KEY_FILE") }}'
