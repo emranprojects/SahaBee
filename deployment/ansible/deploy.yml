@@ -6,14 +6,17 @@
         src: '{{ root_dir }}/docker-compose.yml'
         dest: '/home/{{ ansible_user }}/sahabee/'
     - name: 'Create SSL directory'
+      become: yes
       file:
         path: /etc/ssl-files/
         state: directory
     - name: 'Copy SSL private key'
+      become: yes
       copy:
         src: '{{ lookup("env", "SSL_PRIVATE_KEY_FILE") }}'
         dest: /etc/ssl-files/privkey.pem
     - name: 'Copy SSL fullchain'
+      become: yes
       copy:
         src: '{{ lookup("env", "SSL_FULL_CHAIN_FILE") }}'
         dest: /etc/ssl-files/fullchain.pem
