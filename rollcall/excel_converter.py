@@ -19,8 +19,9 @@ class ExcelConverter:
         'جمعه',
     ]
 
-    def __init__(self, rollouts, starting_date):
+    def __init__(self, user, rollouts, starting_date):
         self.rollouts = rollouts
+        self.user = user
         self.starting_date = starting_date
         self.starting_date_jalali = JalaliDate(starting_date)
 
@@ -28,6 +29,7 @@ class ExcelConverter:
         workbook = openpyxl.load_workbook("./timesheet-template.xlsx")
         sheet = workbook.active
         self.__fill_header_info(sheet)
+        self.__fill_date_info(sheet)
         self.__fill_days(sheet)
         self.__fill_data(sheet)
         return io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(workbook))
@@ -44,9 +46,15 @@ class ExcelConverter:
     def __get_cell_label(row, col):
         return f"{openpyxl.utils.get_column_letter(col)}{row}"
 
+    def __fill_date_info(self, sheet):
+        sheet[self.__get_cell_label(44,2)] = self.starting_date_jalali.month
+        sheet[self.__get_cell_label(44,3)] = self.starting_date_jalali.year - 1398
+        
     def __fill_header_info(self, sheet):
-        sheet[self.__get_cell_label(1,1)] = self.starting_date_jalali.month
-        sheet[self.__get_cell_label(2,1)] = self.starting_date_jalali.year
+        sheet['R1'] = self.user.detail.name
+        sheet['R2'] = self.user.detail.personnel_code
+        sheet['R3'] = self.user.detail.manager_name
+        sheet['E3'] = self.user.detail.unit
 
     def __fill_data(self, sheet):
         for row in range(self.DATA_FIRST_ROW, self.DATA_FIRST_ROW + 31):

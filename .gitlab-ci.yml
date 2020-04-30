@@ -95,7 +95,7 @@ test:
     - docker-compose up -d --no-build
     - sleep 15
     - docker exec sahabee_api_1 bash -c
-      "echo \"from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$TEST_USER', 'a@b.com', '$TEST_PASS')\" | ./manage.py shell"
+      "echo \"from django.contrib.auth import get_user_model; User = get_user_model(); user = User.objects.create_superuser('$TEST_USER', 'a@b.com', '$TEST_PASS'); from rollcall.models import UserDetail; UserDetail.objects.create(user=user,personnel_code='1234',name='عمران',manager_name='علی',unit='QD')\" | ./manage.py shell"
     - cd test/
     - docker run --env TEST_USER --env TEST_PASS --net host -v `pwd`/test.py:/tmp/test.py $TEST_IMAGE /tmp/test.py
 

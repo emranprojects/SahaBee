@@ -25,3 +25,12 @@ def test_excel_data():
     workbook = openpyxl.load_workbook(BytesIO(response.content))
     sheet = workbook.active
     assert sheet[f'D{4 + jdate.day}'].value == time.strftime('%H:%M')
+    
+def test_user_details():
+    jdate = JalaliDate(datetime.datetime.now())
+    response = requests.get(f"{API_URL}/{USER}/{jdate.year}/{jdate.month}/timesheet.xlsx", verify=False)
+    workbook = openpyxl.load_workbook(BytesIO(response.content))
+    sheet = workbook.active
+    assert sheet['R1'].value == 'عمران'
+    assert sheet['R2'].value == '1234'
+    assert sheet['R3'].value == 'علی'
