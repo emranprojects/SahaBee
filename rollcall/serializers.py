@@ -23,5 +23,5 @@ class UserDetailSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = UserDetail
-        fields = ['personnel_code', 'name', 'manager_name', 'unit']
+        fields = ['personnel_code', 'manager_name', 'unit']
         

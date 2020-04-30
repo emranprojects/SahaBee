@@ -8,5 +8,5 @@ class RolloutAdmin(admin.ModelAdmin):
     
 @admin.register(UserDetail)
 class UserDetailAdmin(admin.ModelAdmin):
-    fields = ('user', 'name', 'personnel_code', 'unit', 'manager_name')
-    list_display = ('user', 'name', 'personnel_code')
+    fields = ('user', 'personnel_code', 'unit', 'manager_name')
+    list_display = ('user', 'personnel_code')

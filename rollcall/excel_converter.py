@@ -51,7 +51,7 @@ class ExcelConverter:
         sheet[self.__get_cell_label(44,3)] = self.starting_date_jalali.year - 1398
         
     def __fill_header_info(self, sheet):
-        sheet['R1'] = self.user.detail.name
+        sheet['R1'] = self.user.first_name + ' ' + self.user.last_name
         sheet['R2'] = self.user.detail.personnel_code
         sheet['R3'] = self.user.detail.manager_name
         sheet['E3'] = self.user.detail.unit

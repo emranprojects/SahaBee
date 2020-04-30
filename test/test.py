@@ -31,6 +31,6 @@ def test_user_details():
     response = requests.get(f"{API_URL}/{USER}/{jdate.year}/{jdate.month}/timesheet.xlsx", verify=False)
     workbook = openpyxl.load_workbook(BytesIO(response.content))
     sheet = workbook.active
-    assert sheet['R1'].value == 'عمران'
+    assert sheet['R1'].value == 'سردار آزمون'
     assert sheet['R2'].value == '1234'
     assert sheet['R3'].value == 'علی'

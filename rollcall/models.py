@@ -15,7 +15,6 @@ class UserDetail(models.Model):
                              on_delete=models.CASCADE,
                              related_name='detail')
     personnel_code = models.CharField(max_length=10)
-    name = models.CharField(max_length=NAME_MAX_LENGTH)
     manager_name = models.CharField(max_length=NAME_MAX_LENGTH)
     unit = models.CharField(max_length=32)
     
