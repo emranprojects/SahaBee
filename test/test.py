@@ -18,7 +18,9 @@ def test_service_available():
 def test_excel_data():
     response = requests.post(f"{API_URL_AUTHED}/rollouts/", verify=False)
     response_json = json.loads(response.content)
-    time = datetime.datetime.fromisoformat(response_json.get('time'))
+    time_str = response_json.get('time')
+    print("'time' feild of response json: " + time_str)
+    time = datetime.datetime.fromisoformat(time_str)
     jdate = JalaliDate(time)
 
     response = requests.get(f"{API_URL}/{USER}/{jdate.year}/{jdate.month}/timesheet.xlsx", verify=False)
