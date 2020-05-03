@@ -8,8 +8,8 @@ from rest_framework.views import APIView
 
 from rollcall import models
 from rollcall.excel_converter import ExcelConverter
-from rollcall.models import Rollout
-from rollcall.serializers import UserSerializer, RolloutSerializer
+from rollcall.models import Rollout, UserDetail
+from rollcall.serializers import RolloutSerializer, UserDetailSerializer, UserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -18,6 +18,11 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class UserDetailViewSet(viewsets.ModelViewSet):
+    queryset = UserDetail.objects.all()
+    serializer_class = UserDetailSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 class RolloutViewSet(viewsets.ModelViewSet):

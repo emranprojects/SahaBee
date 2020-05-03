@@ -5,10 +5,9 @@ from django.contrib.auth.models import User
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['url', 'username', 'email', 'groups', 'details']
+        fields = ['url', 'username', 'email', 'groups', 'detail']
 
 class RolloutSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
     
     class Meta:
         model = Rollout
@@ -19,9 +18,7 @@ class RolloutSerializer(serializers.HyperlinkedModelSerializer):
         return super().create(validated_data)
     
 class UserDetailSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
-    
     class Meta:
         model = UserDetail
-        fields = ['personnel_code', 'manager_name', 'unit']
+        fields = ['personnel_code', 'manager_name', 'unit', 'user']
         
