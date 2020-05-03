@@ -12,6 +12,7 @@ class RolloutSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Rollout
         fields = ['id', 'time', 'user']
+        extra_kwargs = {'user': {'required': False}}
     
     def create(self, validated_data):
         validated_data['user'] = self.context["request"].user
