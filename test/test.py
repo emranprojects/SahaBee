@@ -17,8 +17,8 @@ def test_service_available():
 
 def test_excel_data():
     response = requests.post(f"{API_URL_AUTHED}/rollouts/", verify=False)
-    print("Create Rollout Response: " + response.content)
-    response_json = json.loads(response.content)
+    print("Create Rollout Response: " + response.text)
+    response_json = json.loads(response.text)
     time_str = response_json.get('time')
     time = datetime.datetime.fromisoformat(time_str)
     jdate = JalaliDate(time)
