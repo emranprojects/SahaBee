@@ -16,3 +16,12 @@ all:
           ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o ProxyCommand="ssh -v -o StrictHostKeyChecking=no -W %h:%p {{ lookup("env", "SSH_PROXY_SERVER_USER") | mandatory }}@{{ lookup("env", "SSH_PROXY_IP") | mandatory }}"'
           ansible_sudo_pass: '{{ sudo_pass }}'
           ansible_become_pass: '{{ sudo_pass }}'
+    test:
+      hosts:
+        test1:
+          ansible_host: sahabee.ir
+          ansible_user: root
+          ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+          ansible_sudo_pass: root
+          ansible_become_pass: root
+          ansible_ssh_pass: root

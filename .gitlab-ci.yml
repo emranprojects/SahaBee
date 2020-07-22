@@ -73,6 +73,8 @@ build:
   before_script:
     - export API_VERSION="snapshot-${CI_COMMIT_SHA}"
   script:
+    - env
+    - env | grep SSL
     - docker-compose build
     - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin $DOCKER_REGISTRY
     - docker-compose push
@@ -99,6 +101,24 @@ test:
     - cd test/
     - docker run --env TEST_USER --env TEST_PASS --net host -v `pwd`/test.py:/tmp/test.py $TEST_IMAGE /tmp/test.py
 
+test-ansible:
+  stage: test
+  tags:
+    - docker
+  image: $DEPLOYMENT_DOCKER
+  services:
+    - name: rastasheep/ubuntu-sshd:18.04
+      alias: sahabee.ir
+  script:
+    - DNS_SERVER=`cat /etc/resolv.conf | grep -m 1 nameserver | cut -d' ' -f2`
+    - cd deployment/ansible/ 
+    - ansible-playbook infra.yml -i inventory.yml -vvv --limit test --extra-vars "shecan_dns_1=$DNS_SERVER shecan_dns_2=$DNS_SERVER"
+    - ansible-playbook deploy.yml -i inventory.yml -vvv --limit test
+    - curl -i --fail https://sahabee.ir
+  only:
+    changes:
+      - deployment/ansible/*
+
 release:
   stage: release
   image: docker/compose:1.25.4
@@ -124,7 +144,7 @@ setup-infra:
   image: $DEPLOYMENT_DOCKER
   script:
     - cd deployment/ansible/
-    - ansible-playbook infra.yml -i inventory.yml -vvv
+    - ansible-playbook infra.yml -i inventory.yml -vvv --limit production
   when: manual
   only:
     refs:
@@ -137,7 +157,7 @@ deploy:
   image: $DEPLOYMENT_DOCKER
   script:
     - cd deployment/ansible/
-    - ansible-playbook deploy.yml -i inventory.yml -vvv
+    - ansible-playbook deploy.yml -i inventory.yml -vvv --limit production
   artifacts:
     paths:
       - deployment/ansible/smoke-test-result.txt
