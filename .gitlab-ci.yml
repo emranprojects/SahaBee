@@ -6,11 +6,10 @@ stages:
   - deploy
 
 variables:
-  DOCKER_REGISTRY: "registry.gitlab.com"
-  TEST_IMAGE: "$DOCKER_REGISTRY/$DOCKER_USERNAME/sahabee/test:0.2.0"
-  API_IMAGE_NAME: "registry.gitlab.com/emran.bm/sahabee/api"
+  TEST_IMAGE: "emranbm/sahabee-test-env:0.2.0"
+  API_IMAGE_NAME: "emran.bm/sahabee-api"
   API_IMAGE_RELEASE_VERSION: "0.3.0"
-  DEPLOYMENT_DOCKER: "${DOCKER_REGISTRY}/$DOCKER_USERNAME/sahabee/deployment-image:0.3.0"
+  DEPLOYMENT_DOCKER: "emranbm/sahabee-deployment-env:0.3.0"
 
 create-deployment-image:
   stage: prepare
@@ -20,7 +19,7 @@ create-deployment-image:
   tags:
     - docker
   script:
-    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin $DOCKER_REGISTRY
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
     - cd deployment/
     - docker build -t $DEPLOYMENT_DOCKER .
     - docker push $DEPLOYMENT_DOCKER
@@ -59,7 +58,7 @@ build-test-image:
   script:
     - cd test/
     - docker build -t $TEST_IMAGE .
-    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin $DOCKER_REGISTRY
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
     - docker push $TEST_IMAGE
   when: manual
 
@@ -76,7 +75,7 @@ build:
     - env
     - env | grep SSL
     - docker-compose build
-    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin $DOCKER_REGISTRY
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
     - docker-compose push
 
 test:
@@ -131,7 +130,7 @@ release:
   script:
     - docker-compose pull api
     - docker tag ${API_IMAGE_NAME}:${API_VERSION} ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
-    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin $DOCKER_REGISTRY
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
     - docker push ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
   only:
     refs:

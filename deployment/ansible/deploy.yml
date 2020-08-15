@@ -20,13 +20,7 @@
       copy:
         src: '{{ lookup("env", "SSL_FULL_CHAIN_FILE") }}'
         dest: /etc/sahabee.ir/ssl-files/fullchain.pem
-    - name: 'Tear down existing service'
-      docker_compose:
-        project_src: '/home/{{ ansible_user }}/sahabee/'
-        state: absent
-      environment:
-        API_VERSION: '{{ api_version }}'
-    - name: 'Start Service'
+    - name: 'Restart Service If needed'
       docker_compose:
         project_src: '/home/{{ ansible_user }}/sahabee/'
         pull: yes

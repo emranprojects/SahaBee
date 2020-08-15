@@ -2,7 +2,7 @@ version: '3.7'
 services:
   api:
     build: .
-    image: registry.gitlab.com/emran.bm/sahabee/api:${API_VERSION}
+    image: emranbm/sahabee-api:${API_VERSION}
     ports:
       - 443:8000
     volumes:
