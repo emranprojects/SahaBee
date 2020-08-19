@@ -10,6 +10,7 @@ variables:
   API_IMAGE_NAME: "emran.bm/sahabee-api"
   API_IMAGE_RELEASE_VERSION: "0.3.0"
   DEPLOYMENT_DOCKER: "emranbm/sahabee-deployment-env:0.3.0"
+  SNAPSHOT_VERSION: "snapshot-${CI_COMMIT_SHA}"
 
 create-deployment-image:
   stage: prepare
@@ -70,7 +71,7 @@ build:
   tags:
     - docker
   before_script:
-    - export API_VERSION="snapshot-${CI_COMMIT_SHA}"
+    - export API_VERSION=$SNAPSHOT_VERSION
   script:
     - env
     - env | grep SSL
@@ -86,7 +87,7 @@ test:
   tags:
     - docker
   before_script:
-    - export API_VERSION="snapshot-${CI_COMMIT_SHA}"
+    - export API_VERSION=$SNAPSHOT_VERSION
   variables:
     TEST_USER: 'test'
     TEST_PASS: 'test'
@@ -112,11 +113,12 @@ test-ansible:
     - DNS_SERVER=`cat /etc/resolv.conf | grep -m 1 nameserver | cut -d' ' -f2`
     - cd deployment/ansible/ 
     - ansible-playbook infra.yml -i inventory.yml -vvv --limit test --extra-vars "shecan_dns_1=$DNS_SERVER shecan_dns_2=$DNS_SERVER"
-    - ansible-playbook deploy.yml -i inventory.yml -vvv --limit test
+    - ansible-playbook deploy.yml -i inventory.yml -vvv --limit test --extra-vars "api_version=$SNAPSHOT_VERSION"
     - curl -i --fail https://sahabee.ir
   only:
     changes:
       - deployment/ansible/*
+      - .gitlab-ci.yml
 
 release:
   stage: release
@@ -126,7 +128,7 @@ release:
   tags:
     - docker
   before_script:
-    - export API_VERSION="snapshot-${CI_COMMIT_SHA}"
+    - export API_VERSION=$SNAPSHOT_VERSION
   script:
     - docker-compose pull api
     - docker tag ${API_IMAGE_NAME}:${API_VERSION} ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
