@@ -134,11 +134,11 @@ release:
     - echo $API_VERSION
     - docker-compose pull api
     - docker tag ${API_IMAGE_NAME}:${API_VERSION} ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
-    # - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-    # - docker push ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
-  # only:
-  #   refs:
-  #     - master
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+    - docker push ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
+  only:
+    refs:
+      - master
 
 setup-infra:
   stage: deploy
