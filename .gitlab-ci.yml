@@ -7,7 +7,7 @@ stages:
 
 variables:
   TEST_IMAGE: "emranbm/sahabee-test-env:0.2.0"
-  API_IMAGE_NAME: "emran.bm/sahabee-api"
+  API_IMAGE_NAME: "emranbm/sahabee-api"
   API_IMAGE_RELEASE_VERSION: "0.3.0"
   DEPLOYMENT_DOCKER: "emranbm/sahabee-deployment-env:0.3.0"
   SNAPSHOT_VERSION: "snapshot-${CI_COMMIT_SHA}"
@@ -77,6 +77,7 @@ build:
     - env | grep SSL
     - docker-compose build
     - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+    - echo $API_VERSION
     - docker-compose push
 
 test:
@@ -130,13 +131,14 @@ release:
   before_script:
     - export API_VERSION=$SNAPSHOT_VERSION
   script:
+    - echo $API_VERSION
     - docker-compose pull api
     - docker tag ${API_IMAGE_NAME}:${API_VERSION} ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
-    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-    - docker push ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
-  only:
-    refs:
-      - master
+    # - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+    # - docker push ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
+  # only:
+  #   refs:
+  #     - master
 
 setup-infra:
   stage: deploy
