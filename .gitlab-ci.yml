@@ -73,8 +73,6 @@ build:
   before_script:
     - export API_VERSION=$SNAPSHOT_VERSION
   script:
-    - env
-    - env | grep SSL
     - docker-compose build
     - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
     - echo $API_VERSION
