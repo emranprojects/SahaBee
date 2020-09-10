@@ -92,6 +92,8 @@ test:
     TEST_PASS: 'test'
     COMPOSE_INTERACTIVE_NO_CLI: 'true'
   script:
+    - export FULLCHAIN_PATH=$CI_PROJECT_DIR/temp-certificate/fullchain.pem.temp
+    - export PRIVKEY_PATH=$CI_PROJECT_DIR/temp-certificate/privkey.pem.temp
     - docker-compose pull
     - docker-compose up -d --no-build
     - sleep 15
@@ -110,14 +112,15 @@ test-ansible:
       alias: sahabee.ir
   script:
     - DNS_SERVER=`cat /etc/resolv.conf | grep -m 1 nameserver | cut -d' ' -f2`
-    - cd deployment/ansible/ 
+    - cd deployment/ansible/
     - ansible-playbook infra.yml -i inventory.yml -vvv --limit test --extra-vars "shecan_dns_1=$DNS_SERVER shecan_dns_2=$DNS_SERVER"
-    - ansible-playbook deploy.yml -i inventory.yml -vvv --limit test --extra-vars "api_version=$SNAPSHOT_VERSION"
+    - ansible-playbook deploy.yml -i inventory.yml -vvv --limit test --extra-vars "api_version=$SNAPSHOT_VERSION cert_files_dir=$CI_PROJECT_DIR/certificate/"
     - curl -i --fail https://sahabee.ir
   only:
     changes:
       - deployment/ansible/*
       - .gitlab-ci.yml
+
 
 release:
   stage: release

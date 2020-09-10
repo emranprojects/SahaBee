@@ -220,4 +220,4 @@ modules.xml
 # End of https://www.gitignore.io/api/jetbrains+all
 
 # Custom ignores
-/test/
+/certificate/

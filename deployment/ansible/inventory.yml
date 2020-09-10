@@ -3,8 +3,10 @@ all:
   vars:
     shecan_dns_1: 185.51.200.2
     shecan_dns_2: 178.22.122.100
-    root_dir: ../..
+    src_root_dir: ../..
+    dest_root_dir: '/home/{{ ansible_user }}/sahabee/'
     secret_key: '{{ lookup("env", "SAHABEE_SECRET_KEY") }}'
+    nginx_conf_path: '{{ src_root_dir }}/nginx.conf'
   children:
     production:
       hosts:
