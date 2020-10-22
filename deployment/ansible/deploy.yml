@@ -28,23 +28,19 @@
       copy:
         src: '{{ nginx_conf_path }}'
         dest: '{{ dest_root_dir }}/'
-    - name: 'Restart Service If needed'
+    - name: 'Pull, Stop, and Start images'
       docker_compose:
         project_src: '{{ dest_root_dir }}'
         build: no
-        pull: yes
-        state: present
+        pull: '{{ item.pull }}'
+        state: '{{ item.state }}'
       environment:
         API_VERSION: '{{ api_version }}'
         PRODUCTION_IP: '{{ ansible_host }}'
         SECRET_KEY: '{{ secret_key }}'
         FULLCHAIN_PATH: /etc/sahabee.ir/ssl-files/fullchain.pem
         PRIVKEY_PATH: /etc/sahabee.ir/ssl-files/privkey.pem
-#    - name: 'Check logs'
-#      shell: 'cd {{ dest_root_dir }} && docker-compose up --no-build'
-#      environment:
-#        API_VERSION: '{{ api_version }}'
-#        PRODUCTION_IP: '{{ ansible_host }}'
-#        SECRET_KEY: '{{ secret_key }}'
-#        FULLCHAIN_PATH: /etc/sahabee.ir/ssl-files/fullchain.pem
-#        PRIVKEY_PATH: /etc/sahabee.ir/ssl-files/privkey.pem
+      loop:
+        - { pull: yes, state: present }
+        - { pull: no, state: absent }
+        - { pull: no, state: present }
