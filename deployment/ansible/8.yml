@@ -1,0 +1,11 @@
+---
+- hosts: all
+  tasks:
+    - name: 'Pull images'
+      shell: 'docker pull emranbm/sahabee-api:${API_VERSION} '
+      environment:
+        API_VERSION: '{{ api_version }}'
+        PRODUCTION_IP: '{{ ansible_host }}'
+        SECRET_KEY: '{{ secret_key }}'
+        FULLCHAIN_PATH: /etc/sahabee.ir/ssl-files/fullchain.pem
+        PRIVKEY_PATH: /etc/sahabee.ir/ssl-files/privkey.pem

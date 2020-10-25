@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 
-set -euo pipefail
+set -eu
 
-function main(){
+main(){
     
     python manage.py migrate
     
@@ -12,6 +12,8 @@ function main(){
     create_file_if_not_exists $ACCESS_LOG_FILE
     create_file_if_not_exists $ERROR_LOG_FILE
 
+    sync_static_files
+
     gunicorn --bind 0.0.0.0:8000 \
     --access-logfile $ACCESS_LOG_FILE \
     --error-logfile $ERROR_LOG_FILE \
@@ -20,7 +22,7 @@ function main(){
     
 }
 
-function create_file_if_not_exists() {
+create_file_if_not_exists() {
     file_path="$1"
     file_dir=`dirname $file_path`
     if [ ! -d $file_dir ]; then
@@ -30,6 +32,10 @@ function create_file_if_not_exists() {
     if [ ! -f $file_path ]; then
         touch $file_path
     fi
+}
+
+sync_static_files() {
+    rsync -r --delete /sahabee/static/ /sahabee/static-files/
 }
 
 main "$@"

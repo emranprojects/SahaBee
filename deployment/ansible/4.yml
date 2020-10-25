@@ -1,0 +1,8 @@
+---
+- hosts: all
+  tasks:
+    - name: 'Copy SSL private key'
+      become: yes
+      copy:
+        src: '{{ lookup("env", "SSL_PRIVATE_KEY_FILE") }}'
+        dest: /etc/sahabee.ir/ssl-files/privkey.pem

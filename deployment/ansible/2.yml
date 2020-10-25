@@ -1,0 +1,7 @@
+---
+- hosts: all
+  tasks:
+    - name: 'Create backend directory as a hack to make docker-compose work!'
+      file:
+        path: /home/{{ ansible_user }}/sahabee/backend/
+        state: directory

@@ -28,7 +28,7 @@
       copy:
         src: '{{ nginx_conf_path }}'
         dest: '{{ dest_root_dir }}/'
-    - name: 'Pull, Stop, and Start images'
+    - name: 'Pull, Stop, and Start containers'
       docker_compose:
         project_src: '{{ dest_root_dir }}'
         build: no

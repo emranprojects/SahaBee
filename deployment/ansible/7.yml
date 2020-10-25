@@ -1,0 +1,5 @@
+---
+- hosts: all
+  tasks:
+    - name: 'Docker System Prune'
+      shell: "docker system prune"

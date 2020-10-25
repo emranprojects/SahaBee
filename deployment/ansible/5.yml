@@ -1,0 +1,8 @@
+---
+- hosts: all
+  tasks:
+    - name: 'Copy SSL fullchain'
+      become: yes
+      copy:
+        src: '{{ lookup("env", "SSL_FULL_CHAIN_FILE") }}'
+        dest: /etc/sahabee.ir/ssl-files/fullchain.pem
