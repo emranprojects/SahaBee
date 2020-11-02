@@ -1,8 +1,0 @@
----
-- hosts: all
-  tasks:
-    - name: 'Create SSL directory'
-      become: yes
-      file:
-        path: /etc/sahabee.ir/ssl-files/
-        state: directory

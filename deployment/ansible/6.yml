@@ -1,7 +1,0 @@
----
-- hosts: all
-  tasks:
-    - name: 'Copy nginx config'
-      copy:
-        src: '{{ nginx_conf_path }}'
-        dest: '{{ dest_root_dir }}/'
