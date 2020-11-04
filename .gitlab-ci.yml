@@ -88,17 +88,14 @@ test:
   before_script:
     - export API_VERSION=$SNAPSHOT_VERSION
   variables:
-    TEST_USER: 'test'
-    TEST_PASS: 'test'
     COMPOSE_INTERACTIVE_NO_CLI: 'true'
   script:
-    - docker-compose pull
-    - docker-compose up -d --no-build
-    - sleep 15
-    - docker exec sahabee_api_1 sh -c
-      "echo \"from django.contrib.auth import get_user_model; User = get_user_model(); user = User.objects.create_superuser('$TEST_USER', 'a@b.com', '$TEST_PASS', first_name='سردار', last_name='آزمون'); from rollcall.models import UserDetail; UserDetail.objects.create(user=user,personnel_code='1234',manager_name='علی',unit='QD')\" | ./manage.py shell"
-    - cd test/
-    - docker run --env TEST_USER --env TEST_PASS --net host -v `pwd`/test.py:/tmp/test.py $TEST_IMAGE /tmp/test.py
+    - docker-compose pull api
+    - docker-compose run --name test_container api ./manage.py test
+    - docker cp test_container:/sahabee/.coverage .
+  artifacts:
+    reports:
+      cobertura: .coverage
 
 test-ansible:
   stage: test
