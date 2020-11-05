@@ -4,7 +4,7 @@ services:
     build: ./backend
     networks:
       sahabee_net:
-    image: emranbm/sahabee-api:${API_VERSION}
+    image: registry.gitlab.com/emran.bm/sahabee/api:${API_VERSION}
     volumes:
       - db_volume:/database/
       - static_files:/sahabee/static-files/

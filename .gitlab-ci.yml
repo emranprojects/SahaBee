@@ -6,10 +6,9 @@ stages:
   - deploy
 
 variables:
-  TEST_IMAGE: "emranbm/sahabee-test-env:0.2.0"
-  API_IMAGE_NAME: "emranbm/sahabee-api"
-  API_IMAGE_RELEASE_VERSION: "0.3.0"
-  DEPLOYMENT_DOCKER: "emranbm/sahabee-deployment-env:0.3.0"
+  API_IMAGE_NAME: "registry.gitlab.com/emran.bm/sahabee/api"
+  API_IMAGE_RELEASE_VERSION: "0.3.1"
+  DEPLOYMENT_DOCKER: "registry.gitlab.com/emran.bm/sahabee/deployment-controller:0.3.0"
   SNAPSHOT_VERSION: "snapshot-${CI_COMMIT_SHA}"
 
 create-deployment-image:
@@ -20,14 +19,13 @@ create-deployment-image:
   tags:
     - docker
   script:
-    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin registry.gitlab.com
     - cd deployment/
     - docker build -t $DEPLOYMENT_DOCKER .
     - docker push $DEPLOYMENT_DOCKER
   when: manual
-  only:
-    refs:
-      - master
+  except:
+    - schedules
 
 add-public-key-to-machines:
   stage: deploy
@@ -48,20 +46,8 @@ add-public-key-to-machines:
   only:
     refs:
       - master
-
-build-test-image:
-  stage: prepare
-  image: docker:19.03.5
-  services:
-    - docker:19.03.5-dind
-  tags:
-    - docker
-  script:
-    - cd test/
-    - docker build -t $TEST_IMAGE .
-    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-    - docker push $TEST_IMAGE
-  when: manual
+  except:
+    - schedules
 
 build:
   stage: build
@@ -74,9 +60,11 @@ build:
     - export API_VERSION=$SNAPSHOT_VERSION
   script:
     - docker-compose build
-    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin registry.gitlab.com
     - echo $API_VERSION
     - docker-compose push
+  except:
+    - schedules
 
 test:
   stage: test
@@ -96,6 +84,8 @@ test:
   artifacts:
     reports:
       cobertura: .coverage
+  except:
+    - schedules
 
 test-ansible:
   stage: test
@@ -115,7 +105,8 @@ test-ansible:
     changes:
       - deployment/ansible/*
       - .gitlab-ci.yml
-
+  except:
+    - schedules
 
 release:
   stage: release
@@ -130,11 +121,13 @@ release:
     - echo $API_VERSION
     - docker-compose pull api
     - docker tag ${API_IMAGE_NAME}:${API_VERSION} ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
-    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin registry.gitlab.com
     - docker push ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
   only:
     refs:
       - master
+  except:
+    - schedules
 
 setup-infra:
   stage: deploy
@@ -148,6 +141,8 @@ setup-infra:
   only:
     refs:
       - master
+  except:
+    - schedules
 
 deploy:
   stage: deploy
@@ -168,3 +163,19 @@ deploy:
   environment:
     name: production
     url: https://sahabee.ir/admin
+  except:
+    - schedules
+
+clean-gitlab-registry:
+  tags:
+    - docker
+  image: nyurik/alpine-python3-requests
+  script:
+    - ./ci-utils/clean-docker-registry.py
+      --project-id ${CI_PROJECT_ID}
+      --access-token ${DOCKER_REGISTRY_CLEAN_JOB_API_TOKEN}
+      --repo ${API_IMAGE_NAME}
+      --prefix "snapshot-"
+  only:
+    - schedules
+
