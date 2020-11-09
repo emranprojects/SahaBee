@@ -7,6 +7,8 @@ all:
     dest_root_dir: '/home/{{ ansible_user }}/sahabee/'
     secret_key: '{{ lookup("env", "SAHABEE_SECRET_KEY") }}'
     nginx_conf_path: '{{ src_root_dir }}/nginx.conf'
+    docker_hub_username: emranbm
+    docker_hub_password: '{{ lookup("env", "DOCKER_HUB_PASSWORD") }}'
   children:
     production:
       hosts:
@@ -15,9 +17,10 @@ all:
           sudo_pass: '{{ lookup("env", "SERVER_PROD_PASS") }}'
           ansible_host: '{{ lookup("env", "SERVER_PROD_IP") | mandatory }}'
           ansible_user: '{{ lookup("env", "SERVER_PROD_USER") | mandatory }}'
-          ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o ProxyCommand="ssh -v -o StrictHostKeyChecking=no -W %h:%p {{ lookup("env", "SSH_PROXY_SERVER_USER") | mandatory }}@{{ lookup("env", "SSH_PROXY_IP") | mandatory }}"'
+          ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o ProxyCommand="sshpass -p {{ lookup("env", "SSH_PROXY_SERVER_PASS") | mandatory }} ssh -o StrictHostKeyChecking=no -W %h:%p {{ lookup("env", "SSH_PROXY_SERVER_USER") | mandatory }}@{{ lookup("env", "SSH_PROXY_IP") | mandatory }}"'
           ansible_sudo_pass: '{{ sudo_pass }}'
           ansible_become_pass: '{{ sudo_pass }}'
+          ansible_ssh_pass: '{{ lookup("env", "SERVER_PROD_PASS") | mandatory }}'
     test:
       hosts:
         test1:

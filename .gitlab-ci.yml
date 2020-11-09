@@ -8,46 +8,7 @@ stages:
 variables:
   API_IMAGE_NAME: "registry.gitlab.com/emran.bm/sahabee/api"
   API_IMAGE_RELEASE_VERSION: "0.3.1"
-  DEPLOYMENT_DOCKER: "registry.gitlab.com/emran.bm/sahabee/deployment-controller:0.3.0"
   SNAPSHOT_VERSION: "snapshot-${CI_COMMIT_SHA}"
-
-create-deployment-image:
-  stage: prepare
-  image: docker:19.03.5
-  services:
-    - docker:19.03.5-dind
-  tags:
-    - docker
-  script:
-    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin registry.gitlab.com
-    - cd deployment/
-    - docker build -t $DEPLOYMENT_DOCKER .
-    - docker push $DEPLOYMENT_DOCKER
-  when: manual
-  except:
-    - schedules
-
-add-public-key-to-machines:
-  stage: deploy
-  tags:
-    - docker
-  image: $DEPLOYMENT_DOCKER
-  script:
-    - cd deployment/
-    - cp ~/.ssh/id_rsa.pub .
-    - ./add-public-key.sh
-      --server $SSH_PROXY_IP
-      --user $SSH_PROXY_SERVER_USER
-      --pass $SSH_PROXY_SERVER_PASS
-      --no-check-fingerprint
-    - scp ./add-public-key.sh ./id_rsa.pub ${SSH_PROXY_SERVER_USER}@${SSH_PROXY_IP}:/tmp/
-    - ssh ${SSH_PROXY_SERVER_USER}@${SSH_PROXY_IP} "/tmp/add-public-key.sh --server $SERVER_PROD_IP --user $SERVER_PROD_USER --pass $SERVER_PROD_PASS --no-check-fingerprint"
-  when: manual
-  only:
-    refs:
-      - master
-  except:
-    - schedules
 
 build:
   stage: build
@@ -84,6 +45,8 @@ test:
   artifacts:
     reports:
       cobertura: .coverage
+  needs:
+    - build
   except:
     - schedules
 
@@ -91,7 +54,7 @@ test-ansible:
   stage: test
   tags:
     - docker
-  image: $DEPLOYMENT_DOCKER
+  image: spy86/ansible:latest
   services:
     - name: rastasheep/ubuntu-sshd:18.04
       alias: sahabee.ir
@@ -133,7 +96,7 @@ setup-infra:
   stage: deploy
   tags:
     - docker
-  image: $DEPLOYMENT_DOCKER
+  image: spy86/ansible:latest
   script:
     - cd deployment/ansible/
     - ansible-playbook infra.yml -i inventory.yml -vvv --limit production
@@ -148,7 +111,7 @@ deploy:
   stage: deploy
   tags:
     - docker
-  image: $DEPLOYMENT_DOCKER
+  image: spy86/ansible:latest
   script:
     - cd deployment/ansible/
     - ansible-playbook deploy.yml -i inventory.yml -vvv --limit production
