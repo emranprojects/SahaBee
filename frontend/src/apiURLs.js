@@ -1,6 +1,6 @@
 class ApiUrls {
     get BASE_URL() {
-        return "http://localhost:8000"
+        return window.AppConfig.API_BASE_URL
     }
     get login() {
         return `${this.BASE_URL}/api-token-auth/`
