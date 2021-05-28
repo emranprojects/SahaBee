@@ -6,7 +6,7 @@ import Card from 'react-bootstrap/Card';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import {HCenter} from "./HCenter";
-import apiURLs from "./apiURLs"
+import apiURLs from "../apiURLs"
 
 function Login() {
     const [username, setUsername] = useState("")
