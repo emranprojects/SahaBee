@@ -7,10 +7,16 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import {HCenter} from "./HCenter";
 import apiURLs from "../apiURLs"
+import {Redirect} from "react-router-dom";
+import utils from "../utils";
 
-function Login() {
+export default function Login() {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
+    const [loggedIn, setLoggedIn] = useState(utils.isLoggedIn())
+
+    if (loggedIn)
+        return <Redirect to="/"/>
 
     async function login() {
         if (username === "" || password === "") {
@@ -31,7 +37,7 @@ function Login() {
         switch (result.status) {
             case 200:
                 localStorage.setItem('token', (await result.json()).token)
-                alert("Login successful!!!")
+                setLoggedIn(true)
                 break;
             case 400:
                 alert("Username/Password wrong.") //TODO nice message
@@ -71,5 +77,3 @@ function Login() {
         </Container>
     );
 }
-
-export default Login;
