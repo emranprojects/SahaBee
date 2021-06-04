@@ -13,8 +13,6 @@ variables:
   FRONTEND_IMAGE_RELEASE_VERSION: "${CI_COMMIT_SHA}"
   SNAPSHOT_VERSION: "snapshot-${CI_COMMIT_SHA}"
 
-.docker-login-script: &docker-login-script
-  - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin docker.pkg.github.com
 
 build:
   stage: build
@@ -27,7 +25,7 @@ build:
     - export API_VERSION=$SNAPSHOT_VERSION
     - export FRONTEND_VERSION=$SNAPSHOT_VERSION
   script:
-    *docker-login-script
+    - ci-utils/docker-login.sh
     - docker-compose build
     - docker-compose push
   except:
@@ -46,6 +44,7 @@ test-api:
   variables:
     COMPOSE_INTERACTIVE_NO_CLI: 'true'
   script:
+    - ci-utils/docker-login.sh
     - docker-compose pull api
     - docker-compose run --name test_container api ./manage.py test
     - docker cp test_container:/sahabee/.coverage .
@@ -91,7 +90,7 @@ release:
     - export API_VERSION=$SNAPSHOT_VERSION
     - export FRONTEND_VERSION=$SNAPSHOT_VERSION
   script:
-    *docker-login-script
+    - ci-utils/docker-login.sh
     - docker-compose pull api frontend
     - docker tag ${API_IMAGE_NAME}:${API_VERSION} ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
     - docker tag ${FRONTEND_IMAGE_NAME}:${FRONTEND_VERSION} ${FRONTEND_IMAGE_NAME}:${FRONTEND_IMAGE_RELEASE_VERSION}
