@@ -10,7 +10,6 @@ services:
       - static_files:/sahabee/static-files/
     environment:
       - DJANGO_SETTINGS_MODULE=sahabee.settings-production
-      - PRODUCTION_IP
       - SECRET_KEY
   nginx:
     image: nginx:1.19.2
