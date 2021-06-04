@@ -39,11 +39,6 @@
       community.general.docker_login:
         username: '{{ docker_hub_username | mandatory }}'
         password: '{{ docker_hub_password | mandatory }}'
-    - name: 'Login to GitHub docker registry (To pull images)'
-      community.general.docker_login:
-        username: '{{ docker_username | mandatory }}'
-        password: '{{ docker_password | mandatory }}'
-        registry: 'docker.pkg.github.com'
     - name: 'Pull images'
       docker_compose:
         project_src: '{{ dest_root_dir }}'

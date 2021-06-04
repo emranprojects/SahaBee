@@ -6,7 +6,7 @@ stages:
   - deploy
 
 variables:
-  IMAGE_PREFIX: "docker.pkg.github.com/emranbm/sahabee"
+  IMAGE_PREFIX: "emranbm"
   API_IMAGE_NAME: "${IMAGE_PREFIX}/api"
   FRONTEND_IMAGE_NAME: "${IMAGE_PREFIX}/frontend"
   API_IMAGE_RELEASE_VERSION: "0.3.1"
