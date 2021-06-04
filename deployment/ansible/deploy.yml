@@ -43,6 +43,7 @@
       community.general.docker_login:
         username: '{{ docker_username | mandatory }}'
         password: '{{ docker_password | mandatory }}'
+        registry: 'docker.pkg.github.com'
     - name: 'Pull images'
       docker_compose:
         project_src: '{{ dest_root_dir }}'
