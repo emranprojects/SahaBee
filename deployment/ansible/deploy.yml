@@ -41,10 +41,12 @@
         state: '{{ item.state }}'
       environment:
         API_VERSION: '{{ api_version }}'
+        FRONTEND_VERSION: '{{ frontend_version }}'
         PRODUCTION_IP: '{{ ansible_host }}'
         SECRET_KEY: '{{ secret_key }}'
         FULLCHAIN_PATH: /etc/sahabee.ir/ssl-files/fullchain.pem
         PRIVKEY_PATH: /etc/sahabee.ir/ssl-files/privkey.pem
+        API_URL: '{{ api_url }}'
       loop:
         - { pull: yes, state: present }
         - { pull: no, state: absent }

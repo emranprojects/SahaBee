@@ -6,8 +6,11 @@ stages:
   - deploy
 
 variables:
-  API_IMAGE_NAME: "registry.gitlab.com/emran.bm/sahabee/api"
+  IMAGE_PREFIX: "registry.gitlab.com/emran.bm/sahabee"
+  API_IMAGE_NAME: "${IMAGE_PREFIX}/api"
+  FRONTEND_IMAGE_NAME: "${IMAGE_PREFIX}/frontend"
   API_IMAGE_RELEASE_VERSION: "0.3.1"
+  FRONTEND_IMAGE_RELEASE_VERSION: "${CI_COMMIT_SHA}"
   SNAPSHOT_VERSION: "snapshot-${CI_COMMIT_SHA}"
 
 build:
@@ -19,15 +22,15 @@ build:
     - docker
   before_script:
     - export API_VERSION=$SNAPSHOT_VERSION
+    - export FRONTEND_VERSION=$SNAPSHOT_VERSION
   script:
-    - docker-compose build
     - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin registry.gitlab.com
-    - echo $API_VERSION
+    - docker-compose build
     - docker-compose push
   except:
     - schedules
 
-test:
+test-api:
   stage: test
   image: docker/compose:1.25.4
   services:
@@ -36,6 +39,7 @@ test:
     - docker
   before_script:
     - export API_VERSION=$SNAPSHOT_VERSION
+    - export FRONTEND_VERSION=$SNAPSHOT_VERSION
   variables:
     COMPOSE_INTERACTIVE_NO_CLI: 'true'
   script:
@@ -80,9 +84,9 @@ release:
     - docker
   before_script:
     - export API_VERSION=$SNAPSHOT_VERSION
+    - export FRONTEND_VERSION=$SNAPSHOT_VERSION
   script:
-    - echo $API_VERSION
-    - docker-compose pull api
+    - docker-compose pull api frontend
     - docker tag ${API_IMAGE_NAME}:${API_VERSION} ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
     - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin registry.gitlab.com
     - docker push ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
@@ -125,7 +129,7 @@ deploy:
       - master
   environment:
     name: production
-    url: https://sahabee.ir/admin
+    url: https://sahabee.ir
   except:
     - schedules
 
@@ -138,6 +142,11 @@ clean-gitlab-registry:
       --project-id ${CI_PROJECT_ID}
       --access-token ${DOCKER_REGISTRY_CLEAN_JOB_API_TOKEN}
       --repo ${API_IMAGE_NAME}
+      --prefix "snapshot-"
+    - ./ci-utils/clean-docker-registry.py
+      --project-id ${CI_PROJECT_ID}
+      --access-token ${DOCKER_REGISTRY_CLEAN_JOB_API_TOKEN}
+      --repo ${FRONTEND_IMAGE_NAME}
       --prefix "snapshot-"
   only:
     - schedules

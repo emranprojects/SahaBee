@@ -24,12 +24,22 @@ services:
       - $FULLCHAIN_PATH:/etc/ssl-files/fullchain.pem:ro
       - $PRIVKEY_PATH:/etc/ssl-files/privkey.pem:ro
       - static_files:/sahabee/static-files/:ro
+      - frontend_files:/mnt/frontend/:ro
     depends_on:
       - api
+      - frontend
+  frontend:
+    build: ./frontend
+    image: registry.gitlab.com/emran.bm/sahabee/frontend:${FRONTEND_VERSION}
+    environment:
+      - API_URL
+    volumes:
+      - frontend_files:/mnt/frontend/
 
 volumes:
   db_volume:
   static_files:
+  frontend_files:
 
 networks:
   sahabee_net:

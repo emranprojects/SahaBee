@@ -9,11 +9,13 @@ all:
     nginx_conf_path: '{{ src_root_dir }}/nginx.conf'
     docker_hub_username: emranbm
     docker_hub_password: '{{ lookup("env", "DOCKER_HUB_PASSWORD") }}'
+    api_url: "https://api.sahabee.ir"
   children:
     production:
       hosts:
         prod1:
           api_version: '{{ lookup("env", "API_IMAGE_RELEASE_VERSION") }}'
+          frontend_version: '{{ lookup("env", "FRONTEND_IMAGE_RELEASE_VERSION") }}'
           sudo_pass: '{{ lookup("env", "SERVER_PROD_PASS") }}'
           ansible_host: '{{ lookup("env", "SERVER_PROD_IP") | mandatory }}'
           ansible_user: '{{ lookup("env", "SERVER_PROD_USER") | mandatory }}'
