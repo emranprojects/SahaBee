@@ -13,6 +13,9 @@ variables:
   FRONTEND_IMAGE_RELEASE_VERSION: "${CI_COMMIT_SHA}"
   SNAPSHOT_VERSION: "snapshot-${CI_COMMIT_SHA}"
 
+.docker-login-script: &docker-login-script
+  - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin docker.pkg.github.com
+
 build:
   stage: build
   image: docker/compose:1.25.4
@@ -24,7 +27,7 @@ build:
     - export API_VERSION=$SNAPSHOT_VERSION
     - export FRONTEND_VERSION=$SNAPSHOT_VERSION
   script:
-    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin docker.pkg.github.com
+    *docker-login-script
     - docker-compose build
     - docker-compose push
   except:
@@ -88,7 +91,7 @@ release:
     - export API_VERSION=$SNAPSHOT_VERSION
     - export FRONTEND_VERSION=$SNAPSHOT_VERSION
   script:
-    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin docker.pkg.github.com
+    *docker-login-script
     - docker-compose pull api frontend
     - docker tag ${API_IMAGE_NAME}:${API_VERSION} ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
     - docker tag ${FRONTEND_IMAGE_NAME}:${FRONTEND_VERSION} ${FRONTEND_IMAGE_NAME}:${FRONTEND_IMAGE_RELEASE_VERSION}
