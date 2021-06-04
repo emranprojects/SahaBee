@@ -5,10 +5,13 @@
       copy:
         src: '{{ src_root_dir }}/docker-compose.yml'
         dest: '/home/{{ ansible_user }}/sahabee/'
-    - name: 'Create backend directory as a hack to make docker-compose work!'
+    - name: 'Create build directories as a hack to make docker-compose work!'
       file:
-        path: /home/{{ ansible_user }}/sahabee/backend/
+        path: /home/{{ ansible_user }}/sahabee/{{ item }}
         state: directory
+      loop:
+        - 'backend/'
+        - 'frontend/'
     - name: 'Create SSL directory'
       become: yes
       file:
