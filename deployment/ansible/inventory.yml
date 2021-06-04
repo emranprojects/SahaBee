@@ -10,6 +10,8 @@ all:
     docker_hub_username: emranbm
     docker_hub_password: '{{ lookup("env", "DOCKER_HUB_PASSWORD") }}'
     api_url: "https://api.sahabee.ir"
+    docker_username: '{{ lookup("env", "DOCKER_USERNAME") }}'
+    docker_password: '{{ lookup("env", "DOCKER_PASSWORD") }}'
   children:
     production:
       hosts:
