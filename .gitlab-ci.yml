@@ -65,8 +65,10 @@ test-ansible:
   script:
     - DNS_SERVER=`cat /etc/resolv.conf | grep -m 1 nameserver | cut -d' ' -f2`
     - cd deployment/ansible/
-    - ansible-playbook infra.yml -i inventory.yml -vvv --limit test --extra-vars "shecan_dns_1=$DNS_SERVER shecan_dns_2=$DNS_SERVER"
-    - ansible-playbook deploy.yml -i inventory.yml -vvv --limit test --extra-vars "api_version=$SNAPSHOT_VERSION"
+    - ansible-playbook infra.yml -i inventory.yml -vvv
+      --limit test
+      --extra-vars "shecan_dns_1=$DNS_SERVER shecan_dns_2=$DNS_SERVER"
+    - ansible-playbook deploy.yml -i inventory.yml -vvv --limit test
     - curl -i --fail https://sahabee.ir
   only:
     changes:

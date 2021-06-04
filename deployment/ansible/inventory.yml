@@ -26,6 +26,8 @@ all:
     test:
       hosts:
         test1:
+          api_version: '{{ lookup("env", "SNAPSHOT_VERSION") }}'
+          frontend_version: '{{ lookup("env", "SNAPSHOT_VERSION") }}'
           ansible_host: sahabee.ir
           ansible_user: root
           ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
