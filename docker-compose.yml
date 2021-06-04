@@ -4,7 +4,7 @@ services:
     build: ./backend
     networks:
       sahabee_net:
-    image: emranbm/sahabee/api:${API_VERSION}
+    image: ${IMAGE_PREFIX}/sahabee-api:${API_VERSION}
     volumes:
       - db_volume:/database/
       - static_files:/sahabee/static-files/
@@ -29,7 +29,7 @@ services:
       - frontend
   frontend:
     build: ./frontend
-    image: emranbm/sahabee/frontend:${FRONTEND_VERSION}
+    image: ${IMAGE_PREFIX}/sahabee-frontend:${FRONTEND_VERSION}
     environment:
       - API_URL
     volumes:
