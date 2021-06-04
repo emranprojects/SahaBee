@@ -12,9 +12,6 @@ all:
     api_url: "https://api.sahabee.ir"
     docker_username: '{{ lookup("env", "DOCKER_USERNAME") }}'
     docker_password: '{{ lookup("env", "DOCKER_PASSWORD") }}'
-    proxy_server_host: '{{ lookup("env", "SSH_PROXY_IP") | mandatory }}'
-    proxy_server_user: '{{ lookup("env", "SSH_PROXY_SERVER_USER") | mandatory }}'
-    proxy_server_pass: '{{ lookup("env", "SSH_PROXY_SERVER_PASS") | mandatory }}'
   children:
     production:
       hosts:
@@ -24,7 +21,7 @@ all:
           sudo_pass: '{{ lookup("env", "SERVER_PROD_PASS") }}'
           ansible_host: '{{ lookup("env", "SERVER_PROD_IP") | mandatory }}'
           ansible_user: '{{ lookup("env", "SERVER_PROD_USER") | mandatory }}'
-          ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o ProxyCommand="sshpass -p {{ proxy_server_pass }} ssh -o StrictHostKeyChecking=no -W %h:%p {{ proxy_server_user }}@{{ proxy_server_host }}"'
+          ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o ProxyCommand="sshpass -p {{ lookup("env", "SSH_PROXY_SERVER_PASS") | mandatory }} ssh -o StrictHostKeyChecking=no -W %h:%p {{ lookup("env", "SSH_PROXY_SERVER_USER") | mandatory }}@{{ lookup("env", "SSH_PROXY_IP") | mandatory }}"'
           ansible_sudo_pass: '{{ sudo_pass }}'
           ansible_become_pass: '{{ sudo_pass }}'
           ansible_ssh_pass: '{{ lookup("env", "SERVER_PROD_PASS") | mandatory }}'

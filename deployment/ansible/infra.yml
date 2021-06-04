@@ -35,18 +35,6 @@
         - python-setuptools
         - docker-compose
         - python-dev
-        - proxychains
-        - sshpass
-
-    - name: Config proxychains
-      copy:
-        content: |
-          proxy_dns
-          tcp_read_time_out 15000
-          tcp_connect_time_out 8000
-          [ProxyList]
-          socks5 127.0.0.1 9000
-        dest: /etc/proxychains.conf
 
     - name: Set Shecan
       shell: "echo '### Shecan DNS ###\nnameserver {{ shecan_dns_1 }}\nnameserver {{ shecan_dns_2 }}' > /etc/resolv.conf"

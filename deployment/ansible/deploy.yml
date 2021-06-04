@@ -40,15 +40,11 @@
         username: '{{ docker_hub_username | mandatory }}'
         password: '{{ docker_hub_password | mandatory }}'
     - name: 'Pull images'
-      shell:
-        chdir: '{{ dest_root_dir }}'
-        cmd: >
-          sshpass -p {{ proxy_server_pass }} ssh -D 0.0.0.0:9000 -N -f {{ proxy_server_user }}@{{ proxy_server_host }} &&
-          proxychains docker-compose pull --no-build
-    - name: 'Kill socks proxy'
-      become: yes
-      shell:
-        cmd: kill -9 $(ps aux | grep "ssh -D 0.0.0.0:9000 -N" | head -1 | cut -d' ' -f 7)
+      docker_compose:
+        project_src: '{{ dest_root_dir }}'
+        build: no
+        pull: yes
+        state: present
     - name: 'Stop containers'
       docker_compose:
         project_src: '{{ dest_root_dir }}'
