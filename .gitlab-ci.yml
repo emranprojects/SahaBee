@@ -105,7 +105,7 @@ setup-infra:
   image: spy86/ansible:latest
   script:
     - cd deployment/ansible/
-    - ansible-playbook infra.yml -i inventory.yml -vvv --limit production
+    - ansible-playbook infra.yml -i inventory.yml --limit production
   when: manual
   only:
     refs:
@@ -120,7 +120,7 @@ deploy:
   image: spy86/ansible:latest
   script:
     - cd deployment/ansible/
-    - ansible-playbook deploy.yml -i inventory.yml -vvv --limit production
+    - ansible-playbook deploy.yml -i inventory.yml --limit production
   artifacts:
     paths:
       - deployment/ansible/smoke-test-result.txt
