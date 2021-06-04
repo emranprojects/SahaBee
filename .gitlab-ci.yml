@@ -67,6 +67,10 @@ test-ansible:
   script:
     - DNS_SERVER=`cat /etc/resolv.conf | grep -m 1 nameserver | cut -d' ' -f2`
     - cd deployment/ansible/
+    - sshpass -p root
+      ssh -o StrictHostKeyChecking=no
+      root@sahabee.ir
+      bash -c "echo 'echo \$@' > /bin/systemctl" # Mock systemctl
     - ansible-playbook infra.yml -i inventory.yml -vvv
       --limit test
       --extra-vars "shecan_dns_1=$DNS_SERVER shecan_dns_2=$DNS_SERVER"

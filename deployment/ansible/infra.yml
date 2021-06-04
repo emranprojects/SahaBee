@@ -35,6 +35,7 @@
         - python-setuptools
         - docker-compose
         - python-dev
+        - sshpass
 
     - name: Set Shecan
       shell: "echo '### Shecan DNS ###\nnameserver {{ shecan_dns_1 }}\nnameserver {{ shecan_dns_2 }}' > /etc/resolv.conf"

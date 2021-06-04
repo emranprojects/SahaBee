@@ -39,12 +39,38 @@
       community.general.docker_login:
         username: '{{ docker_hub_username | mandatory }}'
         password: '{{ docker_hub_password | mandatory }}'
+    - name: 'Config docker proxy: create config dir'
+      file:
+        path: /etc/systemd/system/docker.service.d/ &&
+        state: directory
+    - name: 'Config docker proxy: Copy config file'
+      copy:
+        content: |
+          [Service]
+          Environment="HTTP_PROXY=socks5://127.0.0.1:9000"
+        dest: /etc/systemd/system/docker.service.d/http-proxy.conf
+    - name: 'Restart Docker'
+      become: yes
+      shell: systemctl daemon-reload && service docker restart && sleep 3
+    - name: 'Start socks proxy'
+      shell: sshpass -p {{ proxy_server_pass }} ssh -o StrictHostKeyChecking=no -D 0.0.0.0:9000 -N -f {{ proxy_server_user }}@{{ proxy_server_host }}
     - name: 'Pull images'
       docker_compose:
         project_src: '{{ dest_root_dir }}'
         build: no
         pull: yes
         state: present
+    - name: 'Deconfig docker proxy'
+      become: yes
+      file:
+        path: /etc/systemd/system/docker.service.d/http-proxy.conf
+        state: absent
+    - name: 'Stop socks proxy'
+      become: yes
+      shell: kill -9 $(ps ax | grep "ssh -o StrictHostKeyChecking=no -D 0.0.0.0:9000 -N -f" | head -1 | xargs | cut -d' ' -f 1)
+    - name: 'Restart Docker'
+      become: yes
+      shell: systemctl daemon-reload && service docker restart && sleep 3
     - name: 'Stop containers'
       docker_compose:
         project_src: '{{ dest_root_dir }}'
