@@ -88,10 +88,12 @@ release:
     - export API_VERSION=$SNAPSHOT_VERSION
     - export FRONTEND_VERSION=$SNAPSHOT_VERSION
   script:
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin registry.gitlab.com
     - docker-compose pull api frontend
     - docker tag ${API_IMAGE_NAME}:${API_VERSION} ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
-    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin registry.gitlab.com
+    - docker tag ${FRONTEND_IMAGE_NAME}:${FRONTEND_VERSION} ${FRONTEND_IMAGE_NAME}:${FRONTEND_IMAGE_RELEASE_VERSION}
     - docker push ${API_IMAGE_NAME}:${API_IMAGE_RELEASE_VERSION}
+    - docker push ${FRONTEND_IMAGE_NAME}:${FRONTEND_IMAGE_RELEASE_VERSION}
   only:
     refs:
       - master
