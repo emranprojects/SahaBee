@@ -53,7 +53,7 @@
       become: yes
       shell: systemctl daemon-reload && service docker restart && sleep 3
     - name: 'Start socks proxy'
-      shell: sshpass -p {{ proxy_server_pass }} ssh -o StrictHostKeyChecking=no -D 0.0.0.0:9000 -N -f {{ proxy_server_user }}@{{ proxy_server_host }}
+      shell: sshpass -p {{ proxy_server_pass }} ssh -o StrictHostKeyChecking=no -D 0.0.0.0:9000 -N -S /tmp/proxy.sock -f {{ proxy_server_user }}@{{ proxy_server_host }}
     - name: 'Pull images'
       docker_compose:
         project_src: '{{ dest_root_dir }}'
@@ -66,8 +66,7 @@
         path: /etc/systemd/system/docker.service.d/http-proxy.conf
         state: absent
     - name: 'Stop socks proxy'
-      become: yes
-      shell: kill -9 $(ps ax | grep "ssh -o StrictHostKeyChecking=no -D 0.0.0.0:9000 -N -f" | head -1 | xargs | cut -d' ' -f 1)
+      shell: ssh -S /tmp/proxy.sock -O exit fake-server-placeholder
     - name: 'Restart Docker'
       become: yes
       shell: systemctl daemon-reload && service docker restart && sleep 3
