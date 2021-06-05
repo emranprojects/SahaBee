@@ -35,58 +35,44 @@
       template:
         src: '.env.j2'
         dest: '{{ dest_root_dir }}/.env'
-    - name: 'Check Resources'
-      shell: echo "HDD:" && df -h && echo "RAM:" && free
     - name: 'Login to Docker Hub registry (To extend pull rate limit)'
       community.general.docker_login:
         username: '{{ docker_hub_username | mandatory }}'
         password: '{{ docker_hub_password | mandatory }}'
-    - name: 'Check Resources'
-      shell: echo "HDD:" && df -h && echo "RAM:" && free
     - name: 'Config docker proxy: create config dir'
+      become: yes
       file:
         path: /etc/systemd/system/docker.service.d/ &&
         state: directory
     - name: 'Config docker proxy: Copy config file'
+      become: yes
       copy:
         content: |
           [Service]
           Environment="HTTP_PROXY=socks5://127.0.0.1:9000"
         dest: /etc/systemd/system/docker.service.d/http-proxy.conf
-    - name: 'Check Resources'
-      shell: echo "HDD:" && df -h && echo "RAM:" && free
     - name: 'Restart Docker'
       become: yes
       shell: systemctl daemon-reload && service docker restart && sleep 3
     - name: 'Start socks proxy'
       shell: nohup sshpass -p {{ proxy_server_pass }} ssh -o StrictHostKeyChecking=no -D 0.0.0.0:9000 -N {{ proxy_server_user }}@{{ proxy_server_host }} & echo $! > /tmp/proxy.pid
-    - name: 'Check Resources'
-      shell: echo "HDD:" && df -h && echo "RAM:" && free
     - name: 'Pull images'
       docker_compose:
         project_src: '{{ dest_root_dir }}'
         build: no
         pull: yes
         state: present
-    - name: 'Check Resources'
-      shell: echo "HDD:" && df -h && echo "RAM:" && free
     - name: 'Deconfig docker proxy'
+      become: yes
       file:
         path: /etc/systemd/system/docker.service.d/http-proxy.conf
         state: absent
-    - name: 'Check Resources'
-      shell: echo "HDD:" && df -h && echo "RAM:" && free
     - name: 'Stop socks proxy'
       become: yes
       shell: >
-        echo "PS AX:" &&
-        ps ax | grep "ssh -o StrictHostKeyChecking=no -D 0.0.0.0:9000 -N" &&
-        echo "END PS AX" &&
         pid=$(cat /tmp/proxy.pid) &&
         echo "Socks proxy pid: $pid" &&
         kill $pid
-    - name: 'Check Resources'
-      shell: echo "HDD:" && df -h && echo "RAM:" && free
     - name: 'Restart Docker'
       become: yes
       shell: systemctl daemon-reload && service docker restart && sleep 3
