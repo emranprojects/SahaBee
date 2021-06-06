@@ -9,6 +9,7 @@ import {HCenter} from "./HCenter";
 import apiURLs from "../apiURLs"
 import {Redirect} from "react-router-dom";
 import utils from "../utils";
+import appPaths from "../appPaths";
 
 export default function Login() {
     const [username, setUsername] = useState("")
@@ -16,7 +17,7 @@ export default function Login() {
     const [loggedIn, setLoggedIn] = useState(utils.isLoggedIn())
 
     if (loggedIn)
-        return <Redirect to="/"/>
+        return <Redirect to={appPaths.dashboard}/>
 
     async function login() {
         if (username === "" || password === "") {

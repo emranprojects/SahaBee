@@ -2,7 +2,7 @@ import {Redirect} from "react-router-dom"
 import utils from "../utils";
 import appPaths from "../appPaths";
 
-export default function Rollouts() {
+export default function Dashboard() {
     if (!utils.isLoggedIn())
         return <Redirect to={appPaths.login}/>
 

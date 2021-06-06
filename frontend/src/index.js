@@ -4,7 +4,8 @@ import Login from './components/Login';
 import reportWebVitals from './reportWebVitals';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Rollouts from "./components/Rollouts";
+import Dashboard from "./components/Dashboard";
+import LandingPage from "./components/LandingPage";
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import appPaths from "./appPaths";
 
@@ -15,8 +16,11 @@ ReactDOM.render(
                 <Route path={appPaths.login}>
                     <Login/>
                 </Route>
+                <Route path={appPaths.dashboard}>
+                    <Dashboard/>
+                </Route>
                 <Route path="/">
-                    <Rollouts/>
+                    <LandingPage/>
                 </Route>
             </Switch>
         </BrowserRouter>
