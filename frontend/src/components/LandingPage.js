@@ -13,7 +13,7 @@ export default function Rollouts() {
                 <img src="/logo192.png"/>
                 <h1 className="text-center font-weight-bold text-white stroke-black">SahaBee</h1>
                 <h3 className="text-center font-weight-bold font-italic">Let the good times roll!</h3>
-                <a href={appPaths.login} className="btn btn-warning">Get Started!</a>
+                <a href={appPaths.login} className="btn btn-secondary">Get Started!</a>
             </div>
         </div>
     </>
