@@ -115,7 +115,7 @@ function download_timesheet() {
     if [ -f "./timesheet.xlsx" ]; then
         rm ./timesheet.xlsx
     fi
-    wget "https://sahabee.ir/$SAHABEE_USER/$YEAR_MONTH/timesheet.xlsx"
+    wget "https://api.sahabee.ir/$SAHABEE_USER/$YEAR_MONTH/timesheet.xlsx"
 }
 
 function send_mail() {
