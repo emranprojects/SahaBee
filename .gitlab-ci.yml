@@ -31,6 +31,20 @@ build:
   except:
     - schedules
 
+export-logo:
+  stage: build
+  image: dpokidov/imagemagick:7.0.11-13
+  tags:
+    - docker
+  script:
+    - cd visual-identity/
+    - convert logo.psd[0] logo.png
+    - convert logo.psd[1] logo-black.png
+  artifacts:
+    paths:
+      - visual-identity/logo.png
+      - visual-identity/logo-black.png
+
 test-api:
   stage: test
   image: docker/compose:1.25.4
