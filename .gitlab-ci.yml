@@ -35,7 +35,7 @@ export-logo:
   stage: build
   image:
     name: dpokidov/imagemagick:7.0.11-13
-    entrypoint: ""
+    entrypoint: [""]
   tags:
     - docker
   script:
