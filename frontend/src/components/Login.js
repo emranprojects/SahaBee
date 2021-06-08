@@ -76,6 +76,8 @@ export default function Login() {
                                 />
                             </Form.Group>
                             <Button type="submit" variant="primary">Login</Button>
+                            <Row className="mb-3"/>
+                            <Form.Label>New to SahaBee? <a href={appPaths.register}>create an account</a>.</Form.Label>
                         </Form>
                     </Card.Body>
                 </Card>

@@ -7,7 +7,11 @@
 }
 
 .main-wrapper {
-    height: 100vh;
+    height: 95vh;
+}
+
+.nav-bar {
+    height: 5vh;
 }
 
 .section {

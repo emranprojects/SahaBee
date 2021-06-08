@@ -8,6 +8,7 @@ import Dashboard from "./components/Dashboard";
 import LandingPage from "./components/LandingPage";
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import appPaths from "./appPaths";
+import Register from './components/Register';
 
 ReactDOM.render(
     <React.StrictMode>
@@ -15,6 +16,9 @@ ReactDOM.render(
             <Switch>
                 <Route path={appPaths.login}>
                     <Login/>
+                </Route>
+                <Route path={appPaths.register}>
+                    <Register/>
                 </Route>
                 <Route path={appPaths.dashboard}>
                     <Dashboard/>
