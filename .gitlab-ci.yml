@@ -61,9 +61,8 @@ test-api:
     COMPOSE_INTERACTIVE_NO_CLI: 'true'
   script:
     - ci-utils/docker-login.sh
-    - export DJANGO_SETTINGS_MODULE=sahabee.settings
     - docker-compose pull api
-    - docker-compose run --name test_container api ./manage.py test
+    - docker-compose run --name test_container api sh -c 'DJANGO_SETTINGS_MODULE=sahabee.settings ./manage.py test'
     - docker cp test_container:/sahabee/.coverage .
   artifacts:
     reports:
