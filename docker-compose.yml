@@ -11,6 +11,7 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=sahabee.settings-production
       - SECRET_KEY
+      - RECAPTCHA_SERVER_KEY
   nginx:
     image: nginx:1.19.2
     networks:

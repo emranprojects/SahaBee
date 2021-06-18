@@ -5,6 +5,9 @@ class ApiUrls {
     get login() {
         return `${this.BASE_URL}/api-token-auth/`
     }
+    get register() {
+        return `${this.BASE_URL}/users/register/`
+    }
 }
 
 const apiURLs = new ApiUrls()

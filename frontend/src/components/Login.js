@@ -24,16 +24,9 @@ export default function Login() {
             alert("Enter username/password!")
             return
         }
-        const result = await fetch(apiURLs.login, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username: username,
-                password: password
-            })
+        const result = await utils.post(apiURLs.login, {
+            username: username,
+            password: password
         })
         switch (result.status) {
             case 200:

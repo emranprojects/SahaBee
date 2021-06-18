@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_nose',
     'corsheaders',
+    'drf_recaptcha',
 ]
 
 MIDDLEWARE = [
@@ -143,3 +144,6 @@ NOSE_ARGS = [
     '--with-coverage',
     '--cover-package=rollcall',
 ]
+
+DRF_RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SERVER_KEY')
+DRF_RECAPTCHA_TESTING = True

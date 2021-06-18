@@ -5,3 +5,4 @@ openpyxl==3.0.3
 django-nose==1.4.7
 coverage==5.3
 django-cors-headers==3.7.0
+drf-recaptcha==2.0.4
