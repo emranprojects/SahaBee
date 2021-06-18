@@ -94,7 +94,7 @@ export default function Register() {
                                                   onChange={e => setPassword2(e.target.value)}
                                     />
                                 </Form.Group>
-                                <GoogleReCaptcha onVerify={setRecaptcha}/>
+                                <GoogleReCaptcha action="register" onVerify={setRecaptcha}/>
                                 <Button type="submit" variant="success">Register</Button>
                                 <Form.Label className="text-muted"><small>
                                     By creating an account, you agree to the
