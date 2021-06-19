@@ -6,9 +6,10 @@ import {
     GoogleReCaptchaProvider,
     GoogleReCaptcha
 } from 'react-google-recaptcha-v3'
-import utils, {RequestFailedError} from "../utils";
+import utils from "../utils";
 import apiURLs from "../apiURLs";
 import {Redirect} from "react-router-dom";
+import {toast} from 'react-toastify';
 
 export default function Register() {
     const [username, setUsername] = useState("")
@@ -24,31 +25,30 @@ export default function Register() {
 
     async function register() {
         if (username === "" || email === "" || password === "" || password2 === "") {
-            alert("Please fill all the fields.")
+            toast.error("Please fill all the fields.")
             return
         }
         if (password !== password2) {
-            alert("The two passwords don't match!")
+            toast.error("The two passwords don't match!")
             return
         }
         if (recaptcha === "") {
-            alert("Recaptcha token not set! Inform the admin, please.")
+            toast.error("Recaptcha token not set! Inform the admin, please.")
             return
         }
 
         const result = await utils.post(apiURLs.register, {username, password, email, recaptcha})
         switch (result.status){
             case 201:
-                // TODO: Toast registration succeeded
+                toast.success("Successfully registered! Try logging in.")
                 setSucceeded(true)
                 break
             case 400:
-                // TODO: Nice errors
-                alert(await result.text())
+                // TODO: Nice form errors
+                toast.error(await result.text())
                 break
             default:
-                // TODO: Nice errors
-                throw Error(`Unexpected status code: ${result.status}`)
+                toast.error(`Unexpected status code (${result.status}): ${await result.text()}`)
         }
     }
 

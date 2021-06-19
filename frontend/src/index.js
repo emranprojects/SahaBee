@@ -2,13 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Login from './components/Login';
 import reportWebVitals from './reportWebVitals';
-
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Dashboard from "./components/Dashboard";
 import LandingPage from "./components/LandingPage";
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import appPaths from "./appPaths";
 import Register from './components/Register';
+import {ToastContainer} from 'react-toastify';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 ReactDOM.render(
     <React.StrictMode>
@@ -28,6 +30,7 @@ ReactDOM.render(
                 </Route>
             </Switch>
         </BrowserRouter>
+        <ToastContainer/>
     </React.StrictMode>,
     document.getElementById('root')
 );

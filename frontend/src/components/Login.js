@@ -10,6 +10,7 @@ import apiURLs from "../apiURLs"
 import {Redirect} from "react-router-dom";
 import utils from "../utils";
 import appPaths from "../appPaths";
+import {toast} from 'react-toastify';
 
 export default function Login() {
     const [username, setUsername] = useState("")
@@ -21,7 +22,7 @@ export default function Login() {
 
     async function login() {
         if (username === "" || password === "") {
-            alert("Enter username/password!")
+            toast.error("Enter username/password!")
             return
         }
         const result = await utils.post(apiURLs.login, {
@@ -30,14 +31,15 @@ export default function Login() {
         })
         switch (result.status) {
             case 200:
+                toast.success("Successfully logged in!")
                 localStorage.setItem('token', (await result.json()).token)
                 setLoggedIn(true)
                 break;
             case 400:
-                alert("Username/Password wrong.") //TODO nice message
+                toast.error("Username/Password wrong.")
                 break;
             default:
-                alert(`Unexpected status code (${result.status}): ${await result.text()}`)
+                toast.error(`Unexpected status code (${result.status}): ${await result.text()}`)
         }
     }
 
