@@ -195,7 +195,6 @@ sonarcloud-analysis:
     paths:
       - .sonar/cache
   script:
-    - sonar-scanner
+    - sonar-scanner -Dsonar.projectVersion=${CI_COMMIT_SHA}
   only:
-    - merge_requests
     - master
