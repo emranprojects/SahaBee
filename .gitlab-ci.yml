@@ -68,6 +68,8 @@ test-api:
   artifacts:
     reports:
       cobertura: .coverage
+    paths:
+      - .coverage
   needs:
     - build
   except:
