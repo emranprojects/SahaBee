@@ -2,6 +2,7 @@ stages:
   - prepare
   - build
   - test
+  - analysis
   - release
   - deploy
 
@@ -95,7 +96,6 @@ test-ansible:
   only:
     changes:
       - deployment/ansible/*
-      - .gitlab-ci.yml
   except:
     - schedules
 
@@ -177,8 +177,11 @@ clean-gitlab-registry:
   only:
     - schedules
 
-sonarcloud-check:
-  stage: test
+sonarcloud-analysis:
+  stage: analysis
+  needs:
+    - job: test-api
+      artifacts: true
   image:
     name: sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
