@@ -143,6 +143,7 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 NOSE_ARGS = [
     '--with-coverage',
     '--cover-package=rollcall',
+    '--cover-xml',
 ]
 
 DRF_RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SERVER_KEY')
