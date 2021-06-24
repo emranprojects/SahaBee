@@ -8,6 +8,9 @@ class AppPaths {
     get dashboard() {
         return "/dashboard"
     }
+    get termsOfService() {
+        return "/terms-of-service"
+    }
 }
 
 const appPaths = new AppPaths()

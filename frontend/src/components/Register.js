@@ -98,7 +98,7 @@ export default function Register() {
                                 <Button type="submit" variant="success">Register</Button>
                                 <Form.Label className="text-muted"><small>
                                     By creating an account, you agree to the
-                                    <a href="https://todo.come!">Terms of Service</a>.
+                                    <a href={appPaths.termsOfService}>Terms of Service</a>.
                                 </small></Form.Label>
                                 <Form.Label>Already have an account? <a href={appPaths.login}>login</a>!</Form.Label>
                             </Form>

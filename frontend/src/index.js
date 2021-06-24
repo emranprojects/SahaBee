@@ -11,6 +11,7 @@ import {ToastContainer} from 'react-toastify';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
+import TermsOfService from "./components/TermsOfService";
 
 ReactDOM.render(
     <React.StrictMode>
@@ -24,6 +25,9 @@ ReactDOM.render(
                 </Route>
                 <Route path={appPaths.dashboard}>
                     <Dashboard/>
+                </Route>
+                <Route path={appPaths.termsOfService}>
+                    <TermsOfService/>
                 </Route>
                 <Route path="/">
                     <LandingPage/>
