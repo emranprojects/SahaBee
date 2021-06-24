@@ -34,7 +34,7 @@ export default function RolloutsList() {
 
     return (
         <Card>
-            <Card.Header><abbr title="Last 10 reports. Full list will be supported in future versions."><h3>Rollouts</h3></abbr></Card.Header>
+            <Card.Header><h3>Rollouts</h3></Card.Header>
             <Table striped={true} bordered={false} hover={true}>
                 <tbody>
                 {rolloutRows.length > 0 ? rolloutRows : <>
