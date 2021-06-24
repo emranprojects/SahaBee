@@ -32,7 +32,7 @@ export default function Login() {
         switch (result.status) {
             case 200:
                 toast.success("Successfully logged in!")
-                localStorage.setItem('token', (await result.json()).token)
+                utils.setLoggedIn((await result.json()).token)
                 setLoggedIn(true)
                 break;
             case 400:

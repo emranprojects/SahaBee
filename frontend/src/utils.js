@@ -1,9 +1,18 @@
-export default {
-    isLoggedIn: () => {
+class Utils {
+    isLoggedIn() {
         const token = localStorage.getItem('token')
         return !!token
-    },
-    post: async (url, body) => {
+    }
+
+    setLoggedIn(token){
+        localStorage.setItem('token', token)
+    }
+
+    logout() {
+        localStorage.removeItem('token')
+    }
+
+    async post(url, body) {
         const result = await fetch(url, {
             method: 'POST',
             headers: {
@@ -15,3 +24,5 @@ export default {
         return result
     }
 }
+const utils = new Utils()
+export default utils

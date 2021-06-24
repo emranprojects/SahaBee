@@ -16,22 +16,26 @@ import Navbar from "./components/Navbar";
 
 ReactDOM.render(
     <React.StrictMode>
-        <Navbar/>
         <BrowserRouter>
             <Switch>
                 <Route path={appPaths.login}>
+                    <Navbar isLoggedIn={false}/>
                     <Login/>
                 </Route>
                 <Route path={appPaths.register}>
+                    <Navbar isLoggedIn={false}/>
                     <Register/>
                 </Route>
                 <Route path={appPaths.dashboard}>
+                    <Navbar isLoggedIn={true}/>
                     <Dashboard/>
                 </Route>
                 <Route path={appPaths.termsOfService}>
+                    <Navbar isLoggedIn={false}/>
                     <TermsOfService/>
                 </Route>
                 <Route path="/">
+                    <Navbar isLoggedIn={false}/>
                     <LandingPage/>
                 </Route>
             </Switch>
