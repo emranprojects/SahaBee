@@ -8,6 +8,9 @@ class ApiUrls {
     get register() {
         return `${this.BASE_URL}/users/register/`
     }
+    get rollouts() {
+        return `${this.BASE_URL}/rollouts/`
+    }
 }
 
 const apiURLs = new ApiUrls()
