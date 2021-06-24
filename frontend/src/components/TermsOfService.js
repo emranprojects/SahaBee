@@ -6,7 +6,7 @@ export default function TermsOfService() {
         <Jumbotron>
             <Container>
                 <h1 className="text-info">SahaBee Terms of Service</h1>
-                <span>
+                <span className="text-justify">
                 By registering at and continuing to use SahaBee service, you agree that:<br/>
                 <ul>
                     <li>
