@@ -12,9 +12,11 @@ import {ToastContainer} from 'react-toastify';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 import TermsOfService from "./components/TermsOfService";
+import Navbar from "./components/Navbar";
 
 ReactDOM.render(
     <React.StrictMode>
+        <Navbar/>
         <BrowserRouter>
             <Switch>
                 <Route path={appPaths.login}>
