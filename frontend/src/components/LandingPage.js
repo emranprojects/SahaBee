@@ -2,7 +2,7 @@ import appPaths from "../appPaths";
 import "./LandingPage.css"
 import React from "react";
 
-export default function Rollouts() {
+export default function LandingPage() {
     return <>
         <div className="main-wrapper">
             <div className="section bg col-xs-9">
