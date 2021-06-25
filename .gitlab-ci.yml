@@ -236,8 +236,9 @@ restore-backup-to-production:
     - echo 'ERROR>> Provide BACKUP_FILE_URL env var'
     - exit 1
     - fi
+    - wget -o backup.zip "$BACKUP_FILE_URL"
+    - unzip backup.zip # Inflates deployment/ansible/backup.json.enc
     - cd deployment/ansible/
-    - wget -o backup.json.enc "$BACKUP_FILE_URL"
     - echo "${PRODUCTION_BACKUP_FILE_PASS}" | openssl enc -in backup.json.enc -d -aes-256-cbc -pass stdin > backup.json
     - ansible-playbook restore.yml -i inventory.yml --limit production
   only:
