@@ -47,6 +47,11 @@ export-logo:
     paths:
       - visual-identity/logo.png
       - visual-identity/logo-black.png
+  only:
+    refs:
+      - master
+  except:
+    - schedules
 
 test-api:
   stage: test
@@ -203,6 +208,8 @@ sonarcloud-analysis:
     - sonar-scanner -Dsonar.projectVersion=${CI_COMMIT_SHA}
   only:
     - master
+  except:
+    - schedules
 
 backup-production:
   stage: deploy
