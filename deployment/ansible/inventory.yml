@@ -16,6 +16,8 @@ all:
     proxy_server_user: '{{ lookup("env", "SSH_PROXY_SERVER_USER") | mandatory }}'
     proxy_server_pass: '{{ lookup("env", "SSH_PROXY_SERVER_PASS") | mandatory }}'
     recaptcha_server_key: '{{ lookup("env", "RECAPTCHA_SERVER_KEY") | mandatory }}'
+    backup_file_remote_path: '/tmp/backup.json'
+    backup_file_local_path: './backup.json'
   children:
     production:
       hosts:

@@ -200,3 +200,37 @@ sonarcloud-analysis:
     - sonar-scanner -Dsonar.projectVersion=${CI_COMMIT_SHA}
   only:
     - master
+
+backup-production:
+  stage: deploy
+  tags:
+    - docker
+  image: spy86/ansible:latest
+  script:
+    - cd deployment/ansible/
+    - ansible-playbook backup.yml -i inventory.yml --limit production
+    - echo "${PRODUCTION_BACKUP_FILE_PASS}" | openssl enc -in backup.json -aes-256-cbc -pass stdin > backup.json.enc
+  artifacts:
+    expire_in: 30 days
+    paths:
+      - deployment/ansible/backup.json.enc
+  only:
+    refs:
+      - master
+
+restore-backup-to-production:
+  stage: prepare
+  image: spy86/ansible:latest
+  script:
+    - if [ -z "$BACKUP_FILE_URL" ]; then
+    - echo 'ERROR>> Provide BACKUP_FILE_URL env var'
+    - exit 1
+    - fi
+    - cd deployment/ansible/
+    - wget -o backup.json.enc "$BACKUP_FILE_URL"
+    - echo "${PRODUCTION_BACKUP_FILE_PASS}" | openssl enc -in backup.json.enc -d -aes-256-cbc -pass stdin > backup.json
+    - ansible-playbook restore.yml -i inventory.yml --limit production
+  only:
+    refs:
+      - master
+  when: manual

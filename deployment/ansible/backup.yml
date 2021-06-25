@@ -1,0 +1,22 @@
+---
+- hosts: all
+  tasks:
+    - name: 'Backup Database'
+      shell:
+        chdir: '{{ dest_root_dir }}'
+        cmd: |
+          set -eu
+          docker rm backup-container 1>/dev/null 2>&1 || true
+          docker-compose run --name backup-container api sh -c \
+            "./manage.py dumpdata --natural-foreign \
+              --exclude=auth.permission \
+              --exclude=authtoken.token \
+              --exclude=contenttypes \
+              > /backup.json"
+          docker cp backup-container:/backup.json {{ backup_file_remote_path }}
+          docker rm backup-container
+    - name: 'Download backup'
+      fetch:
+        src: '{{ backup_file_remote_path }}'
+        dest: '{{ backup_file_local_path }}'
+        flat: yes

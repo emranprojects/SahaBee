@@ -1,0 +1,14 @@
+---
+- hosts: all
+  tasks:
+    - name: 'Upload backup'
+      copy:
+        src: '{{ backup_file_local_path }}'
+        dest: '{{ backup_file_remote_path }}'
+    - name: 'Restore Database'
+      shell:
+        chdir: '{{ dest_root_dir }}'
+        cmd: |
+          set -eu
+          docker-compose run --rm -v {{ backup_file_remote_path }}:/backup.json api sh -c \
+            "./manage.py flush --no-input && ./manage.py loaddata /backup.json"
