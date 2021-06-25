@@ -97,6 +97,9 @@ test-ansible:
       --extra-vars "shecan_dns_1=$DNS_SERVER shecan_dns_2=$DNS_SERVER"
     - ansible-playbook deploy.yml -i inventory.yml -vvv --limit test
     - curl -i --fail https://sahabee.ir
+    - curl -i --fail https://api.sahabee.ir
+    - ansible-playbook backup.yml -i inventory.yml -vvv --limit test
+    - ansible-playbook restore.yml -i inventory.yml -vvv --limit test
   only:
     changes:
       - deployment/ansible/*
