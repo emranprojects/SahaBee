@@ -11,6 +11,9 @@ class ApiUrls {
     get rollouts() {
         return `${this.BASE_URL}/rollouts/`
     }
+    rollout(id){
+        return `${this.rollouts}${id}/`
+    }
 }
 
 const apiURLs = new ApiUrls()

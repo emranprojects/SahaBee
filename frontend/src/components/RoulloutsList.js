@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {Card, Table} from "react-bootstrap";
+import {Button, Card, Table} from "react-bootstrap";
 import utils from "../utils";
 import apiURLs from "../apiURLs";
 import {toast} from "react-toastify";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faTrash} from "@fortawesome/free-solid-svg-icons";
 
-export default function RolloutsList() {
+export default function RolloutsList({lastAddedRolloutId = null}) {
     const [rollouts, setRollouts] = useState([])
 
     useEffect(() => {
@@ -24,24 +26,45 @@ export default function RolloutsList() {
         return () => {
             cancel = true
         }
-    }, [])
+    }, [lastAddedRolloutId])
 
     const rolloutRows = []
     for (let rollout of rollouts)
-        rolloutRows.push(<tr>
-            <td>{utils.formatDateTime(rollout.time)}</td>
-        </tr>)
+        rolloutRows.push(<RolloutRow key={rollout.id}
+                                     rollout={rollout}
+                                     onRolloutDeleted={id => setRollouts(rollouts.filter(r => r.id !== id))}/>)
 
     return (
         <Card>
             <Card.Header><h3>Rollouts</h3></Card.Header>
-            <Table striped={true} bordered={false} hover={true}>
-                <tbody>
-                {rolloutRows.length > 0 ? rolloutRows : <>
-                    <h4 className="text-muted text-center">No rollouts yet.</h4>
-                </>}
-                </tbody>
-            </Table>
+            {rolloutRows.length > 0
+                ? <Table striped={true} bordered={false} hover={true}>
+                    <tbody>{rolloutRows}</tbody>
+
+                </Table>
+                : <h4 className="text-muted text-center">No rollouts yet.</h4>}
         </Card>
+    )
+}
+
+function RolloutRow({rollout, onRolloutDeleted}) {
+    async function deleteRollout() {
+        if (window.confirm(`Delete rollout of "${utils.formatDateTime(rollout.time)}"?`)) {
+            const resp = await utils.delete(apiURLs.rollout(rollout.id))
+            if (resp.status === 204) {
+                toast.success("Rollout deleted.")
+                onRolloutDeleted(rollout.id)
+            } else
+                toast.error(`Unexpected status code (${resp.status}): ${await resp.text()}`)
+        }
+    }
+
+    return (
+        <tr>
+            <td>{utils.formatDateTime(rollout.time)}</td>
+            <td className="text-right"><abbr title="Delete rollout">
+                <Button variant="danger" onClick={deleteRollout}><FontAwesomeIcon icon={faTrash}/></Button>
+            </abbr></td>
+        </tr>
     )
 }

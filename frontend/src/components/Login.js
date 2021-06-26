@@ -28,7 +28,7 @@ export default function Login() {
         const result = await utils.post(apiURLs.login, {
             username: username,
             password: password
-        })
+        }, false)
         switch (result.status) {
             case 200:
                 toast.success("Successfully logged in!")
