@@ -6,6 +6,7 @@ import {Container, Row} from "react-bootstrap";
 import RolloutsList from "./RoulloutsList";
 import RolloutCard from "./RolloutCard";
 import {useState} from "react";
+import TimesheetDownloadCard from "./TimesheetDownloadCard";
 
 export default function Dashboard() {
     const [lastAddedRolloutId, setLastAddedRolloutId] = useState()
@@ -16,6 +17,7 @@ export default function Dashboard() {
     return <>
         <Container>
             <Row className="mb-5"/>
+            <TimesheetDownloadCard/>
             <RolloutCard onRollcall={(rollout) => setLastAddedRolloutId(rollout.id)}/>
             <RolloutsList lastAddedRolloutId={lastAddedRolloutId}/>
         </Container>

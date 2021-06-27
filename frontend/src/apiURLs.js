@@ -14,6 +14,9 @@ class ApiUrls {
     rollout(id){
         return `${this.rollouts}${id}/`
     }
+    timesheetDownload(username, year, month){
+        return `${this.BASE_URL}/${username}/${year}/${month}/timesheet.xlsx`
+    }
 }
 
 const apiURLs = new ApiUrls()

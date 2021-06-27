@@ -12,16 +12,22 @@ class Utils {
         return !!token
     }
 
-    setLoggedIn(token){
+    setLoggedIn(username, token){
+        localStorage.setItem('username', username)
         localStorage.setItem('token', token)
     }
 
     logout() {
+        localStorage.removeItem('username')
         localStorage.removeItem('token')
     }
 
     get _token() {
         return localStorage.getItem('token')
+    }
+
+    get username() {
+        return localStorage.getItem('username')
     }
 
     async get(url) {
