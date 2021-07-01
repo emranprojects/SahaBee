@@ -6,7 +6,7 @@ import {toast} from "react-toastify";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
 
-export default function RolloutsList({lastAddedRolloutId = null}) {
+export default function RolloutsList({lastAddedRolloutId = null, onRolloutDeleted = id => undefined}) {
     const [rollouts, setRollouts] = useState([])
 
     useEffect(() => {
@@ -32,7 +32,10 @@ export default function RolloutsList({lastAddedRolloutId = null}) {
     for (let rollout of rollouts)
         rolloutRows.push(<RolloutRow key={rollout.id}
                                      rollout={rollout}
-                                     onRolloutDeleted={id => setRollouts(rollouts.filter(r => r.id !== id))}/>)
+                                     onRolloutDeleted={id => {
+                                         setRollouts(rollouts.filter(r => r.id !== id))
+                                         onRolloutDeleted(id)
+                                     }}/>)
 
     return (
         <Card>

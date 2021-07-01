@@ -2,11 +2,11 @@ from django.contrib.auth.models import User
 from django.core.files import File
 from django.http import HttpResponse
 from persiantools.jdatetime import JalaliDate, JalaliDateTime
-from rest_framework import permissions
+from rest_framework import permissions, authentication
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED
+from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN
 from rest_framework.views import APIView
 
 from rollcall import models
@@ -47,8 +47,14 @@ class RolloutViewSet(viewsets.ModelViewSet):
 
 
 class ReportRollouts(APIView):
-    def get(self, request, username, year, month, format=None):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [authentication.TokenAuthentication, authentication.BasicAuthentication, authentication.SessionAuthentication]
+
+    def get(self, request, username, year, month):
         user = models.User.objects.get(username=username)
+        if request.user.username != user.username:
+            if not request.user.is_superuser:
+                return HttpResponse("", status=HTTP_403_FORBIDDEN)
         total_days = JalaliDate.days_in_month(month=month, year=year)
         date_from = JalaliDateTime(year=year, month=month, day=1).to_gregorian()
         date_to = JalaliDateTime(year=year, month=month, day=total_days, hour=23, minute=59, second=59,

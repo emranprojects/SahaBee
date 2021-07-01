@@ -4,8 +4,9 @@ import moment from "jalali-moment";
 import {toast} from "react-toastify";
 import apiURLs from "../apiURLs";
 import utils from "../utils";
+import AuthenticatedLink from "./AuthenticatedLink";
 
-export default function TimesheetDownloadCard() {
+export default function TimesheetDownloadCard({lastAddedRolloutId}) {
     const YEAR_MIN = 1300
     const YEAR_MAX = 2000
     const MONTH_MIN = 1
@@ -15,15 +16,16 @@ export default function TimesheetDownloadCard() {
     const [year, setYear] = useState(now.jYear())
     const [month, setMonth] = useState(now.jMonth() + 1)
 
-    function validateDownloadData(e) {
+    function validateDownloadArgs() {
         if (year < YEAR_MIN || year > YEAR_MAX) {
             toast.error("Invalid year!")
-            e.preventDefault()
+            return false
         }
         if (month < MONTH_MIN || month > MONTH_MAX) {
             toast.error("Invalid month!")
-            e.preventDefault()
+            return false
         }
+        return true
     }
 
     return <Card>
@@ -59,13 +61,14 @@ export default function TimesheetDownloadCard() {
                     </InputGroup>
                 </Col>
                 <Col>
-                    <a className="btn btn-info"
-                       href={`${apiURLs.timesheetDownload(utils.username, year, month)}`}
-                       download={`timesheet-${year}-${month}.xlsx`}
-                       onClick={validateDownloadData}
-                    >
-                        Download time-sheet
-                    </a>
+                <AuthenticatedLink url={`${apiURLs.timesheetDownload(utils.username, year, month)}`}
+                                   className="btn btn-info"
+                                   filename={`timesheet-${year}-${month}`}
+                                   validateFunc={validateDownloadArgs}
+                                   refreshArg={lastAddedRolloutId}
+                >
+                    Download!
+                </AuthenticatedLink>
                 </Col>
             </Row>
         </Card.Body>

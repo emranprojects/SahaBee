@@ -4,6 +4,7 @@ set -euo pipefail
 
 readonly CWD="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 readonly SMTP_CLI="./smtp-cli"
+readonly VERSION="1.0.0"
 
 SERVER=
 USER=
@@ -12,12 +13,13 @@ RECIPIENTS=()
 VERBOSE=
 YEAR_MONTH=
 SAHABEE_USER=
+SAHABEE_PASS=
 
 function main() {
     cd $CWD
-    download_smtp_cli_if_needed
     inflate_args "$@"
     check_args
+    download_smtp_cli_if_needed
     download_timesheet
     send_mail
 }
@@ -31,6 +33,9 @@ function inflate_args() {
     while [ $# -gt 0 ]; do
         case "$1" in
         --help | -h)
+            echo "SahaBee Soldier $VERSION"
+            echo " An agent that automatically downloads and sends your timesheets."
+            echo
             print_usage
             exit 0
             ;;
@@ -59,6 +64,11 @@ function inflate_args() {
             SAHABEE_USER=$1
             shift
             ;;
+        --sahabee-pass)
+            shift
+            SAHABEE_PASS="$1"
+            shift
+            ;;
         --year-month | -y | -m)
             shift
             YEAR_MONTH=$1
@@ -79,7 +89,7 @@ function inflate_args() {
             VERBOSE=--verbose
             ;;
         *)
-            ercho "Unknown option: $1"
+            echo >&2 "Unknown option: $1"
             exit 1
             ;;
         esac
@@ -90,7 +100,7 @@ function inflate_args() {
 function print_usage() {
     echo "
 Usage:
-  ./send-timesheet.sh --server <SMTP_SERVER:PORT> --user <USER> --pass <PASS> --to <RECIPIENT> --year-month <LIKE 1400/01> --sahabee-user <user of sahabee.ir>
+  ./send-timesheet.sh --server <SMTP_SERVER:PORT> --user <USER> --pass <PASS> --to <RECIPIENT> --year-month <LIKE 1400/01> --sahabee-user <user of sahabee.ir> --sahabee-pass <password for sahabee.ir>
     "
 }
 
@@ -112,10 +122,13 @@ function download_smtp_cli_if_needed() {
 }
 
 function download_timesheet() {
+    local user_pass_base64
+    user_pass_base64=$(echo -n "$SAHABEE_USER:$SAHABEE_PASS" | base64)
     if [ -f "./timesheet.xlsx" ]; then
         rm ./timesheet.xlsx
     fi
-    wget "https://api.sahabee.ir/$SAHABEE_USER/$YEAR_MONTH/timesheet.xlsx"
+    wget --header="Authorization: Basic $user_pass_base64" \
+     "https://api.sahabee.ir/$SAHABEE_USER/$YEAR_MONTH/timesheet.xlsx"
 }
 
 function send_mail() {
@@ -136,11 +149,11 @@ function send_mail() {
         --body-plain="Hello,
 Here's my remote worksheet in $YEAR_MONTH.
 
-This message is sent by SahaBee Soldier, an agent for mailing the timesheets, instead of the real sender!
-
+----------------------------------
+This message is sent by SahaBee Soldier (an agent for mailing the timesheets, instead of the real sender!)
 Sincerely,
-SahaBee Soldier
-https://gitlab.com/emran.bm/sahabee" \
+SahaBee Soldier v$VERSION
+https://sahabee.ir" \
         $to_part \
         $VERBOSE \
         --mail-from=$USER \

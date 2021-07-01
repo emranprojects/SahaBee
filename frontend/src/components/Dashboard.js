@@ -17,9 +17,10 @@ export default function Dashboard() {
     return <>
         <Container>
             <Row className="mb-5"/>
-            <TimesheetDownloadCard/>
+            <TimesheetDownloadCard lastAddedRolloutId={lastAddedRolloutId}/>
             <RolloutCard onRollcall={(rollout) => setLastAddedRolloutId(rollout.id)}/>
-            <RolloutsList lastAddedRolloutId={lastAddedRolloutId}/>
+            <RolloutsList lastAddedRolloutId={lastAddedRolloutId}
+                          onRolloutDeleted={id => setLastAddedRolloutId(-id)}/>
         </Container>
     </>
 }
