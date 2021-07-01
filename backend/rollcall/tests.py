@@ -18,16 +18,23 @@ def create_user(username='default.test.user', is_superuser=False):
                                first_name=f'{username} firstname',
                                last_name=f'{username} lastname',
                                is_superuser=is_superuser)
-    UserDetail.objects.create(user=user,
-                              personnel_code='1',
-                              manager_name='test manager',
-                              unit='test department')
     return user
+
+
+class UserTest(TestCase):
+    def test_user_detail_should_be_created_on_creating_user(self):
+        user = User.objects.create(username='username',
+                                   first_name=f'firstname',
+                                   last_name=f'lastname')
+        self.assertTrue(UserDetail.objects.filter(user=user).exists())
 
 
 class ExcelConverterTest(TestCase):
     def setUp(self) -> None:
         self.user = create_user()
+        self.user.detail.personnel_code = "123"
+        self.user.detail.manager_name = "abu test"
+        self.user.detail.save()
 
     def test_rollout_should_be_in_excel(self):
         rollout = Rollout.objects.create(user=self.user)
