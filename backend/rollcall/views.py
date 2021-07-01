@@ -51,13 +51,14 @@ class RolloutViewSet(viewsets.ModelViewSet):
 
 class ReportRollouts(APIView):
     permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [authentication.TokenAuthentication, authentication.BasicAuthentication, authentication.SessionAuthentication]
+    authentication_classes = [authentication.TokenAuthentication,
+                              authentication.BasicAuthentication,
+                              authentication.SessionAuthentication]
 
     def get(self, request, username, year, month):
         user = models.User.objects.get(username=username)
-        if request.user.username != user.username:
-            if not request.user.is_superuser:
-                return HttpResponse("", status=HTTP_403_FORBIDDEN)
+        if request.user.username != user.username and not request.user.is_superuser:
+            return HttpResponse("", status=HTTP_403_FORBIDDEN)
         total_days = JalaliDate.days_in_month(month=month, year=year)
         date_from = JalaliDateTime(year=year, month=month, day=1).to_gregorian()
         date_to = JalaliDateTime(year=year, month=month, day=total_days, hour=23, minute=59, second=59,
