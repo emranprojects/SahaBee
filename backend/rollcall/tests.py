@@ -13,7 +13,7 @@ from rollcall.models import Rollout, UserDetail
 from rollcall.excel_converter import ExcelConverter
 
 
-def create_user(username, is_superuser=False):
+def create_user(username='default.test.user', is_superuser=False):
     user = User.objects.create(username=username,
                                first_name=f'{username} firstname',
                                last_name=f'{username} lastname',
@@ -27,7 +27,7 @@ def create_user(username, is_superuser=False):
 
 class ExcelConverterTest(TestCase):
     def setUp(self) -> None:
-        self.user = create_user('test.tst')
+        self.user = create_user()
 
     def test_rollout_should_be_in_excel(self):
         rollout = Rollout.objects.create(user=self.user)
@@ -50,7 +50,7 @@ class ExcelConverterTest(TestCase):
 
 class ReportRolloutsTest(TestCase):
     def setUp(self) -> None:
-        self.user = create_user('test.tst')
+        self.user = create_user()
 
     def _download_timesheet(self, username, auth_user=None):
         api_client = APIClient()
@@ -94,7 +94,7 @@ class RegistrationTest(TestCase):
 
 class RolloutsAPITest(APITestCase):
     def setUp(self) -> None:
-        self.user = create_user('tst')
+        self.user = create_user()
 
     def test_rollouts_should_be_sorted_descending(self):
         t = datetime(2000, 1, 1, 20, 0, 0)
