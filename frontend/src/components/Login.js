@@ -11,6 +11,7 @@ import {Redirect} from "react-router-dom";
 import utils from "../utils";
 import appPaths from "../appPaths";
 import {toast} from 'react-toastify';
+import LoginContext from "./LoginContext";
 
 export default function Login() {
     const [username, setUsername] = useState("")
@@ -20,7 +21,7 @@ export default function Login() {
     if (loggedIn)
         return <Redirect to={appPaths.dashboard}/>
 
-    async function login() {
+    async function login(loginContext) {
         if (username === "" || password === "") {
             toast.error("Enter username/password!")
             return
@@ -34,6 +35,7 @@ export default function Login() {
                 toast.success("Successfully logged in!")
                 utils.setLoggedIn(username, (await result.json()).token)
                 setLoggedIn(true)
+                loginContext.setIsLoggedIn(true)
                 break;
             case 400:
                 toast.error("Username/Password wrong.")
@@ -44,39 +46,44 @@ export default function Login() {
     }
 
     return (
-        <Container>
-            <Row className="mb-5"/>
-            <HCenter md={4}>
-                <Card>
-                    <Card.Header>Welcome to SahaBee</Card.Header>
-                    <Card.Body>
-                        <Form onSubmit={async e => {
-                            e.preventDefault();
-                            await login()
-                        }}>
-                            <Form.Group>
-                                <Form.Label>Username</Form.Label>
-                                <Form.Control type="text"
-                                              placeholder="Enter username"
-                                              value={username}
-                                              onChange={e => setUsername(e.target.value)}
-                                />
-                            </Form.Group>
-                            <Form.Group>
-                                <Form.Label>Password</Form.Label>
-                                <Form.Control type="password"
-                                              placeholder="Enter password"
-                                              value={password}
-                                              onChange={e => setPassword(e.target.value)}
-                                />
-                            </Form.Group>
-                            <Button type="submit" variant="primary">Login</Button>
-                            <Row className="mb-3"/>
-                            <Form.Label>New to SahaBee? <a href={appPaths.register}>create an account</a>.</Form.Label>
-                        </Form>
-                    </Card.Body>
-                </Card>
-            </HCenter>
-        </Container>
+        <LoginContext.Consumer>
+            {loginContext =>
+                <Container>
+                    <Row className="mb-5"/>
+                    <HCenter md={4}>
+                        <Card>
+                            <Card.Header>Welcome to SahaBee</Card.Header>
+                            <Card.Body>
+                                <Form onSubmit={async e => {
+                                    e.preventDefault();
+                                    await login(loginContext)
+                                }}>
+                                    <Form.Group>
+                                        <Form.Label>Username</Form.Label>
+                                        <Form.Control type="text"
+                                                      placeholder="Enter username"
+                                                      value={username}
+                                                      onChange={e => setUsername(e.target.value)}
+                                        />
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <Form.Label>Password</Form.Label>
+                                        <Form.Control type="password"
+                                                      placeholder="Enter password"
+                                                      value={password}
+                                                      onChange={e => setPassword(e.target.value)}
+                                        />
+                                    </Form.Group>
+                                    <Button type="submit" variant="primary">Login</Button>
+                                    <Row className="mb-3"/>
+                                    <Form.Label>New to SahaBee? <a href={appPaths.register}>create an
+                                        account</a>.</Form.Label>
+                                </Form>
+                            </Card.Body>
+                        </Card>
+                    </HCenter>
+                </Container>
+            }
+        </LoginContext.Consumer>
     );
 }

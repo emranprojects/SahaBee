@@ -5,20 +5,31 @@ import utils from "../utils";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faSignOutAlt} from '@fortawesome/free-solid-svg-icons'
 import apiURLs from "../apiURLs";
+import LoginContext from "./LoginContext";
 
-export default function Navbar({isLoggedIn}) {
+export default function Navbar() {
+
+    function logout(loginContext){
+        utils.logout()
+        loginContext.setIsLoggedIn(false)
+    }
+
     return (
-        <BootstrapNavbar className="nav-bar" bg="dark" expand="lg">
-            <BootstrapNavbar.Brand href="/" className="text-white">SahaBee</BootstrapNavbar.Brand>
-            <a href={apiURLs.BASE_URL} target="_blank" className="btn btn-dark">API</a>
-            {isLoggedIn ? <>
-                    <a href={appPaths.dashboard} className="btn btn-dark">Dashboard</a>
-                    <a href="/" className="btn btn-dark" onClick={utils.logout}>
-                        <abbr title="Logout"><FontAwesomeIcon icon={faSignOutAlt} /></abbr>
-                    </a>
-                </> :
-                <a href={appPaths.login} className="btn btn-dark">Login</a>
+        <LoginContext.Consumer>
+            {loginContext =>
+                <BootstrapNavbar className="nav-bar" bg="dark" expand="lg">
+                    <BootstrapNavbar.Brand href="/" className="text-white">SahaBee</BootstrapNavbar.Brand>
+                    <a href={apiURLs.BASE_URL} target="_blank" className="btn btn-dark">API</a>
+                    {loginContext.isLoggedIn ? <>
+                            <a href={appPaths.dashboard} className="btn btn-dark">Dashboard</a>
+                            <a href="/" className="btn btn-dark" onClick={() => logout(loginContext)}>
+                                <abbr title="Logout"><FontAwesomeIcon icon={faSignOutAlt}/></abbr>
+                            </a>
+                        </> :
+                        <a href={appPaths.login} className="btn btn-dark">Login</a>
+                    }
+                </BootstrapNavbar>
             }
-        </BootstrapNavbar>
+        </LoginContext.Consumer>
     )
 }
