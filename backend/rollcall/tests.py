@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import openpyxl
 import pytz
@@ -7,19 +7,27 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from persiantools.jdatetime import JalaliDate
 from rest_framework.status import HTTP_201_CREATED, HTTP_401_UNAUTHORIZED, HTTP_200_OK, HTTP_403_FORBIDDEN
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APITestCase
 
 from rollcall.models import Rollout, UserDetail
 from rollcall.excel_converter import ExcelConverter
 
 
+def create_user(username, is_superuser=False):
+    user = User.objects.create(username=username,
+                               first_name=f'{username} firstname',
+                               last_name=f'{username} lastname',
+                               is_superuser=is_superuser)
+    UserDetail.objects.create(user=user,
+                              personnel_code='1',
+                              manager_name='test manager',
+                              unit='test department')
+    return user
+
+
 class ExcelConverterTest(TestCase):
     def setUp(self) -> None:
-        self.user = User.objects.create(username='test.tst', first_name='test', last_name='unit zade')
-        UserDetail.objects.create(user=self.user,
-                                  personnel_code='1',
-                                  manager_name='test manager',
-                                  unit='test department')
+        self.user = create_user('test.tst')
 
     def test_rollout_should_be_in_excel(self):
         rollout = Rollout.objects.create(user=self.user)
@@ -41,6 +49,9 @@ class ExcelConverterTest(TestCase):
 
 
 class ReportRolloutsTest(TestCase):
+    def setUp(self) -> None:
+        self.user = create_user('test.tst')
+
     def _download_timesheet(self, username, auth_user=None):
         api_client = APIClient()
         if auth_user is not None:
@@ -48,35 +59,22 @@ class ReportRolloutsTest(TestCase):
         resp = api_client.get(f'/{username}/1400/01/timesheet.xlsx')
         return resp
 
-    def _create_user(self, username, is_superuser=False):
-        user = User.objects.create(username=username,
-                                   first_name=f'{username} firstname',
-                                   last_name=f'{username} lastname',
-                                   is_superuser=is_superuser)
-        UserDetail.objects.create(user=user,
-                                  personnel_code='1',
-                                  manager_name='test manager',
-                                  unit='test department')
-        return user
-
     def test_unauthenticated_user_cant_download_timesheet(self):
         resp = self._download_timesheet('some_user')
         self.assertEqual(resp.status_code, HTTP_401_UNAUTHORIZED)
 
     def test_authenticated_user_can_download_self_timesheet(self):
-        user = self._create_user('test.tst')
-        resp = self._download_timesheet(user.username, user)
+        resp = self._download_timesheet(self.user.username, self.user)
         self.assertEqual(resp.status_code, HTTP_200_OK)
 
     def test_authenticated_user_cant_download_others_timesheet(self):
-        user = self._create_user('test.tst')
-        other_user = self._create_user('other_user')
-        resp = self._download_timesheet(other_user.username, user)
+        other_user = create_user('other_user')
+        resp = self._download_timesheet(other_user.username, self.user)
         self.assertEqual(resp.status_code, HTTP_403_FORBIDDEN)
 
     def test_superuser_can_download_others_timesheet(self):
-        superuser = self._create_user('admin.user', is_superuser=True)
-        other_user = self._create_user('other_user')
+        superuser = create_user('admin.user', is_superuser=True)
+        other_user = create_user('other_user')
         resp = self._download_timesheet(other_user.username, superuser)
         self.assertEqual(resp.status_code, HTTP_200_OK)
 
@@ -92,3 +90,17 @@ class RegistrationTest(TestCase):
                                 })
         self.assertEqual(resp.status_code, HTTP_201_CREATED)
         self.assertTrue(User.objects.filter(username='test').exists())
+
+
+class RolloutsAPITest(APITestCase):
+    def setUp(self) -> None:
+        self.user = create_user('tst')
+
+    def test_rollouts_should_be_sorted_descending(self):
+        t = datetime(2000, 1, 1, 20, 0, 0)
+        r1 = Rollout.objects.create(user=self.user, time=t - timedelta(days=1))
+        r2 = Rollout.objects.create(user=self.user, time=t)
+        self.client.force_authenticate(self.user)
+        resp = self.client.get('/rollouts/')
+        self.assertEqual(resp.data[0]['id'], r2.id)
+        self.assertEqual(resp.data[1]['id'], r1.id)

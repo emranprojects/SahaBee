@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.core.files import File
 from django.http import HttpResponse
 from persiantools.jdatetime import JalaliDate, JalaliDateTime
-from rest_framework import permissions, authentication
+from rest_framework import permissions, authentication, filters
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -40,6 +40,9 @@ class UserDetailViewSet(viewsets.ModelViewSet):
 class RolloutViewSet(viewsets.ModelViewSet):
     serializer_class = RolloutSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['time']
+    ordering = ['-time']
 
     def get_queryset(self):
         user = self.request.user
