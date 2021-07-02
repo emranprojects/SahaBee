@@ -1,5 +1,13 @@
 ---
 - hosts: all
+  pre_tasks:
+    - name: Check mandatory variables
+      assert:
+        that: ({{ item }} is defined) and ({{ item }}|length > 0)
+      loop:
+        - dest_root_dir
+        - backup_file_remote_path
+        - backup_file_local_path
   tasks:
     - name: 'Upload backup'
       copy:

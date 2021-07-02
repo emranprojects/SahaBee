@@ -1,6 +1,13 @@
 ---
 - hosts: all
   become: yes
+  pre_tasks:
+    - name: Check mandatory variables
+      assert:
+        that: ({{ item }} is defined) and ({{ item }}|length > 0)
+      loop:
+        - shecan_dns_1
+        - shecan_dns_2
   tasks:
     - name: Install python-apt using apt
       apt:

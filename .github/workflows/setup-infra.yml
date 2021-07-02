@@ -1,0 +1,14 @@
+---
+name: Setup Infra
+on:
+  workflow_dispatch:
+jobs:
+  setup-infra:
+    runs-on: ubuntu-20.04
+    environment:
+      name: production
+      url: https://sahabee.ir
+    steps:
+      - uses: actions/checkout@v2
+      - working-directory: deployment/ansible/
+        run: ansible-playbook infra.yml -i inventory.yml --limit production

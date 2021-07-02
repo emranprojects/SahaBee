@@ -5,37 +5,35 @@ all:
     shecan_dns_2: 178.22.122.100
     src_root_dir: ../..
     dest_root_dir: '/home/{{ ansible_user }}/sahabee/'
-    secret_key: '{{ lookup("env", "SAHABEE_SECRET_KEY") }}'
+    secret_key:
     nginx_conf_path: '{{ src_root_dir }}/nginx.conf'
     docker_hub_username: emranbm
-    docker_hub_password: '{{ lookup("env", "DOCKER_HUB_PASSWORD") }}'
+    docker_hub_password:
     api_url: "https://api.sahabee.ir"
-    docker_username: '{{ lookup("env", "DOCKER_USERNAME") }}'
-    docker_password: '{{ lookup("env", "DOCKER_PASSWORD") }}'
-    proxy_server_host: '{{ lookup("env", "SSH_PROXY_IP") | mandatory }}'
-    proxy_server_user: '{{ lookup("env", "SSH_PROXY_SERVER_USER") | mandatory }}'
-    proxy_server_pass: '{{ lookup("env", "SSH_PROXY_SERVER_PASS") | mandatory }}'
-    recaptcha_server_key: '{{ lookup("env", "RECAPTCHA_SERVER_KEY") | mandatory }}'
+    docker_username:
+    docker_password:
+    proxy_server_host:
+    proxy_server_user:
+    proxy_server_pass:
+    recaptcha_server_key:
     backup_file_remote_path: '/tmp/backup.json'
     backup_file_local_path: './backup.json'
+    ssl_full_chain_file:
+    ssl_private_key_file:
+    api_version:
+    frontend_version:
   children:
     production:
       hosts:
         prod1:
-          api_version: '{{ lookup("env", "API_IMAGE_RELEASE_VERSION") }}'
-          frontend_version: '{{ lookup("env", "FRONTEND_IMAGE_RELEASE_VERSION") }}'
-          sudo_pass: '{{ lookup("env", "SERVER_PROD_PASS") }}'
           ansible_host: '{{ lookup("env", "SERVER_PROD_IP") | mandatory }}'
           ansible_user: '{{ lookup("env", "SERVER_PROD_USER") | mandatory }}'
           ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o ProxyCommand="sshpass -p {{ proxy_server_pass }} ssh -o StrictHostKeyChecking=no -W %h:%p {{ proxy_server_user }}@{{ proxy_server_host }}"'
           ansible_sudo_pass: '{{ sudo_pass }}'
           ansible_become_pass: '{{ sudo_pass }}'
-          ansible_ssh_pass: '{{ lookup("env", "SERVER_PROD_PASS") | mandatory }}'
     test:
       hosts:
         test1:
-          api_version: '{{ lookup("env", "SNAPSHOT_VERSION") }}'
-          frontend_version: '{{ lookup("env", "SNAPSHOT_VERSION") }}'
           ansible_host: sahabee.ir
           ansible_user: root
           ansible_ssh_common_args: '-o StrictHostKeyChecking=no'

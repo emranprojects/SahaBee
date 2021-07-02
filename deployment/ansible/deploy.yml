@@ -1,5 +1,25 @@
 ---
 - hosts: all
+  pre_tasks:
+    - name: Check mandatory variables
+      assert:
+        that: ({{ item }} is defined) and ({{ item }}|length > 0)
+      loop:
+        - src_root_dir
+        - ssl_full_chain_file
+        - ssl_private_key_file
+        - nginx_conf_path
+        - dest_root_dir
+        - docker_hub_username
+        - docker_hub_password
+        - proxy_server_host
+        - proxy_server_user
+        - proxy_server_pass
+        - api_version
+        - frontend_version
+        - api_url
+        - secret_key
+        - recaptcha_server_key
   tasks:
     - name: 'Copy compose file'
       copy:
@@ -20,12 +40,12 @@
     - name: 'Copy SSL private key'
       become: yes
       copy:
-        src: '{{ lookup("env", "SSL_PRIVATE_KEY_FILE") }}'
+        src: '{{ ssl_private_key_file }}'
         dest: /etc/sahabee.ir/ssl-files/privkey.pem
     - name: 'Copy SSL fullchain'
       become: yes
       copy:
-        src: '{{ lookup("env", "SSL_FULL_CHAIN_FILE") }}'
+        src: '{{ ssl_full_chain_file }}'
         dest: /etc/sahabee.ir/ssl-files/fullchain.pem
     - name: 'Copy nginx config'
       copy:
@@ -37,8 +57,8 @@
         dest: '{{ dest_root_dir }}/.env'
     - name: 'Login to Docker Hub registry (To extend pull rate limit)'
       community.general.docker_login:
-        username: '{{ docker_hub_username | mandatory }}'
-        password: '{{ docker_hub_password | mandatory }}'
+        username: '{{ docker_hub_username }}'
+        password: '{{ docker_hub_password }}'
     - name: 'Config docker proxy: create config dir'
       become: yes
       file:

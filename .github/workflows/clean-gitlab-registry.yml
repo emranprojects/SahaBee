@@ -1,0 +1,29 @@
+---
+name: Clean Gitlab Docker Registry
+on:
+  schedule:
+    - cron: "30 23 * * *" # every night 23:30 UTC = 03:00 ASIA/TEHRAN
+env:
+  IMAGE_PREFIX: "registry.gitlab.com/emran.bm/sahabee"
+  API_IMAGE_NAME: "${IMAGE_PREFIX}/api"
+  FRONTEND_IMAGE_NAME: "${IMAGE_PREFIX}/frontend"
+  GITLAB_PROJECT_ID: 17989661
+jobs:
+  clean-gitlab-registry:
+    runs-on: ubuntu-20.04
+    container:
+      image: nyurik/alpine-python3-requests
+    steps:
+      - uses: actions/checkout@v2
+      - name: Clean API image snapshots
+        run: ./ci-utils/clean-docker-registry.py
+          --project-id ${GITLAB_PROJECT_ID}
+          --access-token ${{ secrets.DOCKER_REGISTRY_CLEAN_JOB_API_TOKEN }}
+          --repo ${API_IMAGE_NAME}
+          --prefix "snapshot-"
+      - name: Clean frontend image snapshots
+        run: ./ci-utils/clean-docker-registry.py
+          --project-id ${GITLAB_PROJECT_ID}
+          --access-token ${{ secrets.DOCKER_REGISTRY_CLEAN_JOB_API_TOKEN }}
+          --repo ${FRONTEND_IMAGE_NAME}
+          --prefix "snapshot-"

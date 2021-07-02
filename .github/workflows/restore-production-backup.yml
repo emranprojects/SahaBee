@@ -1,0 +1,25 @@
+---
+name: Restore production database backup
+on:
+  workflow_dispatch:
+    input:
+      backup-file-url:
+        description: URL to the encrypted backup file
+        required: true
+jobs:
+  restore-production-backup:
+    runs-on: ubuntu-20.04
+    container:
+      image: spy86/ansible:latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download backup
+        run: wget -O backup.zip ${{ github.event.inputs.host }}
+      - name: Extract backup
+        run: unzip backup.zip # Inflates deployment/ansible/backup.json.enc
+      - name: Decrypt backup
+        working-directory: deployment/ansible/
+        run: echo "${{ secrets.PRODUCTION_BACKUP_FILE_PASS }}" | openssl enc -in backup.json.enc -d -aes-256-cbc -pass stdin > backup.json
+      - name: Restore backup
+        working-directory: deployment/ansible/
+        run: ansible-playbook restore.yml -i inventory.yml --limit production
