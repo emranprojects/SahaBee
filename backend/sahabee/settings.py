@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django_nose',
     'corsheaders',
     'drf_recaptcha',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -112,7 +113,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
-    ]
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 
@@ -148,3 +150,9 @@ NOSE_ARGS = [
 
 DRF_RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SERVER_KEY')
 DRF_RECAPTCHA_TESTING = True
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'SahaBee API',
+    'DESCRIPTION': 'Let the good times roll!',
+    'VERSION': VERSION,
+}

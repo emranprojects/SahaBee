@@ -20,6 +20,7 @@ from rest_framework import routers
 from rollcall import views
 from django.conf import settings
 from django.conf.urls.static import static
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -31,5 +32,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('admin/', admin.site.urls),
-    path('<username>/<int:year>/<int:month>/timesheet.xlsx', views.ReportRollouts.as_view())
+    path('<username>/<int:year>/<int:month>/timesheet.xlsx', views.ReportRollouts.as_view()),
+    path('api-schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('docs/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
