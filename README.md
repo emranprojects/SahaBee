@@ -1,5 +1,5 @@
 # SahaBee
-![Master Pipeline](https://github.com/emranbm/sahabee/workflows/Master%20Workflow/badge.svg?branch=master)
+[![Master Pipeline](https://github.com/emranbm/sahabee/workflows/Master%20Workflow/badge.svg?branch=master)](https://github.com/emranbm/SahaBee/actions/workflows/master.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=emran.bm_sahabee&metric=alert_status)](https://sonarcloud.io/dashboard?id=emran.bm_sahabee)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=emran.bm_sahabee&metric=coverage)](https://sonarcloud.io/dashboard?id=emran.bm_sahabee)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=emran.bm_sahabee&metric=code_smells)](https://sonarcloud.io/dashboard?id=emran.bm_sahabee)
