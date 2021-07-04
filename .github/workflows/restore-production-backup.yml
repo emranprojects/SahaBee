@@ -16,10 +16,11 @@ jobs:
       - name: Download backup
         run: wget -O backup.zip ${{ github.event.inputs.host }}
       - name: Extract backup
-        run: unzip backup.zip # Inflates deployment/ansible/backup.json.enc
+        run: unzip backup.zip # Extracts backup.json.enc
       - name: Decrypt backup
-        working-directory: deployment/ansible/
-        run: echo "${{ secrets.PRODUCTION_BACKUP_FILE_PASS }}" | openssl enc -in backup.json.enc -d -aes-256-cbc -pass stdin > backup.json
+        run: echo "${{ secrets.PRODUCTION_BACKUP_FILE_PASS }}"
+          | openssl enc -in backup.json.enc -d -aes-256-cbc -pass stdin
+          > deployment/ansible/backup.json
       - name: Restore backup
         working-directory: deployment/ansible/
         run: ansible-playbook restore.yml -i inventory.yml --limit production
@@ -27,4 +28,7 @@ jobs:
           ansible_host=${{ secrets.SAHABEE_SERVER_IP }}
           ansible_user=${{ secrets.SAHABEE_SERVER_USER }}
           sudo_pass=${{ secrets.SAHABEE_SERVER_PASS }}
+          proxy_server_host=${{ secrets.PROXY_SERVER_HOST }}
+          proxy_server_user=${{ secrets.PROXY_SERVER_USER }}
+          proxy_server_pass=${{ secrets.PROXY_SERVER_PASS }}
           "
