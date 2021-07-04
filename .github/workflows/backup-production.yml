@@ -17,7 +17,7 @@ jobs:
       - working-directory: deployment/ansible/
         run: |
           ansible-playbook backup.yml -i inventory.yml --limit production \
-            --extra-vars "
+            --extra-vars "\
             ansible_host=${{ secrets.SAHABEE_SERVER_IP }}
             ansible_user=${{ secrets.SAHABEE_SERVER_USER }}
             sudo_pass=${{ secrets.SAHABEE_SERVER_PASS }}
