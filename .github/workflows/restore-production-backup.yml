@@ -3,9 +3,9 @@ name: Restore production database backup
 on:
   workflow_dispatch:
     inputs:
-      backup_file_url:
-        description: URL to the encrypted backup file
-        required: true
+      backup_run_id:
+        description: The run id of a successfull backup job. (It can be found from the jobs URL) (Leave blank for the latest backup)
+        required: false
 jobs:
   restore-production-backup:
     runs-on: ubuntu-20.04
@@ -14,7 +14,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Download backup
-        run: wget -O backup.zip ${{ github.event.inputs.backup_file_url }}
+        run: |
+          if [ -z "${{ github.event.inputs.backup_run_id }}" ]; then
+            BACKUP_FILE_URL="https://nightly.link/emranbm/SahaBee/workflows/backup-production/master/production-backup.zip"
+          else
+            BACKUP_FILE_URL="https://nightly.link/emranbm/SahaBee/actions/runs/${{ github.event.inputs.backup_run_id }}/production-backup.zip"
+          fi
+          wget -O backup.zip $BACKUP_FILE_URL
       - name: Extract backup
         run: unzip backup.zip # Extracts backup.json.enc
       - name: Decrypt backup
