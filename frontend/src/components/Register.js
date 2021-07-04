@@ -37,7 +37,7 @@ export default function Register() {
             return
         }
 
-        const result = await utils.post(apiURLs.register, {username, password, email, recaptcha})
+        const result = await utils.post(apiURLs.register, {username, password, email, recaptcha}, false)
         switch (result.status){
             case 201:
                 toast.success("Successfully registered! Try logging in.")
