@@ -203,7 +203,6 @@ jobs:
           ansible_host=${{ secrets.SAHABEE_SERVER_IP }}
           ansible_user=${{ secrets.SAHABEE_SERVER_USER }}
           sudo_pass=${{ secrets.SAHABEE_SERVER_PASS }}
-          ansible_ssh_pass=${{ secrets.SAHABEE_SERVER_PASS }}
           ssl_full_chain_file=SSL_FULL_CHAIN_FILE
           ssl_private_key_file=SSL_PRIVATE_KEY_FILE
           docker_hub_password=${{ secrets.DOCKER_HUB_PASSWORD }}
