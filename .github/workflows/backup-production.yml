@@ -16,7 +16,12 @@ jobs:
       - uses: actions/checkout@v2
       - working-directory: deployment/ansible/
         run: |
-          ansible-playbook backup.yml -i inventory.yml --limit production
+          ansible-playbook backup.yml -i inventory.yml --limit production \
+            --extra-vars "
+            ansible_host=${{ secrets.SAHABEE_SERVER_IP }}
+            ansible_user=${{ secrets.SAHABEE_SERVER_USER }}
+            sudo_pass=${{ secrets.SAHABEE_SERVER_PASS }}
+            "
           echo "${{ secrets.PRODUCTION_BACKUP_FILE_PASS }}" | openssl enc -in backup.json -aes-256-cbc -pass stdin > backup.json.enc
       - uses: actions/upload-artifact@v2
         with:
