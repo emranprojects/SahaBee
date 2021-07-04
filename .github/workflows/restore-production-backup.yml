@@ -2,7 +2,7 @@
 name: Restore production database backup
 on:
   workflow_dispatch:
-    input:
+    inputs:
       backup_file_url:
         description: URL to the encrypted backup file
         required: true
