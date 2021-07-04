@@ -5,9 +5,12 @@ import apiURLs from "../apiURLs";
 import {toast} from "react-toastify";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
+import {Redirect} from "react-router-dom";
+import appPaths from "../appPaths";
 
 export default function RolloutsList({lastAddedRolloutId = null, onRolloutDeleted = id => undefined}) {
     const [rollouts, setRollouts] = useState([])
+    const [tokenInvalid, setTokenInvalid] = useState(false)
 
     useEffect(() => {
         let cancel = false;
@@ -19,6 +22,10 @@ export default function RolloutsList({lastAddedRolloutId = null, onRolloutDelete
                 case 200:
                     setRollouts(await resp.json())
                     break;
+                case 401:
+                    toast.error("Not logged in!")
+                    setTokenInvalid(true)
+                    break;
                 default:
                     toast.error(`Unexpected status code (${resp.status}): ${await resp.text()}`)
             }
@@ -27,6 +34,9 @@ export default function RolloutsList({lastAddedRolloutId = null, onRolloutDelete
             cancel = true
         }
     }, [lastAddedRolloutId])
+
+    if (!utils.isLoggedIn() || tokenInvalid)
+        return <Redirect to={appPaths.login}/>
 
     const rolloutRows = []
     for (let rollout of rollouts)

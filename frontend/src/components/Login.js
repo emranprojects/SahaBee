@@ -16,10 +16,10 @@ import LoginContext from "./LoginContext";
 export default function Login() {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
-    const [loggedIn, setLoggedIn] = useState(utils.isLoggedIn())
+    const [loggedIn, setLoggedIn] = useState(false)
 
     if (loggedIn)
-        return <Redirect to={appPaths.dashboard}/>
+        return <Redirect to={appPaths.dashboard} />
 
     async function login(loginContext) {
         if (username === "" || password === "") {

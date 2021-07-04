@@ -2,7 +2,14 @@ import React, {useEffect, useState} from 'react'
 import {createRef} from 'react'
 import utils from '../utils'
 
-export default function AuthenticatedLink({url, filename, children, className, validateFunc = () => true, refreshArg = undefined}) {
+export default function AuthenticatedLink({
+                                              url,
+                                              filename,
+                                              children,
+                                              className,
+                                              validateFunc = () => true,
+                                              refreshArg = undefined,
+                                              onError401 = () => undefined}) {
     const link = createRef()
     const [alreadyFetched, setAlreadyFetched] = useState(false)
 
@@ -14,8 +21,12 @@ export default function AuthenticatedLink({url, filename, children, className, v
         if (!validateFunc())
             return
         if (!alreadyFetched) {
-            const result = await utils.get(url)
-            const blob = await result.blob()
+            const resp = await utils.get(url)
+            if (resp.status === 401){
+                onError401()
+                return
+            }
+            const blob = await resp.blob()
             const href = window.URL.createObjectURL(blob)
             if (link.current)
                 link.current.href = href
