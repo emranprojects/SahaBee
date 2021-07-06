@@ -35,7 +35,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'email', 'recaptcha', 'detail']
+        fields = ['username', 'password', 'email', 'first_name', 'last_name', 'recaptcha', 'detail']
 
     def validate(self, attrs):
         attrs.pop('recaptcha')
