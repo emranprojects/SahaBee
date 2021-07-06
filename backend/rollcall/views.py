@@ -21,7 +21,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
 
     @action(methods=['POST'], detail=False, url_path="register", permission_classes=[])
     def register(self, request, *args, **kwargs):
@@ -30,7 +30,7 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer.save()
         return Response(serializer.data, status=HTTP_201_CREATED)
 
-    @action(methods=['GET'], detail=False, url_path="self", permission_classes=[permissions.IsAuthenticated])
+    @action(methods=['GET'], detail=False, url_path="self")
     def get_current_user(self, request, *args, **kwargs):
         serializer = UserSerializer(instance=request.user, context={"request": request})
         return Response(serializer.data)
