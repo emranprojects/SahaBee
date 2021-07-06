@@ -21,7 +21,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAdminUser]
 
     @action(methods=['POST'], detail=False, url_path="register", permission_classes=[])
     def register(self, request, *args, **kwargs):
