@@ -22,7 +22,7 @@ class RolloutSerializer(serializers.HyperlinkedModelSerializer):
 class UserDetailSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = UserDetail
-        fields = ['personnel_code', 'manager_name', 'unit']
+        fields = ['id', 'personnel_code', 'manager_name', 'unit']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -35,7 +35,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'email', 'first_name', 'last_name', 'recaptcha', 'detail']
+        fields = ['id', 'username', 'password', 'email', 'first_name', 'last_name', 'recaptcha', 'detail']
 
     def validate(self, attrs):
         attrs.pop('recaptcha')
