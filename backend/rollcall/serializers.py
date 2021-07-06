@@ -22,7 +22,7 @@ class RolloutSerializer(serializers.HyperlinkedModelSerializer):
 class UserDetailSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = UserDetail
-        fields = ['personnel_code', 'manager_name', 'unit', 'user']
+        fields = ['personnel_code', 'manager_name', 'unit']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -31,10 +31,11 @@ class UserSerializer(serializers.ModelSerializer):
                                      style={'input_type': 'password', 'placeholder': 'Password'})
     email = serializers.EmailField()
     recaptcha = ReCaptchaV3Field(action="register")
+    detail = UserDetailSerializer(read_only=True)
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'email', 'recaptcha']
+        fields = ['username', 'password', 'email', 'recaptcha', 'detail']
 
     def validate(self, attrs):
         attrs.pop('recaptcha')

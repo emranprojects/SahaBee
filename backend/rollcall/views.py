@@ -30,6 +30,10 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer.save()
         return Response(serializer.data, status=HTTP_201_CREATED)
 
+    @action(methods=['GET'], detail=False, url_path="self", permission_classes=[permissions.IsAuthenticated])
+    def get_current_user(self, request, *args, **kwargs):
+        serializer = UserSerializer(instance=request.user, context={"request": request})
+        return Response(serializer.data)
 
 class UserDetailViewSet(viewsets.ModelViewSet):
     queryset = UserDetail.objects.all()
