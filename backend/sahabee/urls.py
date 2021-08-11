@@ -24,7 +24,6 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
-router.register(r'userdetails', views.UserDetailViewSet)
 router.register(r'rollouts', views.RolloutViewSet, basename='folan')
 
 urlpatterns = [

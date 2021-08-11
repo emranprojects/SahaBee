@@ -53,12 +53,6 @@ class UserViewSet(viewsets.GenericViewSet):
         return Response(status=HTTP_200_OK)
 
 
-class UserDetailViewSet(viewsets.ModelViewSet):
-    queryset = UserDetail.objects.all()
-    serializer_class = UserDetailSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-
 class RolloutViewSet(viewsets.ModelViewSet):
     serializer_class = RolloutSerializer
     permission_classes = [permissions.IsAuthenticated]
