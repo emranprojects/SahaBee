@@ -22,6 +22,7 @@ export default function Navbar() {
                     <a href={apiURLs.BASE_URL} target="_blank" className="btn btn-dark">API</a>
                     {loginContext.isLoggedIn ? <>
                             <a href={appPaths.dashboard} className="btn btn-dark">Dashboard</a>
+                            <a href={appPaths.userProfile} className="btn btn-dark">Profile</a>
                             <a href="/" className="btn btn-dark" onClick={() => logout(loginContext)}>
                                 <abbr title="Logout"><FontAwesomeIcon icon={faSignOutAlt}/></abbr>
                             </a>

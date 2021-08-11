@@ -6,7 +6,7 @@ from rest_framework import permissions, authentication, filters
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN
+from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN, HTTP_200_OK
 from rest_framework.views import APIView
 
 from rollcall import models
@@ -15,12 +15,8 @@ from rollcall.models import Rollout, UserDetail
 from rollcall.serializers import RolloutSerializer, UserDetailSerializer, UserSerializer
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
+class UserViewSet(viewsets.GenericViewSet):
+    queryset = User.objects.all()
     permission_classes = [permissions.IsAuthenticated]
 
     @action(methods=['POST'], detail=False, url_path="register", permission_classes=[])
@@ -30,10 +26,32 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer.save()
         return Response(serializer.data, status=HTTP_201_CREATED)
 
-    @action(methods=['GET'], detail=False, url_path="self")
-    def get_current_user(self, request, *args, **kwargs):
+    @action(methods=['GET', 'PUT'], detail=False, url_path="self")
+    def self_user_endpoint(self, request, *args, **kwargs):
+        if request.method == "GET":
+            return self._get_current_user(request, *args, **kwargs)
+        elif request.method == "PUT":
+            return self._update_current_user(request, *args, **kwargs)
+        else:
+            raise Exception(f"Unexpected method: {request.method}")
+
+    @staticmethod
+    def _get_current_user(request, *args, **kwargs):
         serializer = UserSerializer(instance=request.user, context={"request": request})
         return Response(serializer.data)
+
+    @staticmethod
+    def _update_current_user(request, *args, **kwargs):
+        user_data = {key: val for key, val in request.data.items() if key != 'detail'}
+        user_detail_data = request.data.get('detail', {})
+        user_serializer = UserSerializer(request.user, user_data, partial=True)
+        user_detail_serializer = UserDetailSerializer(request.user.detail, user_detail_data, partial=True)
+        user_serializer.is_valid(raise_exception=True)
+        user_detail_serializer.is_valid(raise_exception=True)
+        user_serializer.save()
+        user_detail_serializer.save()
+        return Response(status=HTTP_200_OK)
+
 
 class UserDetailViewSet(viewsets.ModelViewSet):
     queryset = UserDetail.objects.all()

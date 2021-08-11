@@ -32,7 +32,7 @@ export default function Register() {
             toast.error("The two passwords don't match!")
             return
         }
-        if (recaptcha === "") {
+        if (recaptcha === "" && !utils.isDev()) {
             toast.error("Recaptcha token not set! Inform the admin, please.")
             return
         }

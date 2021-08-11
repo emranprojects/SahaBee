@@ -9,6 +9,7 @@ import LandingPage from "./LandingPage";
 import LoginContext from "./LoginContext";
 import React, {useState} from "react";
 import utils from "../utils";
+import UserProfile from "./UserProfile";
 
 export default function Router() {
 
@@ -30,6 +31,9 @@ export default function Router() {
                     </Route>
                     <Route path={appPaths.termsOfService}>
                         <TermsOfService/>
+                    </Route>
+                    <Route path={appPaths.userProfile}>
+                        <UserProfile/>
                     </Route>
                     <Route path="/">
                         <LandingPage/>

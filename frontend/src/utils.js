@@ -1,4 +1,6 @@
+import React from "react";
 import moment from "jalali-moment";
+import {useEffect} from "react";
 
 
 export const DateFormat = Object.freeze({
@@ -12,7 +14,7 @@ class Utils {
         return !!token
     }
 
-    setLoggedIn(username, token){
+    setLoggedIn(username, token) {
         localStorage.setItem('username', username)
         localStorage.setItem('token', token)
     }
@@ -30,19 +32,7 @@ class Utils {
         return localStorage.getItem('username')
     }
 
-    async get(url) {
-        const result = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Token ${this._token}`
-            },
-        })
-        return result
-    }
-
-    async post(url, body = {}, authorized = true) {
+    async request(method, url, authorized, body = undefined) {
         const headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -51,29 +41,33 @@ class Utils {
         if (authorized)
             headers['Authorization'] = `Token ${this._token}`
 
-        const result = await fetch(url, {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(body)
+        const resp = await fetch(url, {
+            method,
+            headers,
+            body: body !== undefined ? JSON.stringify(body) : undefined
         })
-        return result
+        return resp
     }
 
-    async delete(url, ) {
-        const result = await fetch(url, {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Token ${this._token}`
-            },
-        })
-        return result
+    async get(url, authorized = true) {
+        return await this.request('GET', url, authorized)
     }
 
-    formatDateTime(datetime, dateFormat = DateFormat.DATE | DateFormat.TIME){
+    async post(url, body = {}, authorized = true) {
+        return await this.request('POST', url, authorized, body)
+    }
+
+    async put(url, body = {}) {
+        return await this.request('PUT', url, true, body)
+    }
+
+    async delete(url) {
+        return this.request('DELETE',url,true)
+    }
+
+    formatDateTime(datetime, dateFormat = DateFormat.DATE | DateFormat.TIME) {
         let format
-        switch (dateFormat){
+        switch (dateFormat) {
             case DateFormat.DATE:
                 format = "jYYYY-jMM-jDD"
                 break
@@ -88,6 +82,21 @@ class Utils {
         }
         return moment(datetime).format(format)
     }
+
+    useEffectAsync(asyncFunc, deps = [], thisArg = this) {
+        _useEffectAsync.apply(this, [asyncFunc, deps, thisArg])
+    }
+
+    isDev(){
+        return !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
+    }
 }
+
+function _useEffectAsync(asyncFunc, deps, thisArg) {
+    useEffect(() => {
+        asyncFunc.apply(thisArg)
+    }, deps)
+}
+
 const utils = new Utils()
 export default utils

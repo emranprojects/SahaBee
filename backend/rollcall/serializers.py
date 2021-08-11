@@ -1,14 +1,13 @@
 from django.contrib.auth.hashers import make_password
 from drf_recaptcha.fields import ReCaptchaV3Field
 from rest_framework import serializers
-from rest_framework.serializers import ModelSerializer
 from rest_framework.validators import UniqueValidator
 
 from rollcall.models import Rollout, UserDetail
 from django.contrib.auth.models import User
 
 
-class RolloutSerializer(serializers.HyperlinkedModelSerializer):
+class RolloutSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rollout
         fields = ['id', 'time', 'user']
@@ -19,7 +18,7 @@ class RolloutSerializer(serializers.HyperlinkedModelSerializer):
         return super().create(validated_data)
 
 
-class UserDetailSerializer(serializers.HyperlinkedModelSerializer):
+class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserDetail
         fields = ['id', 'personnel_code', 'manager_name', 'unit']
@@ -38,7 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'password', 'email', 'first_name', 'last_name', 'recaptcha', 'detail']
 
     def validate(self, attrs):
-        attrs.pop('recaptcha')
+        attrs.pop('recaptcha', None)
         return attrs
 
     def create(self, validated_data):

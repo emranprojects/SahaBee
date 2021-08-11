@@ -111,3 +111,59 @@ class RolloutsAPITest(APITestCase):
         resp = self.client.get('/rollouts/')
         self.assertEqual(resp.data[0]['id'], r2.id)
         self.assertEqual(resp.data[1]['id'], r1.id)
+
+
+class UserUpdateTest(APITestCase):
+    def setUp(self) -> None:
+        self.user = create_user()
+        self.client.force_login(self.user)
+
+    def test_id_shouldnt_update(self):
+        user_id = self.user.id
+        detail_id = self.user.detail.id
+        self.client.put('/users/self/', data={
+            'id': user_id + 1,
+            'detail': {
+                'id': detail_id + 1,
+            }
+        }, format='json')
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.id, user_id)
+        self.assertEqual(self.user.detail.id, detail_id)
+
+    def test_user_can_be_updated(self):
+        resp = self.client.put('/users/self/', data={
+            'username': 'new_test',
+            'password': 'new_pass',
+            'email': 'new_test@test.com',
+        })
+        self.assertEqual(resp.status_code, 200)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, 'new_test')
+        self.assertEqual(self.user.password, 'new_pass')
+        self.assertEqual(self.user.email, 'new_test@test.com')
+
+    def test_user_detail_can_be_updated(self):
+        resp = self.client.put('/users/self/', data={
+            'detail': {
+                'personnel_code': 'new_code',
+                'unit': 'new_unit',
+                'manager_name': 'new_manager',
+            }
+        }, format='json')
+        self.assertEqual(resp.status_code, 200)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.detail.personnel_code, 'new_code')
+        self.assertEqual(self.user.detail.unit, 'new_unit')
+        self.assertEqual(self.user.detail.manager_name, 'new_manager')
+
+
+class UserGetTest(APITestCase):
+    def setUp(self) -> None:
+        self.user = create_user()
+        self.client.force_login(self.user)
+
+    def test_user_can_be_retrieved(self):
+        resp = self.client.get('/users/self/')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        self.assertEqual(resp.data['id'], self.user.id)

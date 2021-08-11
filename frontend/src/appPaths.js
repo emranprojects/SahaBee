@@ -11,6 +11,9 @@ class AppPaths {
     get termsOfService() {
         return "/terms-of-service"
     }
+    get userProfile(){
+        return "/user-profile"
+    }
 }
 
 const appPaths = new AppPaths()
