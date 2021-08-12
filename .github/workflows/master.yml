@@ -81,7 +81,7 @@ jobs:
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
         with:
-          args: -Dsonar.projectVersion=${{ env.GITHUB_SHA }}
+          args: -Dsonar.projectVersion=${{ env.GITHUB_SHA }} -X
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
