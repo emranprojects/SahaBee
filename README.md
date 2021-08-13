@@ -1,9 +1,9 @@
 # SahaBee
 [![Master Pipeline](https://github.com/emranbm/sahabee/workflows/Master%20Workflow/badge.svg?branch=master)](https://github.com/emranbm/SahaBee/actions/workflows/master.yml)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=emran.bm_sahabee&metric=alert_status)](https://sonarcloud.io/dashboard?id=emran.bm_sahabee)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=emran.bm_sahabee&metric=coverage)](https://sonarcloud.io/dashboard?id=emran.bm_sahabee)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=emran.bm_sahabee&metric=code_smells)](https://sonarcloud.io/dashboard?id=emran.bm_sahabee)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=emran.bm_sahabee&metric=bugs)](https://sonarcloud.io/dashboard?id=emran.bm_sahabee)  
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=emranbm_SahaBee&metric=alert_status)](https://sonarcloud.io/dashboard?id=emranbm_SahaBee)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=emranbm_SahaBee&metric=coverage)](https://sonarcloud.io/dashboard?id=emranbm_SahaBee)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=emranbm_SahaBee&metric=code_smells)](https://sonarcloud.io/dashboard?id=emranbm_SahaBee)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=emranbm_SahaBee&metric=bugs)](https://sonarcloud.io/dashboard?id=emranbm_SahaBee)  
 A simple api for rollcalling during the remote-work.
 ## What problem does SahaBee solve?
 We are currently remote working because of the corona virus. These days it's a regular task for us to report our work-times to the company as a standard excel sheet.  
