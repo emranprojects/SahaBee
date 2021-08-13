@@ -65,23 +65,25 @@ jobs:
           path: coverage.xml
 
   sonarcloud-analysis:
-    name: SonarCloud
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs:
       - test-api
+    container:
+      image: sonarsource/sonar-scanner-cli:latest
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
       - uses: actions/download-artifact@v2
         with:
           name: coverage-report
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: sonarsource/sonarcloud-github-action@master
         with:
           args: -Dsonar.projectVersion=${{ env.GITHUB_SHA }} -X
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
 
   test-ansible:
