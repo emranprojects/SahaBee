@@ -5,6 +5,7 @@ services:
     networks:
       sahabee_net:
     image: ${IMAGE_PREFIX}/api:${API_VERSION}
+    restart: unless-stopped
     volumes:
       - db_volume:/database/
       - static_files:/sahabee/static-files/
@@ -19,6 +20,7 @@ services:
     ports:
       - 443:443
       - 80:80
+    restart: unless-stopped
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - $FULLCHAIN_PATH:/etc/ssl-files/fullchain.pem:ro
