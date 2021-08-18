@@ -1,6 +1,6 @@
 import React, {useState} from "react";
-import {Button, Card} from "react-bootstrap";
-import {faBell} from "@fortawesome/free-solid-svg-icons";
+import {Button, Card, Col, Row} from "react-bootstrap";
+import {faBell, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import utils, {DateFormat} from "../utils";
 import apiURLs from "../apiURLs";
@@ -34,9 +34,18 @@ export default function RolloutCard({onRollcall = (rollout) => undefined}) {
 
     return <Card>
         <Card.Body>
-            <Button className="btn-block btn-light btn-outline-info" onClick={rollcall}>
-                <FontAwesomeIcon icon={faBell}/><br/>Rollcall!
-            </Button>
+            <Row>
+                <Col md={10}>
+                    <Button className="btn-block btn-light btn-outline-info" onClick={rollcall}>
+                        <FontAwesomeIcon icon={faBell}/><br/>Rollcall!
+                    </Button>
+                </Col>
+                <Col md={2}>
+                    <a href={appPaths.addRollout} className="btn-block btn btn-info">
+                        <FontAwesomeIcon icon={faPlus}/><br/>Custom Rollout
+                    </a>
+                </Col>
+            </Row>
         </Card.Body>
     </Card>
 }
