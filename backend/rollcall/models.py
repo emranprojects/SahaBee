@@ -25,8 +25,9 @@ class UserDetail(models.Model):
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_auth_token_and_user_detail(sender, instance=None, created=False, **kwargs):
-    if created:
+def create_auth_token_and_user_detail(sender, instance=None, created=False, raw=False, **kwargs):
+    signal_is_raised_through_loaddata_command = raw
+    if created and not signal_is_raised_through_loaddata_command:
         Token.objects.create(user=instance)
         UserDetail.objects.create(user=instance,
                                   personnel_code="",
