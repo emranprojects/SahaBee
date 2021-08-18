@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import utils from "../utils";
 import {Redirect} from "react-router-dom";
 import appPaths from "../appPaths";
-import {Button, Card, Col, Container, FormControl, InputGroup, Row, Spinner} from "react-bootstrap";
+import {Col, FormControl, InputGroup} from "react-bootstrap";
 import apiURLs from "../apiURLs";
 import {toast} from "react-toastify";
+import EditCard from "./EditCard";
 
 export default function UserProfile() {
     const [userId, setUserId] = useState()
@@ -58,7 +59,7 @@ export default function UserProfile() {
         setManagerName(user.detail.manager_name)
     }
 
-    function getUserFromStates(){
+    function getUserFromStates() {
         return {
             id: userId,
             username,
@@ -74,14 +75,14 @@ export default function UserProfile() {
         }
     }
 
-    async function save(){
-        if (loading){
+    async function save() {
+        if (loading) {
             toast.error("User not loaded yet!")
             return
         }
         const user = getUserFromStates()
         const resp = await utils.put(apiURLs.selfUser, user)
-        switch (resp.status){
+        switch (resp.status) {
             case 200:
                 toast.success("Info updated successfully!")
                 break
@@ -95,47 +96,29 @@ export default function UserProfile() {
     }
 
     return (
-        <Container>
-            <Row className="mb-5"/>
-            <Card>
-                <Card.Header>
-                    <Row>
-                        <h5>Profile info.</h5>
-                        {loading ?
-                            <Spinner animation="border" variant="info" className="float-right ml-2"/> : ""
-                        }
-                    </Row>
-                </Card.Header>
-                <Card.Body>
-                    <Row>
-                        <Input title="@"
-                               value={username}
-                               setValueFunc={setUsername}/>
-                        <Input title="Email"
-                               value={email}
-                               setValueFunc={setEmail}/>
-                        <Input title="Firstname"
-                               value={firstname}
-                               setValueFunc={setFirstname}/>
-                        <Input title="Lastname"
-                               value={lastname}
-                               setValueFunc={setLastname}/>
-                        <Input title="Personnel Code"
-                               value={personnelCode}
-                               setValueFunc={setPersonnelCode}/>
-                        <Input title="Unit"
-                               value={unit}
-                               setValueFunc={setUnit}/>
-                        <Input title="Manager Name"
-                               value={managerName}
-                               setValueFunc={setManagerName}/>
-                    </Row>
-                </Card.Body>
-                <Card.Footer>
-                    <Button variant="info" className="pr-5 pl-5 float-right" onClick={save}>Save</Button>
-                </Card.Footer>
-            </Card>
-        </Container>
+        <EditCard title="Profile Information" onSave={save} loading={loading}>
+            <Input title="@"
+                   value={username}
+                   setValueFunc={setUsername}/>
+            <Input title="Email"
+                   value={email}
+                   setValueFunc={setEmail}/>
+            <Input title="Firstname"
+                   value={firstname}
+                   setValueFunc={setFirstname}/>
+            <Input title="Lastname"
+                   value={lastname}
+                   setValueFunc={setLastname}/>
+            <Input title="Personnel Code"
+                   value={personnelCode}
+                   setValueFunc={setPersonnelCode}/>
+            <Input title="Unit"
+                   value={unit}
+                   setValueFunc={setUnit}/>
+            <Input title="Manager Name"
+                   value={managerName}
+                   setValueFunc={setManagerName}/>
+        </EditCard>
     )
 }
 
