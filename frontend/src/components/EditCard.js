@@ -1,4 +1,4 @@
-import {Button, Card, Container, Row, Spinner} from "react-bootstrap";
+import {Button, Card, Col, Container, FormControl, InputGroup, Row, Spinner} from "react-bootstrap";
 import React from "react";
 
 export default function EditCard({loading, title, children, onSave = () => undefined}) {
@@ -24,5 +24,22 @@ export default function EditCard({loading, title, children, onSave = () => undef
                 </Card.Footer>
             </Card>
         </Container>
+    )
+}
+
+EditCard.Input = function ({title, value, setValueFunc}) {
+    return (
+        <Col md={4} className="pt-2">
+            <InputGroup>
+                <InputGroup.Prepend>
+                    <InputGroup.Text>
+                        {title}
+                    </InputGroup.Text>
+                </InputGroup.Prepend>
+                <FormControl
+                    value={value}
+                    onChange={e => setValueFunc(e.target.value)}/>
+            </InputGroup>
+        </Col>
     )
 }

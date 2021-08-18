@@ -97,44 +97,27 @@ export default function UserProfile() {
 
     return (
         <EditCard title="Profile Information" onSave={save} loading={loading}>
-            <Input title="@"
+            <EditCard.Input title="@"
                    value={username}
                    setValueFunc={setUsername}/>
-            <Input title="Email"
+            <EditCard.Input title="Email"
                    value={email}
                    setValueFunc={setEmail}/>
-            <Input title="Firstname"
+            <EditCard.Input title="Firstname"
                    value={firstname}
                    setValueFunc={setFirstname}/>
-            <Input title="Lastname"
+            <EditCard.Input title="Lastname"
                    value={lastname}
                    setValueFunc={setLastname}/>
-            <Input title="Personnel Code"
+            <EditCard.Input title="Personnel Code"
                    value={personnelCode}
                    setValueFunc={setPersonnelCode}/>
-            <Input title="Unit"
+            <EditCard.Input title="Unit"
                    value={unit}
                    setValueFunc={setUnit}/>
-            <Input title="Manager Name"
+            <EditCard.Input title="Manager Name"
                    value={managerName}
                    setValueFunc={setManagerName}/>
         </EditCard>
-    )
-}
-
-function Input({title, value, setValueFunc}) {
-    return (
-        <Col md={4} className="pt-2">
-            <InputGroup>
-                <InputGroup.Prepend>
-                    <InputGroup.Text>
-                        {title}
-                    </InputGroup.Text>
-                </InputGroup.Prepend>
-                <FormControl
-                    value={value}
-                    onChange={e => setValueFunc(e.target.value)}/>
-            </InputGroup>
-        </Col>
     )
 }
