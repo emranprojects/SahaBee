@@ -14,6 +14,9 @@ class AppPaths {
     get userProfile(){
         return "/user-profile"
     }
+    get addRollout(){
+        return "/add-rollout"
+    }
 }
 
 const appPaths = new AppPaths()

@@ -10,6 +10,7 @@ import LoginContext from "./LoginContext";
 import React, {useState} from "react";
 import utils from "../utils";
 import UserProfile from "./UserProfile";
+import RolloutEditPage from "./RolloutEditPage";
 
 export default function Router() {
 
@@ -34,6 +35,9 @@ export default function Router() {
                     </Route>
                     <Route path={appPaths.userProfile}>
                         <UserProfile/>
+                    </Route>
+                    <Route path={appPaths.addRollout}>
+                        <RolloutEditPage/>
                     </Route>
                     <Route path="/">
                         <LandingPage/>
