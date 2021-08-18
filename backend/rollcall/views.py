@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 
 from rollcall import models
 from rollcall.excel_converter import ExcelConverter
-from rollcall.models import Rollout, UserDetail
+from rollcall.models import Rollout
 from rollcall.serializers import RolloutSerializer, UserDetailSerializer, UserSerializer
 
 
@@ -33,7 +33,7 @@ class UserViewSet(viewsets.GenericViewSet):
         elif request.method == "PUT":
             return self._update_current_user(request, *args, **kwargs)
         else:
-            raise Exception(f"Unexpected method: {request.method}")
+            raise ValueError(f"Unexpected method: {request.method}")
 
     @staticmethod
     def _get_current_user(request, *args, **kwargs):
