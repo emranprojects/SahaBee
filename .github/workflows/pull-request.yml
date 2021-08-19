@@ -1,0 +1,173 @@
+---
+name: Pull Request Workflow
+on:
+  pull_request:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - name: Checkout LFS objects
+        run: git lfs checkout
+      - name: Inflate version vars
+        run: |
+          echo "API_VERSION=snapshot-${GITHUB_SHA}" >> $GITHUB_ENV
+          echo "FRONTEND_VERSION=snapshot-${GITHUB_SHA}" >> $GITHUB_ENV
+      - name: Docker Login
+        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin registry.gitlab.com
+      - name: Build
+        run: |
+          docker-compose build
+          docker-compose push
+
+  check-migrations:
+    needs: build
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Inflate version vars
+        run: |
+          echo "API_VERSION=snapshot-${GITHUB_SHA}" >> $GITHUB_ENV
+          echo "FRONTEND_VERSION=snapshot-${GITHUB_SHA}" >> $GITHUB_ENV
+      - name: Docker Login
+        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin registry.gitlab.com
+      - run: docker-compose pull
+      - name: Check Migrations
+        run: docker-compose run api sh -c "./manage.py makemigrations --dry-run --check"
+
+  test-api:
+    runs-on: ubuntu-20.04
+    needs:
+      - build
+    steps:
+      - uses: actions/checkout@v2
+      - name: Inflate version vars
+        run: |
+          echo "API_VERSION=snapshot-${GITHUB_SHA}" >> $GITHUB_ENV
+          echo "FRONTEND_VERSION=snapshot-${GITHUB_SHA}" >> $GITHUB_ENV
+      - name: Docker Login
+        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin registry.gitlab.com
+      - run: |
+          docker-compose pull api
+          docker-compose run --name test_container api sh -c 'DJANGO_SETTINGS_MODULE=sahabee.settings ./manage.py test'
+          docker cp test_container:/sahabee/coverage.xml .
+          sed -i 's/\/sahabee/backend/g' coverage.xml # Update source path according to the current directory structure
+        env:
+          COMPOSE_INTERACTIVE_NO_CLI: 'true'
+      - uses: actions/upload-artifact@v2
+        with:
+          name: coverage-report
+          path: coverage.xml
+
+  sonarcloud-analysis:
+    runs-on: ubuntu-20.04
+    needs:
+      - test-api
+    container:
+      image: sonarsource/sonar-scanner-cli:latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+      - uses: actions/download-artifact@v2
+        with:
+          name: coverage-report
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        with:
+          args: -Dsonar.projectVersion=${{ env.GITHUB_SHA }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+
+  test-ansible:
+    runs-on: ubuntu-20.04
+    needs:
+      - build
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 100
+      - uses: marceloprado/has-changed-path@v1
+        id: ansibles-changed
+        with:
+          paths: deployment/ansible
+      - name: Force GitHub Actions' docker daemon to use vfs.
+        if: steps.ansibles-changed.outputs.changed == 'true'
+        run: |
+          sudo systemctl stop docker
+          echo '{"cgroup-parent":"/actions_job","storage-driver":"vfs"}' | sudo tee /etc/docker/daemon.json
+          sudo systemctl start docker
+      - name: Choose TAGET_HOST ip
+        if: steps.ansibles-changed.outputs.changed == 'true'
+        run: echo "TARGET_HOST=192.168.2.2" >> $GITHUB_ENV
+      - name: Create network
+        if: steps.ansibles-changed.outputs.changed == 'true'
+        run: docker network create --subnet 192.168.2.0/24 test-net
+      - name: Start the target
+        if: steps.ansibles-changed.outputs.changed == 'true'
+        run: docker run -d
+          --network test-net
+          --ip $TARGET_HOST
+          --privileged
+          rastasheep/ubuntu-sshd:18.04
+      - name: Mock sahabee.ir to the test target
+        if: steps.ansibles-changed.outputs.changed == 'true'
+        run: |
+          echo "$TARGET_HOST sahabee.ir" | sudo tee -a /etc/hosts
+          echo "$TARGET_HOST api.sahabee.ir" | sudo tee -a /etc/hosts
+      - name: Mock systemctl
+        if: steps.ansibles-changed.outputs.changed == 'true'
+        working-directory: deployment/ansible/
+        run: sshpass -p root
+          ssh -o StrictHostKeyChecking=no
+          root@sahabee.ir
+          bash -c "echo 'echo \$@' > /bin/systemctl"
+      - name: Setup infra
+        if: steps.ansibles-changed.outputs.changed == 'true'
+        working-directory: deployment/ansible/
+        run: ansible-playbook infra.yml -i inventory.yml -vvv
+          --limit test
+          --extra-vars "shecan_dns_1=4.4.4.4 shecan_dns_2=8.8.8.8"
+      - name: Inflate SSL files
+        if: steps.ansibles-changed.outputs.changed == 'true'
+        working-directory: deployment/ansible/
+        run: |
+          echo "${{ secrets.SSL_FULL_CHAIN }}" > SSL_FULL_CHAIN_FILE
+          echo "${{ secrets.SSL_PRIVATE_KEY }}" > SSL_PRIVATE_KEY_FILE
+      - name: Deploy
+        if: steps.ansibles-changed.outputs.changed == 'true'
+        working-directory: deployment/ansible/
+        run: ansible-playbook deploy.yml -i inventory.yml -vvv
+          --limit test
+          --extra-vars "
+          ssl_full_chain_file=SSL_FULL_CHAIN_FILE
+          ssl_private_key_file=SSL_PRIVATE_KEY_FILE
+          docker_hub_password=${{ secrets.DOCKER_HUB_PASSWORD }}
+          proxy_server_host=${{ secrets.PROXY_SERVER_HOST }}
+          proxy_server_user=${{ secrets.PROXY_SERVER_USER }}
+          proxy_server_pass=${{ secrets.PROXY_SERVER_PASS }}
+          api_version=snapshot-${GITHUB_SHA}
+          frontend_version=snapshot-${GITHUB_SHA}
+          secret_key=${{ secrets.SAHABEE_SECRET_KEY }}
+          recaptcha_server_key=${{ secrets.RECAPTCHA_SERVER_KEY }}
+          "
+      - name: Smoke test >> Landing page
+        if: steps.ansibles-changed.outputs.changed == 'true'
+        run: curl -i --fail https://sahabee.ir
+      - name: Smoke test >> API
+        if: steps.ansibles-changed.outputs.changed == 'true'
+        run: sleep 15 && curl -i --fail https://api.sahabee.ir
+      - name: Smoke test >> Backup
+        if: steps.ansibles-changed.outputs.changed == 'true'
+        working-directory: deployment/ansible/
+        run: ansible-playbook backup.yml -i inventory.yml -vvv --limit test
+      - name: Smoke test >> Restore
+        if: steps.ansibles-changed.outputs.changed == 'true'
+        working-directory: deployment/ansible/
+        run: ansible-playbook restore.yml -i inventory.yml -vvv --limit test
