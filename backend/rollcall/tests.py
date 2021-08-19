@@ -118,7 +118,7 @@ class RolloutsAPITest(APITestCase):
     def test_rollcallings_more_than_max_is_denied(self):
         t = datetime(2000, 1, 1, 20, 0, 0)
         max_rollouts = settings.MAX_ROLLOUTS_PER_DAY
-        for i in range(max_rollouts):
+        for _ in range(max_rollouts):
             resp = self.client.post(RolloutsAPITest.ROLLOUT_API_URL, {'time': t})
             self.assertEqual(resp.status_code, HTTP_201_CREATED)
         resp = self.client.post(RolloutsAPITest.ROLLOUT_API_URL, {'time': t})
@@ -126,7 +126,7 @@ class RolloutsAPITest(APITestCase):
 
     def test_rollcallings_more_than_max_is_denied_with_auto_time(self):
         max_rollouts = settings.MAX_ROLLOUTS_PER_DAY
-        for i in range(max_rollouts):
+        for _ in range(max_rollouts):
             resp = self.client.post(RolloutsAPITest.ROLLOUT_API_URL)
             self.assertEqual(resp.status_code, HTTP_201_CREATED)
         resp = self.client.post(RolloutsAPITest.ROLLOUT_API_URL)
