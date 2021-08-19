@@ -23,6 +23,9 @@ class ApiUrls {
     timesheetDownload(username, year, month){
         return `${this.BASE_URL}/${username}/${year}/${month}/timesheet.xlsx`
     }
+    get apiDocs(){
+        return `${this.BASE_URL}/docs/`
+    }
 }
 
 const apiURLs = new ApiUrls()

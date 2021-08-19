@@ -24,7 +24,7 @@ export default function Navbar() {
                             <BootstrapNavbar.Brand href="/" className="text-white">SahaBee</BootstrapNavbar.Brand>
                         </Nav.Item>
                         <Nav.Item>
-                            <a href={apiURLs.BASE_URL} target="_blank" className="btn btn-dark">API</a>
+                            <a href={apiURLs.apiDocs} target="_blank" className="btn btn-dark">API</a>
                         </Nav.Item>
                         {loginContext.isLoggedIn ? <>
                                 <Nav.Item>
