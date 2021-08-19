@@ -16,9 +16,6 @@ export default function TermsOfService() {
                         SahaBee can use the statistical data of the users in any way.
                     </li>
                     <li>
-                        Currently, roll calling is protected and available only to the authenticated users, and just for self data manipulation. But, download of timesheet files are not restricted; i.e. unauthorized users can download them.
-                    </li>
-                    <li>
                         The terms of service may change on the future; continuing to use SahaBee (by keeping account or usage) means agreeing on such changes too.
                     </li>
                 </ul>
