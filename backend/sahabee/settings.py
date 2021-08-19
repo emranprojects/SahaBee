@@ -156,3 +156,5 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'Let the good times roll!',
     'VERSION': VERSION,
 }
+
+MAX_ROLLOUTS_PER_DAY = 10

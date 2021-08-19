@@ -1,4 +1,8 @@
+from datetime import timedelta
+
+from django.conf import settings
 from django.contrib.auth.hashers import make_password
+from django.utils import timezone
 from drf_recaptcha.fields import ReCaptchaV3Field
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
@@ -13,8 +17,30 @@ class RolloutSerializer(serializers.ModelSerializer):
         fields = ['id', 'time', 'user']
         extra_kwargs = {'user': {'required': False}}
 
+    def validate(self, attrs):
+        super().validate(attrs)
+        time = attrs.get('time', timezone.now())
+        self._validate_time(time)
+        return attrs
+
+    @property
+    def _user(self):
+        return self.context["request"].user
+
+    def _validate_time(self, time):
+        day_first_time = time.replace(hour=0, minute=0, second=0, microsecond=0)
+        day_last_time = day_first_time + timedelta(days=1)
+        current_rollouts_count = Rollout.objects\
+            .filter(user=self._user)\
+            .filter(time__gte=day_first_time)\
+            .filter(time__lt=day_last_time)\
+            .count()
+        if current_rollouts_count >= settings.MAX_ROLLOUTS_PER_DAY:
+            raise serializers.ValidationError(
+                f"Too many rollouts for this single day! (max rollouts per day: {settings.MAX_ROLLOUTS_PER_DAY})")
+
     def create(self, validated_data):
-        validated_data['user'] = self.context["request"].user
+        validated_data['user'] = self._user
         return super().create(validated_data)
 
 
