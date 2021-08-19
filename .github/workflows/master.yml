@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - master
+  pull_request:
+    branches:
+      - master
 env:
   API_IMAGE_NAME: "registry.gitlab.com/emran.bm/sahabee/api"
   FRONTEND_IMAGE_NAME: "registry.gitlab.com/emran.bm/sahabee/frontend"
@@ -100,7 +103,7 @@ jobs:
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
         with:
-          args: -Dsonar.projectVersion=${{ env.GITHUB_SHA }}
+          args: -Dsonar.projectVersion=${GITHUB_SHA}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
@@ -193,6 +196,7 @@ jobs:
         run: ansible-playbook restore.yml -i inventory.yml -vvv --limit test
 
   release:
+    if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-20.04
     needs:
       - build
@@ -220,6 +224,7 @@ jobs:
           docker push ${FRONTEND_IMAGE_NAME}:${FRONTEND_IMAGE_RELEASE_VERSION}
 
   deploy:
+    if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-20.04
     needs:
       - release
