@@ -18,7 +18,7 @@ export default function Navbar() {
     return (
         <LoginContext.Consumer>
             {loginContext =>
-                <BootstrapNavbar className="nav-bar ml-auto" bg="dark" expand="lg">
+                <BootstrapNavbar className="navbar ml-auto" bg="dark" expand="lg">
                     <Nav className="container-fluid">
                         <Nav.Item>
                             <BootstrapNavbar.Brand href="/" className="text-white">SahaBee</BootstrapNavbar.Brand>
