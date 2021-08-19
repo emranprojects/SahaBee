@@ -9,7 +9,8 @@ export default function AuthenticatedLink({
                                               className,
                                               validateFunc = () => true,
                                               refreshArg = undefined,
-                                              onError401 = () => undefined}) {
+                                              onError401 = () => undefined
+                                          }) {
     const link = createRef()
     const [alreadyFetched, setAlreadyFetched] = useState(false)
 
@@ -21,11 +22,9 @@ export default function AuthenticatedLink({
         if (!validateFunc())
             return
         if (!alreadyFetched) {
-            const resp = await utils.get(url)
-            if (resp.status === 401){
-                onError401()
+            const resp = await utils.get(url, onError401)
+            if (resp.status === 401)
                 return
-            }
             const blob = await resp.blob()
             const href = window.URL.createObjectURL(blob)
             if (link.current)

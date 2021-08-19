@@ -19,8 +19,8 @@ export default function Register() {
     const [recaptcha, setRecaptcha] = useState("")
     const [succeeded, setSucceeded] = useState(false)
 
-    if (succeeded){
-        return <Redirect to={appPaths.login} />
+    if (succeeded) {
+        return <Redirect to={appPaths.login}/>
     }
 
     async function register() {
@@ -37,18 +37,13 @@ export default function Register() {
             return
         }
 
-        const result = await utils.post(apiURLs.register, {username, password, email, recaptcha}, false)
-        switch (result.status){
-            case 201:
-                toast.success("Successfully registered! Try logging in.")
-                setSucceeded(true)
-                break
-            case 400:
-                // TODO: Nice form errors
-                toast.error(await result.text())
-                break
-            default:
-                toast.error(`Unexpected status code (${result.status}): ${await result.text()}`)
+        const resp = await utils.post(apiURLs.register,
+            {username, password, email, recaptcha},
+            () => undefined,
+            false)
+        if (resp.status === 201) {
+            toast.success("Successfully registered! Try logging in.")
+            setSucceeded(true)
         }
     }
 

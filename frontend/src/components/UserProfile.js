@@ -27,23 +27,11 @@ export default function UserProfile() {
     utils.useEffectAsync(fetchUser, [])
 
     async function fetchUser() {
-        const resp = await utils.get(apiURLs.selfUser)
-
-        switch (resp.status) {
-            case 200:
-                const user = await resp.json()
-                inflateStates(user)
-                setLoading(false)
-                break
-            case 401:
-                toast.error("Not logged in!")
-                setAuthorized(false)
-                break
-            default:
-                const txt = await resp.text()
-                console.error(txt)
-                toast.error(`Unexpected status code (${resp.status}): ${(txt.substr(0, 100))}`)
-                break
+        const resp = await utils.get(apiURLs.selfUser, () => setAuthorized(false))
+        if (resp.status === 200) {
+            const user = await resp.json()
+            inflateStates(user)
+            setLoading(false)
         }
     }
 
@@ -82,42 +70,33 @@ export default function UserProfile() {
         }
         const user = getUserFromStates()
         const resp = await utils.put(apiURLs.selfUser, user)
-        switch (resp.status) {
-            case 200:
-                toast.success("Info updated successfully!")
-                break
-            case 400:
-                // TODO: Nice form errors
-                toast.error(await resp.text())
-                break
-            default:
-                toast.error(`Unexpected status code (${resp.status}): ${await resp.text()}`)
-        }
+        if (resp.status === 200)
+            toast.success("Info updated successfully!")
     }
 
     return (
         <EditCard title="Profile Information" onSave={save} loading={loading}>
             <EditCard.Input title="@"
-                   value={username}
-                   setValueFunc={setUsername}/>
+                            value={username}
+                            setValueFunc={setUsername}/>
             <EditCard.Input title="Email"
-                   value={email}
-                   setValueFunc={setEmail}/>
+                            value={email}
+                            setValueFunc={setEmail}/>
             <EditCard.Input title="Firstname"
-                   value={firstname}
-                   setValueFunc={setFirstname}/>
+                            value={firstname}
+                            setValueFunc={setFirstname}/>
             <EditCard.Input title="Lastname"
-                   value={lastname}
-                   setValueFunc={setLastname}/>
+                            value={lastname}
+                            setValueFunc={setLastname}/>
             <EditCard.Input title="Personnel Code"
-                   value={personnelCode}
-                   setValueFunc={setPersonnelCode}/>
+                            value={personnelCode}
+                            setValueFunc={setPersonnelCode}/>
             <EditCard.Input title="Unit"
-                   value={unit}
-                   setValueFunc={setUnit}/>
+                            value={unit}
+                            setValueFunc={setUnit}/>
             <EditCard.Input title="Manager Name"
-                   value={managerName}
-                   setValueFunc={setManagerName}/>
+                            value={managerName}
+                            setValueFunc={setManagerName}/>
         </EditCard>
     )
 }

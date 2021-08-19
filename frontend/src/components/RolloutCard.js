@@ -16,19 +16,10 @@ export default function RolloutCard({onRollcall = (rollout) => undefined}) {
 
     async function rollcall() {
         const resp = await utils.post(apiURLs.rollouts)
-        switch (resp.status) {
-            case 201:
-                const rollout = await resp.json()
-                toast.success(<span>Rollout done!<br/>{utils.formatDateTime(rollout.time, DateFormat.TIME)}</span>)
-                onRollcall(rollout)
-                break;
-            case 401:
-                toast.error("Not logged in!")
-                setTokenInvalid(true)
-                break;
-            default:
-                toast.error(`Unexpected status code (${resp.status}): ${await resp.text()}`)
-                break;
+        if (resp.status === 201) {
+            const rollout = await resp.json()
+            toast.success(<span>Rollout done!<br/>{utils.formatDateTime(rollout.time, DateFormat.TIME)}</span>)
+            onRollcall(rollout)
         }
     }
 

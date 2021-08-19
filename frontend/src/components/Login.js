@@ -19,29 +19,22 @@ export default function Login() {
     const [loggedIn, setLoggedIn] = useState(false)
 
     if (loggedIn)
-        return <Redirect to={appPaths.dashboard} />
+        return <Redirect to={appPaths.dashboard}/>
 
     async function login(loginContext) {
         if (username === "" || password === "") {
             toast.error("Enter username/password!")
             return
         }
-        const result = await utils.post(apiURLs.login, {
+        const resp = await utils.post(apiURLs.login, {
             username: username,
             password: password
-        }, false)
-        switch (result.status) {
-            case 200:
-                toast.success("Successfully logged in!")
-                utils.setLoggedIn(username, (await result.json()).token)
-                setLoggedIn(true)
-                loginContext.setIsLoggedIn(true)
-                break;
-            case 400:
-                toast.error("Username/Password wrong.")
-                break;
-            default:
-                toast.error(`Unexpected status code (${result.status}): ${await result.text()}`)
+        }, () => undefined, false)
+        if (resp.status === 200) {
+            toast.success("Successfully logged in!")
+            utils.setLoggedIn(username, (await resp.json()).token)
+            setLoggedIn(true)
+            loginContext.setIsLoggedIn(true)
         }
     }
 

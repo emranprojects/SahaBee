@@ -34,19 +34,10 @@ export default function RolloutEditPage({rolloutId = null}) {
             second: time.second()
         })
         const resp = await utils.post(apiURLs.rollouts, {time: date})
-        switch (resp.status) {
-            case 201:
-                const rollout = await resp.json()
-                toast.success(<span>Rollout Saved!<br/>{utils.formatDateTime(rollout.time)}</span>)
-                setSaveSucceeded(true)
-                break;
-            case 401:
-                toast.error("Not logged in!")
-                setTokenInvalid(true)
-                break;
-            default:
-                toast.error(`Unexpected status code (${resp.status}): ${await resp.text()}`)
-                break;
+        if (resp.status === 201) {
+            const rollout = await resp.json()
+            toast.success(<span>Rollout Saved!<br/>{utils.formatDateTime(rollout.time)}</span>)
+            setSaveSucceeded(true)
         }
     }
 
@@ -54,9 +45,9 @@ export default function RolloutEditPage({rolloutId = null}) {
         <EditCard title={rolloutId ? "Edit Rollout" : "Add new Rollout"}
                   loading={loading} onSave={save}>
             <Calendar className="ml-4"
-                onChange={v => setDate(moment(`${v.year}-${v.month.number}-${v.day}`, 'jYYYY-jMM-jDD'))}
-                calendar={persian}
-                locale={persian_fa}
+                      onChange={v => setDate(moment(`${v.year}-${v.month.number}-${v.day}`, 'jYYYY-jMM-jDD'))}
+                      calendar={persian}
+                      locale={persian_fa}
             />
             <EditCard.Input title="Time"
                             className="mt-2"

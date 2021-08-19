@@ -15,20 +15,11 @@ export default function RolloutsList({lastAddedRolloutId = null, onRolloutDelete
     useEffect(() => {
         let cancel = false;
         (async () => {
-            const resp = await utils.get(apiURLs.rollouts)
+            const resp = await utils.get(apiURLs.rollouts,() => setTokenInvalid(true))
             if (cancel)
                 return
-            switch (resp.status) {
-                case 200:
-                    setRollouts(await resp.json())
-                    break;
-                case 401:
-                    toast.error("Not logged in!")
-                    setTokenInvalid(true)
-                    break;
-                default:
-                    toast.error(`Unexpected status code (${resp.status}): ${await resp.text()}`)
-            }
+            if (resp.status === 200)
+                setRollouts(await resp.json())
         })()
         return () => {
             cancel = true
@@ -67,8 +58,7 @@ function RolloutRow({rollout, onRolloutDeleted}) {
             if (resp.status === 204) {
                 toast.success("Rollout deleted.")
                 onRolloutDeleted(rollout.id)
-            } else
-                toast.error(`Unexpected status code (${resp.status}): ${await resp.text()}`)
+            }
         }
     }
 

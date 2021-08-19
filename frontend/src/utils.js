@@ -1,6 +1,7 @@
 import React from "react";
 import moment from "jalali-moment";
 import {useEffect} from "react";
+import {toast} from "react-toastify";
 
 
 export const DateFormat = Object.freeze({
@@ -32,7 +33,7 @@ class Utils {
         return localStorage.getItem('username')
     }
 
-    async request(method, url, authorized, body = undefined) {
+    async request(method, url, onError401 = () => undefined, authorized = false, body = undefined) {
         const headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -41,28 +42,51 @@ class Utils {
         if (authorized)
             headers['Authorization'] = `Token ${this._token}`
 
-        const resp = await fetch(url, {
-            method,
-            headers,
-            body: body !== undefined ? JSON.stringify(body) : undefined
-        })
-        return resp
+        try {
+            const resp = await fetch(url, {
+                method,
+                headers,
+                body: body !== undefined ? JSON.stringify(body) : undefined
+            })
+            switch (resp.status) {
+                case 400:
+                    const errors = await resp.json()
+                    let errorMsg = ""
+                    for (let title in errors)
+                        errorMsg += `${title}: ${errors[title]}\n`
+                    toast.error(errorMsg)
+                    break
+                case 401:
+                    toast.error("Not logged in!")
+                    onError401()
+                    break
+            }
+            return resp
+        } catch (e) {
+            toast.error("Failed to connect to server!")
+            console.log(e)
+            return {
+                status: -1,
+                text: async () => "Connection failed!",
+                json: async () => ({})
+            }
+        }
     }
 
-    async get(url, authorized = true) {
-        return await this.request('GET', url, authorized)
+    async get(url, onError401 = () => undefined, authorized = true) {
+        return await this.request('GET', url, onError401, authorized, undefined)
     }
 
-    async post(url, body = {}, authorized = true) {
-        return await this.request('POST', url, authorized, body)
+    async post(url, body = {}, onError401 = () => undefined, authorized = true) {
+        return await this.request('POST', url, onError401, authorized, body)
     }
 
-    async put(url, body = {}) {
-        return await this.request('PUT', url, true, body)
+    async put(url, body = {}, onError401 = () => undefined) {
+        return await this.request('PUT', url,onError401, true, body)
     }
 
-    async delete(url) {
-        return this.request('DELETE',url,true)
+    async delete(url, onError401 = () => undefined) {
+        return this.request('DELETE', url, onError401, true)
     }
 
     formatDateTime(datetime, dateFormat = DateFormat.DATE | DateFormat.TIME) {
@@ -87,7 +111,7 @@ class Utils {
         _useEffectAsync.apply(this, [asyncFunc, deps, thisArg])
     }
 
-    isDev(){
+    isDev() {
         return !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
     }
 }
