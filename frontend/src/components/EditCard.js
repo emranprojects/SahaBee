@@ -1,19 +1,12 @@
 import {Button, Card, Col, Container, FormControl, InputGroup, Row, Spinner} from "react-bootstrap";
 import React from "react";
+import TitledCard from "./TitledCard";
 
 export default function EditCard({loading, title, children, onSave = () => undefined}) {
     return (
         <Container>
             <Row className="mb-5"/>
-            <Card>
-                <Card.Header>
-                    <Row>
-                        <h5 className="ml-2">{title}</h5>
-                        {loading ?
-                            <Spinner animation="border" variant="info" className="ml-auto mr-2"/> : ""
-                        }
-                    </Row>
-                </Card.Header>
+            <TitledCard title={title} loading={loading}>
                 <Card.Body>
                     <Row>
                         {children}
@@ -22,7 +15,7 @@ export default function EditCard({loading, title, children, onSave = () => undef
                 <Card.Footer>
                     <Button variant="info" className="pr-5 pl-5 float-right" onClick={onSave}>Save</Button>
                 </Card.Footer>
-            </Card>
+            </TitledCard>
         </Container>
     )
 }
