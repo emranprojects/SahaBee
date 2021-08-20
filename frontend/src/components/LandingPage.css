@@ -7,7 +7,7 @@
 }
 
 .main-wrapper {
-    height: 93.6vh;
+    height: calc(100vh - 62px);
 }
 
 .section {
