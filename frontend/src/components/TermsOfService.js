@@ -16,6 +16,9 @@ export default function TermsOfService() {
                         SahaBee can use the statistical data of the users in any way.
                     </li>
                     <li>
+                        As a facility, SahaBee may try to send the timesheets to the administrative manager, periodically. However, it's the users responsibility to make sure the times are received and correct, finally.
+                    </li>
+                    <li>
                         The terms of service may change on the future; continuing to use SahaBee (by keeping account or usage) means agreeing on such changes too.
                     </li>
                 </ul>
