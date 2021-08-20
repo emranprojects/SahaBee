@@ -3,9 +3,9 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import EmailMessage
 from django.utils import timezone
-from persiantools.jdatetime import JalaliDate, JalaliDateTime
+from persiantools.jdatetime import JalaliDateTime
 
 from rollcall import constants
 from rollcall.excel_converter import ExcelConverter
@@ -52,7 +52,7 @@ Let the good times roll!
 https://sahabee.ir
 ''',
                  to=[settings.TIMESHEETS_RECEIVER_EMAIL],
-                 cc=[],  # TODO: CC managers (Issue #16)
+                 cc=[user.email if user.email else ''],  # TODO: CC managers (Issue #16)
                  attachments=[(f'timesheet-{user.detail.personnel_code}.xlsx',
                                ExcelConverter.generateExcelFile(user, j_now.year, j_now.month).getvalue(),
                                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')]).send()
