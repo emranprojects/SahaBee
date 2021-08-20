@@ -7,19 +7,22 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import {Redirect} from "react-router-dom";
 import appPaths from "../appPaths";
+import TitledCard from "./TitledCard";
 
 export default function RolloutsList({lastAddedRolloutId = null, onRolloutDeleted = id => undefined}) {
     const [rollouts, setRollouts] = useState([])
     const [tokenInvalid, setTokenInvalid] = useState(false)
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         let cancel = false;
         (async () => {
-            const resp = await utils.get(apiURLs.rollouts,() => setTokenInvalid(true))
+            const resp = await utils.get(apiURLs.rollouts, () => setTokenInvalid(true))
             if (cancel)
                 return
             if (resp.status === 200)
                 setRollouts(await resp.json())
+            setLoading(false)
         })()
         return () => {
             cancel = true
@@ -39,15 +42,16 @@ export default function RolloutsList({lastAddedRolloutId = null, onRolloutDelete
                                      }}/>)
 
     return (
-        <Card>
-            <Card.Header><h3>Rollouts</h3></Card.Header>
-            {rolloutRows.length > 0
-                ? <Table striped={true} bordered={false} hover={true}>
-                    <tbody>{rolloutRows}</tbody>
+        <TitledCard title="Rollouts" loading={loading}>
+            <Card.Body>
+                {rolloutRows.length > 0
+                    ? <Table striped={true} bordered={false} hover={true}>
+                        <tbody>{rolloutRows}</tbody>
 
-                </Table>
-                : <h4 className="text-muted text-center">No rollouts yet.</h4>}
-        </Card>
+                    </Table>
+                    : <h4 className="text-muted text-center">No rollouts yet.</h4>}
+            </Card.Body>
+        </TitledCard>
     )
 }
 
