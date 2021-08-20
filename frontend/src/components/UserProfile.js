@@ -31,8 +31,8 @@ export default function UserProfile() {
         if (resp.status === 200) {
             const user = await resp.json()
             inflateStates(user)
-            setLoading(false)
         }
+        setLoading(false)
     }
 
     function inflateStates(user) {
