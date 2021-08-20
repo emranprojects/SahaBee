@@ -179,6 +179,7 @@ jobs:
           frontend_version=snapshot-${GITHUB_SHA}
           secret_key=${{ secrets.SAHABEE_SECRET_KEY }}
           recaptcha_server_key=${{ secrets.RECAPTCHA_SERVER_KEY }}
+          email_enabled=False
           "
       - name: Smoke test >> Landing page
         if: steps.ansibles-changed.outputs.changed == 'true'
@@ -257,4 +258,11 @@ jobs:
           frontend_version=${GITHUB_SHA}
           secret_key=${{ secrets.SAHABEE_SECRET_KEY }}
           recaptcha_server_key=${{ secrets.RECAPTCHA_SERVER_KEY }}
+          email_enabled=${{ secrets.EMAIL_ENABLED }}
+          email_host=${{ secrets.EMAIL_HOST }}
+          email_port=${{ secrets.EMAIL_PORT }}
+          email_use_tls=${{ secrets.EMAIL_USE_TLS }}
+          email_host_user=${{ secrets.EMAIL_HOST_USER }}
+          email_host_password=${{ secrets.EMAIL_HOST_PASSWORD }}
+          timesheets_receiver_email=${{ secrets.TIMESHEETS_RECEIVER_EMAIL }}
           "

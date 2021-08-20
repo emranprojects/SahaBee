@@ -13,6 +13,15 @@ services:
       - DJANGO_SETTINGS_MODULE=sahabee.settings-production
       - SECRET_KEY
       - RECAPTCHA_SERVER_KEY
+      - EMAIL_ENABLED
+      - EMAIL_HOST
+      - EMAIL_PORT
+      - EMAIL_USE_TLS
+      - EMAIL_HOST_USER
+      - EMAIL_HOST_PASSWORD
+      - TIMESHEETS_RECEIVER_EMAIL
+    depends_on:
+      - message_broker
   nginx:
     image: nginx:1.19.2
     networks:
@@ -37,6 +46,14 @@ services:
       - API_URL
     volumes:
       - frontend_files:/mnt/frontend/
+  message_broker:
+    restart: unless-stopped
+    image: rabbitmq:3.9.4-alpine
+    environment:
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit log [{console,[{level,error}]}]
+    networks:
+      sahabee_net:
+
 
 volumes:
   db_volume:

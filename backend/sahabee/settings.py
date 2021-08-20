@@ -13,8 +13,9 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from celery.schedules import crontab
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_recaptcha',
     'drf_spectacular',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -79,7 +81,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'sahabee.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 DATABASES = {
@@ -88,7 +89,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -117,7 +117,6 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -130,7 +129,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -158,3 +156,21 @@ SPECTACULAR_SETTINGS = {
 }
 
 MAX_ROLLOUTS_PER_DAY = 10
+
+CELERY_BROKER_URL = 'amqp://message_broker:5672//'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+ACTIVE_TIMESHEET_SEND_INTERVAL = crontab(minute='0', hour='23', day_of_month='*/3')
+MAX_SECONDS_FROM_LAST_ROLLCALL_TO_CONSIDER_TIMESHEET_AS_ACTIVE = 3 * 24 * 60 * 60
+
+EMAIL_ENABLED = os.environ.get('EMAIL_ENABLED', 'False').lower() == 'true'
+if EMAIL_ENABLED:
+    EMAIL_HOST = os.environ.get('EMAIL_HOST')
+    EMAIL_PORT = int(os.environ.get('EMAIL_PORT'))
+    EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS').lower() == 'true'
+    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+    TIMESHEETS_RECEIVER_EMAIL = os.environ.get('TIMESHEETS_RECEIVER_EMAIL')

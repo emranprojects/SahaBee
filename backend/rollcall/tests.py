@@ -10,6 +10,7 @@ from rest_framework.status import HTTP_201_CREATED, HTTP_401_UNAUTHORIZED, HTTP_
     HTTP_400_BAD_REQUEST
 from rest_framework.test import APIClient, APITestCase
 
+from rollcall import tasks
 from rollcall.models import Rollout, UserDetail
 from rollcall.excel_converter import ExcelConverter
 
@@ -189,3 +190,38 @@ class UserGetTest(APITestCase):
         resp = self.client.get(UserUpdateTest.SELF_USER_API_URL)
         self.assertEqual(resp.status_code, HTTP_200_OK)
         self.assertEqual(resp.data['id'], self.user.id)
+
+
+class TimeSheetPeriodicSendTest(TestCase):
+    def setUp(self) -> None:
+        self.user = create_user()
+        Rollout.objects.create(user=self.user)
+        Rollout.objects.create(user=self.user)
+
+    def test_active_timesheet_should_send(self):
+        send_user_timesheet_called = False
+        sent_timesheet_user = None
+
+        def send_user_timesheet_mocked(user, *args, **kwargs):
+            nonlocal send_user_timesheet_called
+            nonlocal sent_timesheet_user
+            send_user_timesheet_called = True
+            sent_timesheet_user = user
+
+        tasks._send_user_timesheet = send_user_timesheet_mocked
+        with self.settings(EMAIL_ENABLED=True):
+            tasks.send_active_timesheets()
+        self.assertTrue(send_user_timesheet_called)
+        self.assertEqual(self.user, sent_timesheet_user)
+
+    def test_active_timesheet_shouldnt_send_when_email_disabled(self):
+        send_user_timesheet_called = False
+
+        def send_user_timesheet_mocked(user, *args, **kwargs):
+            nonlocal send_user_timesheet_called
+            send_user_timesheet_called = True
+
+        tasks._send_user_timesheet = send_user_timesheet_mocked
+        with self.settings(EMAIL_ENABLED=False):
+            tasks.send_active_timesheets()
+        self.assertFalse(send_user_timesheet_called)

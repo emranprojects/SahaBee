@@ -20,6 +20,18 @@
         - api_url
         - secret_key
         - recaptcha_server_key
+        - email_enabled
+    - name: Check email variables if enabled
+      assert:
+        that: ({{ item }} is defined) and ({{ item }}|length > 0)
+      loop:
+        - email_host
+        - email_port
+        - email_use_tls
+        - email_host_user
+        - email_host_password
+        - timesheets_receiver_email
+      when: email_enabled|bool == true
   tasks:
     - name: 'Copy compose file'
       copy:
