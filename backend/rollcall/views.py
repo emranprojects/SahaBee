@@ -74,7 +74,7 @@ class ReportRollouts(APIView):
         if request.user.username != username and not request.user.is_superuser:
             return HttpResponse("", status=HTTP_403_FORBIDDEN)
         user = models.User.objects.get(username=username)
-        excel_file = ExcelConverter.generateExcelFile(user, year, month)
+        excel_file = ExcelConverter.generate_excel_file(user, year, month)
         response = HttpResponse(File(excel_file),
                                 content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename=timesheet.xlsx'

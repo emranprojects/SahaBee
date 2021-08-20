@@ -54,6 +54,6 @@ https://sahabee.ir
                  to=[settings.TIMESHEETS_RECEIVER_EMAIL],
                  cc=[user.email if user.email else ''],  # TODO: CC managers (Issue #16)
                  attachments=[(f'timesheet-{user.detail.personnel_code}.xlsx',
-                               ExcelConverter.generateExcelFile(user, j_now.year, j_now.month).getvalue(),
+                               ExcelConverter.generate_excel_file(user, j_now.year, j_now.month).getvalue(),
                                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')]).send()
     logging.info(f"Successfully emailed timesheet of '{user.username}' to '{settings.TIMESHEETS_RECEIVER_EMAIL}'.")

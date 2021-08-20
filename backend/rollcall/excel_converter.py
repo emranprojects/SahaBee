@@ -1,5 +1,6 @@
 from io import BytesIO
 import openpyxl
+from django.contrib.auth.models import User
 from persiantools.jdatetime import JalaliDate, JalaliDateTime
 import datetime
 import pytz
@@ -22,7 +23,7 @@ class ExcelConverter:
     ]
 
     @staticmethod
-    def generateExcelFile(user, j_year, j_month) -> BytesIO:
+    def generate_excel_file(user: User, j_year: int, j_month: int) -> BytesIO:
         date_from = JalaliDateTime(year=j_year, month=j_month, day=1).to_gregorian()
         next_j_month = j_month % 12 + 1
         date_to = JalaliDateTime(year=j_year, month=next_j_month, day=1).to_gregorian()
