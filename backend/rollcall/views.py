@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User
 from django.core.files import File
 from django.http import HttpResponse
-from persiantools.jdatetime import JalaliDate, JalaliDateTime
 from rest_framework import permissions, authentication, filters
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -75,17 +74,7 @@ class ReportRollouts(APIView):
         if request.user.username != username and not request.user.is_superuser:
             return HttpResponse("", status=HTTP_403_FORBIDDEN)
         user = models.User.objects.get(username=username)
-        total_days = JalaliDate.days_in_month(month=month, year=year)
-        date_from = JalaliDateTime(year=year, month=month, day=1).to_gregorian()
-        date_to = JalaliDateTime(year=year, month=month, day=total_days, hour=23, minute=59, second=59,
-                                 microsecond=999999).to_gregorian()
-        rollouts = Rollout.objects \
-            .filter(user=user) \
-            .filter(time__gte=date_from,
-                    time__lte=date_to) \
-            .order_by('time')
-
-        excel_file = ExcelConverter(user, rollouts, starting_date=date_from).get_excel_file()
+        excel_file = ExcelConverter.generateExcelFile(user, year, month)
         response = HttpResponse(File(excel_file),
                                 content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename=timesheet.xlsx'

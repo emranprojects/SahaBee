@@ -1,9 +1,11 @@
-import io
+from io import BytesIO
 import openpyxl
 from persiantools.jdatetime import JalaliDate, JalaliDateTime
 import datetime
 import pytz
 from django.conf import settings
+
+from rollcall.models import Rollout
 
 
 class ExcelConverter:
@@ -19,6 +21,19 @@ class ExcelConverter:
         'جمعه',
     ]
 
+    @staticmethod
+    def generateExcelFile(user, j_year, j_month) -> BytesIO:
+        date_from = JalaliDateTime(year=j_year, month=j_month, day=1).to_gregorian()
+        next_j_month = j_month % 12 + 1
+        date_to = JalaliDateTime(year=j_year, month=next_j_month, day=1).to_gregorian()
+        rollouts = Rollout.objects \
+            .filter(user=user) \
+            .filter(time__gte=date_from,
+                    time__lt=date_to) \
+            .order_by('time')
+        excel_file = ExcelConverter(user, rollouts, starting_date=date_from).get_excel_file()
+        return excel_file
+
     def __init__(self, user, rollouts, starting_date):
         self.rollouts = rollouts
         self.user = user
@@ -32,7 +47,7 @@ class ExcelConverter:
         self.__fill_date_info(sheet)
         self.__fill_days(sheet)
         self.__fill_data(sheet)
-        return io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(workbook))
+        return BytesIO(openpyxl.writer.excel.save_virtual_workbook(workbook))
 
     def __fill_days(self, sheet):
         total_days = JalaliDate.days_in_month(
@@ -47,9 +62,9 @@ class ExcelConverter:
         return f"{openpyxl.utils.get_column_letter(col)}{row}"
 
     def __fill_date_info(self, sheet):
-        sheet[self.__get_cell_label(44,2)] = self.starting_date_jalali.month
-        sheet[self.__get_cell_label(44,3)] = self.starting_date_jalali.year - 1398
-        
+        sheet[self.__get_cell_label(44, 2)] = self.starting_date_jalali.month
+        sheet[self.__get_cell_label(44, 3)] = self.starting_date_jalali.year - 1398
+
     def __fill_header_info(self, sheet):
         sheet['R1'] = self.user.first_name + ' ' + self.user.last_name
         sheet['R2'] = self.user.detail.personnel_code
@@ -59,8 +74,8 @@ class ExcelConverter:
     def __fill_data(self, sheet):
         for row in range(self.DATA_FIRST_ROW, self.DATA_FIRST_ROW + 31):
             for col in range(self.DATA_FIRST_COLUMN, self.DATA_FIRST_COLUMN + 11):
-                sheet[self.__get_cell_label(row,col)] = '00:00'
-        
+                sheet[self.__get_cell_label(row, col)] = '00:00'
+
         current_row_number = self.DATA_FIRST_ROW - 1
         last_day = -1
         current_column_number = self.DATA_FIRST_COLUMN
