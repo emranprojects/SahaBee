@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import utils from "../utils";
 import {Redirect} from "react-router-dom";
 import appPaths from "../appPaths";
-import {Col, FormControl, InputGroup} from "react-bootstrap";
+import {Col, Container, FormControl, InputGroup} from "react-bootstrap";
 import apiURLs from "../apiURLs";
 import {toast} from "react-toastify";
 import EditCard from "./EditCard";
@@ -78,31 +78,36 @@ export default function UserProfile() {
     }
 
     return (
-        <EditCard title="Profile Information" onSave={save} loading={loading}>
-            <EditCard.Input title="@"
-                            value={username}
-                            setValueFunc={setUsername}/>
-            <EditCard.Input title="Email"
-                            value={email}
-                            setValueFunc={setEmail}/>
-            <EditCard.Input title="Firstname"
-                            value={firstname}
-                            setValueFunc={setFirstname}/>
-            <EditCard.Input title="Lastname"
-                            value={lastname}
-                            setValueFunc={setLastname}/>
-            <EditCard.Input title="Personnel Code"
-                            value={personnelCode}
-                            setValueFunc={setPersonnelCode}/>
-            <EditCard.Input title="Unit"
-                            value={unit}
-                            setValueFunc={setUnit}/>
-            <EditCard.Input title="Manager Name"
-                            value={managerName}
-                            setValueFunc={setManagerName}/>
-            <EditCard.Input title="Manager Email"
-                            value={managerEmail}
-                            setValueFunc={setManagerEmail}/>
-        </EditCard>
+        <>
+            <EditCard title="Profile Information" onSave={save} loading={loading}>
+                <EditCard.Input title="@"
+                                value={username}
+                                setValueFunc={setUsername}/>
+                <EditCard.Input title="Email"
+                                value={email}
+                                setValueFunc={setEmail}/>
+                <EditCard.Input title="Firstname"
+                                value={firstname}
+                                setValueFunc={setFirstname}/>
+                <EditCard.Input title="Lastname"
+                                value={lastname}
+                                setValueFunc={setLastname}/>
+                <EditCard.Input title="Personnel Code"
+                                value={personnelCode}
+                                setValueFunc={setPersonnelCode}/>
+                <EditCard.Input title="Unit"
+                                value={unit}
+                                setValueFunc={setUnit}/>
+                <EditCard.Input title="Manager Name"
+                                value={managerName}
+                                setValueFunc={setManagerName}/>
+                <EditCard.Input title="Manager Email"
+                                value={managerEmail}
+                                setValueFunc={setManagerEmail}/>
+            </EditCard>
+            <Container>
+            <span className="text-muted">* It's highly recommended to provide work emails for the corresponding fields. Email addresses are used to inform the communications between SahaBee and the company (mainly by CCing them).</span>
+            </Container>
+        </>
     )
 }
