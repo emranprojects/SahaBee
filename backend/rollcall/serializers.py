@@ -47,7 +47,7 @@ class RolloutSerializer(serializers.ModelSerializer):
 class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserDetail
-        fields = ['id', 'personnel_code', 'manager_name', 'unit']
+        fields = ['id', 'personnel_code', 'manager_name', 'manager_email', 'unit']
 
 
 class UserSerializer(serializers.ModelSerializer):

@@ -21,6 +21,7 @@ class UserDetail(models.Model):
                                 related_name='detail')
     personnel_code = models.CharField(max_length=10)
     manager_name = models.CharField(max_length=NAME_MAX_LENGTH)
+    manager_email = models.EmailField(unique=False, null=False, blank=True, default='')
     unit = models.CharField(max_length=32)
 
 
