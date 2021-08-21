@@ -17,6 +17,7 @@ export default function UserProfile() {
     const [personnelCode, setPersonnelCode] = useState("")
     const [unit, setUnit] = useState("")
     const [managerName, setManagerName] = useState("")
+    const [managerEmail, setManagerEmail] = useState("")
     const [loading, setLoading] = useState(true)
     const [authorized, setAuthorized] = useState(true)
 
@@ -45,6 +46,7 @@ export default function UserProfile() {
         setPersonnelCode(user.detail.personnel_code)
         setUnit(user.detail.unit)
         setManagerName(user.detail.manager_name)
+        setManagerEmail(user.detail.manager_email)
     }
 
     function getUserFromStates() {
@@ -58,7 +60,8 @@ export default function UserProfile() {
                 id: userDetailId,
                 personnel_code: personnelCode,
                 unit,
-                manager_name: managerName
+                manager_name: managerName,
+                manager_email: managerEmail
             }
         }
     }
@@ -97,6 +100,9 @@ export default function UserProfile() {
             <EditCard.Input title="Manager Name"
                             value={managerName}
                             setValueFunc={setManagerName}/>
+            <EditCard.Input title="Manager Email"
+                            value={managerEmail}
+                            setValueFunc={setManagerEmail}/>
         </EditCard>
     )
 }
