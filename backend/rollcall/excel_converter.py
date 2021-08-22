@@ -21,6 +21,20 @@ class ExcelConverter:
         'پنجشنبه',
         'جمعه',
     ]
+    MONTH_STRS = [
+        'فروردین',
+        'اردیبهشت',
+        'خرداد',
+        'تیر',
+        'مرداد',
+        'شهریور',
+        'مهر',
+        'آبان',
+        'آذر',
+        'دی',
+        'بهمن',
+        'اسفند',
+    ]
 
     @staticmethod
     def generate_excel_file(user: User, j_year: int, j_month: int) -> BytesIO:
@@ -63,8 +77,8 @@ class ExcelConverter:
         return f"{openpyxl.utils.get_column_letter(col)}{row}"
 
     def __fill_date_info(self, sheet):
-        sheet[self.__get_cell_label(44, 2)] = self.starting_date_jalali.month
-        sheet[self.__get_cell_label(44, 3)] = self.starting_date_jalali.year - 1398
+        sheet[self.__get_cell_label(44, 2)] = self.MONTH_STRS[self.starting_date_jalali.month - 1]
+        sheet[self.__get_cell_label(44, 3)] = self.starting_date_jalali.year
 
     def __fill_header_info(self, sheet):
         sheet['R1'] = self.user.first_name + ' ' + self.user.last_name
