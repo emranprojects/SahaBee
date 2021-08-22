@@ -17,4 +17,7 @@ jobs:
           ansible_host=${{ secrets.SAHABEE_SERVER_IP }}
           ansible_user=${{ secrets.SAHABEE_SERVER_USER }}
           sudo_pass=${{ secrets.SAHABEE_SERVER_PASS }}
+          proxy_server_host=${{ secrets.PROXY_SERVER_HOST }}
+          proxy_server_user=${{ secrets.PROXY_SERVER_USER }}
+          proxy_server_pass=${{ secrets.PROXY_SERVER_PASS }}
           "

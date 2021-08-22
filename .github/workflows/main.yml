@@ -248,12 +248,12 @@ jobs:
           ansible_host=${{ secrets.SAHABEE_SERVER_IP }}
           ansible_user=${{ secrets.SAHABEE_SERVER_USER }}
           sudo_pass=${{ secrets.SAHABEE_SERVER_PASS }}
-          ssl_full_chain_file=SSL_FULL_CHAIN_FILE
-          ssl_private_key_file=SSL_PRIVATE_KEY_FILE
-          docker_hub_password=${{ secrets.DOCKER_HUB_PASSWORD }}
           proxy_server_host=${{ secrets.PROXY_SERVER_HOST }}
           proxy_server_user=${{ secrets.PROXY_SERVER_USER }}
           proxy_server_pass=${{ secrets.PROXY_SERVER_PASS }}
+          ssl_full_chain_file=SSL_FULL_CHAIN_FILE
+          ssl_private_key_file=SSL_PRIVATE_KEY_FILE
+          docker_hub_password=${{ secrets.DOCKER_HUB_PASSWORD }}
           api_version=${GITHUB_SHA}
           frontend_version=${GITHUB_SHA}
           secret_key=${{ secrets.SAHABEE_SECRET_KEY }}
