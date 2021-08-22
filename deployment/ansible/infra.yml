@@ -34,11 +34,11 @@
         - ca-certificates
         - curl
         - software-properties-common
-        - python-pip
+        - python3-pip
         - virtualenv
-        - python-setuptools
+        - python3-setuptools
         - docker-compose
-        - python-dev
+        - python3-dev
         - sshpass
     - name: Set Shecan
       shell: "echo '### Shecan DNS ###\nnameserver {{ shecan_dns_1 }}\nnameserver {{ shecan_dns_2 }}' > /etc/resolv.conf"
