@@ -11,4 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - working-directory: deployment/ansible/
-        run: ansible-playbook infra.yml -i inventory.yml --limit production
+        run: ansible-playbook infra.yml -i inventory.yml
+          --limit production
+          --extra-vars "
+          ansible_host=${{ secrets.SAHABEE_SERVER_IP }}
+          ansible_user=${{ secrets.SAHABEE_SERVER_USER }}
+          sudo_pass=${{ secrets.SAHABEE_SERVER_PASS }}
+          "
