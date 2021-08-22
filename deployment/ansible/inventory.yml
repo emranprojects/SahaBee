@@ -1,6 +1,7 @@
 ---
 all:
   vars:
+    ansible_python_interpreter: auto
     shecan_dns_1: 185.51.200.2
     shecan_dns_2: 178.22.122.100
     src_root_dir: ../..
