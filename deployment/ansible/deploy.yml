@@ -74,14 +74,14 @@
     - name: 'Config docker proxy: create config dir'
       become: yes
       file:
-        path: /etc/systemd/system/docker.service.d/ &&
+        path: /etc/systemd/system/docker.service.d/
         state: directory
     - name: 'Config docker proxy: Copy config file'
       become: yes
       copy:
         content: |
           [Service]
-          Environment="HTTP_PROXY=socks5://127.0.0.1:9000"
+          Environment="HTTPS_PROXY=socks5://127.0.0.1:9000"
         dest: /etc/systemd/system/docker.service.d/http-proxy.conf
     - name: 'Restart Docker'
       become: yes
