@@ -2,7 +2,7 @@ import {Button, Card, Col, Container, FormControl, InputGroup, Row, Spinner} fro
 import React from "react";
 import TitledCard from "./TitledCard";
 
-export default function EditCard({loading, title, children, onSave = () => undefined}) {
+export default function EditCard({loading, title, children, onSave = () => undefined, footer = ""}) {
     return (
         <Container>
             <Row className="mb-5"/>
@@ -13,16 +13,31 @@ export default function EditCard({loading, title, children, onSave = () => undef
                     </Row>
                 </Card.Body>
                 <Card.Footer>
-                    <Button variant="info" className="pr-5 pl-5 float-right" onClick={onSave}>Save</Button>
+                    <Row>
+                        <Col md={10}>
+                            {footer}
+                        </Col>
+                        <Col md={2}>
+                            <Button variant="info" className="pr-5 pl-5 float-right" onClick={onSave}>Save</Button>
+                        </Col>
+                    </Row>
                 </Card.Footer>
             </TitledCard>
         </Container>
     )
 }
 
-EditCard.Input = function ({title, value, setValueFunc}) {
+EditCard.InputCell = function ({children}) {
     return (
         <Col md={4} className="pt-2">
+            {children}
+        </Col>
+    )
+}
+
+EditCard.Input = function ({title, value, setValueFunc}) {
+    return (
+        <EditCard.InputCell>
             <InputGroup>
                 <InputGroup.Prepend>
                     <InputGroup.Text>
@@ -33,6 +48,6 @@ EditCard.Input = function ({title, value, setValueFunc}) {
                     value={value}
                     onChange={e => setValueFunc(e.target.value)}/>
             </InputGroup>
-        </Col>
+        </EditCard.InputCell>
     )
 }
