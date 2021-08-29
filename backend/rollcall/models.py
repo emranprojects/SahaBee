@@ -23,6 +23,7 @@ class UserDetail(models.Model):
     manager_name = models.CharField(max_length=NAME_MAX_LENGTH)
     manager_email = models.EmailField(unique=False, null=False, blank=True, default='')
     unit = models.CharField(max_length=32)
+    enable_timesheet_auto_send = models.BooleanField(default=False)
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
