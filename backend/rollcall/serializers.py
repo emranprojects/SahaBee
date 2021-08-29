@@ -30,10 +30,10 @@ class RolloutSerializer(serializers.ModelSerializer):
     def _validate_time(self, time):
         day_first_time = time.replace(hour=0, minute=0, second=0, microsecond=0)
         day_last_time = day_first_time + timedelta(days=1)
-        current_rollouts_count = Rollout.objects\
-            .filter(user=self._user)\
-            .filter(time__gte=day_first_time)\
-            .filter(time__lt=day_last_time)\
+        current_rollouts_count = Rollout.objects \
+            .filter(user=self._user) \
+            .filter(time__gte=day_first_time) \
+            .filter(time__lt=day_last_time) \
             .count()
         if current_rollouts_count >= settings.MAX_ROLLOUTS_PER_DAY:
             raise serializers.ValidationError(
@@ -47,7 +47,7 @@ class RolloutSerializer(serializers.ModelSerializer):
 class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserDetail
-        fields = ['id', 'personnel_code', 'manager_name', 'manager_email', 'unit']
+        fields = ['id', 'personnel_code', 'manager_name', 'manager_email', 'unit', 'enable_timesheet_auto_send']
 
 
 class UserSerializer(serializers.ModelSerializer):
