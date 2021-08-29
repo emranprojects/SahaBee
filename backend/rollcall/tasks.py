@@ -24,7 +24,8 @@ def send_active_timesheets():
         .filter(time__gte=least_active_dt) \
         .values_list('user_id', flat=True) \
         .distinct()
-    users = User.objects.filter(pk__in=user_ids_with_active_timesheet)
+    users = User.objects.filter(pk__in=user_ids_with_active_timesheet) \
+        .filter(detail__enable_timesheet_auto_send=True)
     logging.info(f"Going to send timesheets of {len(users)} users...")
     for user in users:
         logging.debug(f"Going to send the timesheet of user: {user.username}")

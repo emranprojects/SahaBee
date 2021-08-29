@@ -1,10 +1,11 @@
 from datetime import datetime, timedelta
+from unittest import mock
 
 import openpyxl
 import pytz
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from persiantools.jdatetime import JalaliDate
 from rest_framework.status import HTTP_201_CREATED, HTTP_401_UNAUTHORIZED, HTTP_200_OK, HTTP_403_FORBIDDEN, \
     HTTP_400_BAD_REQUEST
@@ -192,36 +193,32 @@ class UserGetTest(APITestCase):
         self.assertEqual(resp.data['id'], self.user.id)
 
 
+@override_settings(EMAIL_ENABLED=True)
 class TimeSheetPeriodicSendTest(TestCase):
     def setUp(self) -> None:
         self.user = create_user()
+        self.user.detail.enable_timesheet_auto_send = True
+        self.user.detail.save()
         Rollout.objects.create(user=self.user)
         Rollout.objects.create(user=self.user)
 
-    def test_active_timesheet_should_send(self):
-        send_user_timesheet_called = False
-        sent_timesheet_user = None
+    def _mock_send_timesheet(self):
+        return mock.patch.object(tasks, '_send_user_timesheet')
 
-        def send_user_timesheet_mocked(user, *args, **kwargs):
-            nonlocal send_user_timesheet_called
-            nonlocal sent_timesheet_user
-            send_user_timesheet_called = True
-            sent_timesheet_user = user
-
-        tasks._send_user_timesheet = send_user_timesheet_mocked
-        with self.settings(EMAIL_ENABLED=True):
+    def test_active_timesheet_send_happy_path(self):
+        with self._mock_send_timesheet() as mocked_send_timesheet:
             tasks.send_active_timesheets()
-        self.assertTrue(send_user_timesheet_called)
-        self.assertEqual(self.user, sent_timesheet_user)
+            mocked_send_timesheet.assert_called_once_with(self.user)
 
+    @override_settings(EMAIL_ENABLED=False)
     def test_active_timesheet_shouldnt_send_when_email_disabled(self):
-        send_user_timesheet_called = False
-
-        def send_user_timesheet_mocked(user, *args, **kwargs):
-            nonlocal send_user_timesheet_called
-            send_user_timesheet_called = True
-
-        tasks._send_user_timesheet = send_user_timesheet_mocked
-        with self.settings(EMAIL_ENABLED=False):
+        with self._mock_send_timesheet() as mocked_send_timesheet:
             tasks.send_active_timesheets()
-        self.assertFalse(send_user_timesheet_called)
+            mocked_send_timesheet.assert_not_called()
+
+    def test_active_timesheet_shouldnt_send_when_timesheet_auto_send_disabled(self):
+        self.user.detail.enable_timesheet_auto_send = False
+        self.user.detail.save()
+        with self._mock_send_timesheet() as mocked_send_timesheet:
+            tasks.send_active_timesheets()
+            mocked_send_timesheet.assert_not_called()
