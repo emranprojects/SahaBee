@@ -2,10 +2,12 @@ import React, {useState} from "react";
 import utils from "../utils";
 import {Redirect} from "react-router-dom";
 import appPaths from "../appPaths";
-import {Col, Container, FormControl, InputGroup} from "react-bootstrap";
+import {Form, FormCheck} from "react-bootstrap";
 import apiURLs from "../apiURLs";
 import {toast} from "react-toastify";
 import EditCard from "./EditCard";
+import FormCheckInput from "react-bootstrap/FormCheckInput";
+import FormCheckLabel from "react-bootstrap/FormCheckLabel";
 
 export default function UserProfile() {
     const [userId, setUserId] = useState()
@@ -20,7 +22,7 @@ export default function UserProfile() {
     const [managerEmail, setManagerEmail] = useState("")
     const [loading, setLoading] = useState(true)
     const [authorized, setAuthorized] = useState(true)
-
+    const [enableTimesheetAutoSend, setEnableTimesheetAutoSend] = useState(false)
 
     if (!utils.isLoggedIn() || !authorized)
         return <Redirect to={appPaths.login}/>
@@ -47,6 +49,7 @@ export default function UserProfile() {
         setUnit(user.detail.unit)
         setManagerName(user.detail.manager_name)
         setManagerEmail(user.detail.manager_email)
+        setEnableTimesheetAutoSend(user.detail.enable_timesheet_auto_send)
     }
 
     function getUserFromStates() {
@@ -61,7 +64,8 @@ export default function UserProfile() {
                 personnel_code: personnelCode,
                 unit,
                 manager_name: managerName,
-                manager_email: managerEmail
+                manager_email: managerEmail,
+                enable_timesheet_auto_send: enableTimesheetAutoSend
             }
         }
     }
@@ -77,13 +81,20 @@ export default function UserProfile() {
             toast.success("Info updated successfully!")
     }
 
+    const footerHint = <span className="text-muted">
+        * It's highly recommended to provide work emails for the corresponding fields. Email addresses are used to inform the communications between SahaBee and the company (mainly by CCing them).<br/>
+        ** Active timesheets are the ones that have been filled recently.
+    </span>
+
     return (
         <>
-            <EditCard title="Profile Information" onSave={save} loading={loading}>
+            <EditCard title="Profile Information"
+                      onSave={save} loading={loading}
+                      footer={footerHint}>
                 <EditCard.Input title="@"
                                 value={username}
                                 setValueFunc={setUsername}/>
-                <EditCard.Input title="Email"
+                <EditCard.Input title="Email*"
                                 value={email}
                                 setValueFunc={setEmail}/>
                 <EditCard.Input title="Firstname"
@@ -101,13 +112,18 @@ export default function UserProfile() {
                 <EditCard.Input title="Manager Name"
                                 value={managerName}
                                 setValueFunc={setManagerName}/>
-                <EditCard.Input title="Manager Email"
+                <EditCard.Input title="Manager Email*"
                                 value={managerEmail}
                                 setValueFunc={setManagerEmail}/>
+                <EditCard.InputCell>
+                    <Form.Check type="switch"
+                                id={Math.random()} // Workaround: https://stackoverflow.com/questions/57748179
+                                label={<span>Enable auto-sending of <b>active**</b> timesheets to the office.</span>}
+                                checked={enableTimesheetAutoSend}
+                                onChange={e => setEnableTimesheetAutoSend(e.target.checked)}
+                    />
+                </EditCard.InputCell>
             </EditCard>
-            <Container>
-            <span className="text-muted">* It's highly recommended to provide work emails for the corresponding fields. Email addresses are used to inform the communications between SahaBee and the company (mainly by CCing them).</span>
-            </Container>
         </>
     )
 }
