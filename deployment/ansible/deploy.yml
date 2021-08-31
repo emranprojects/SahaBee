@@ -48,7 +48,7 @@
         - 'backend/'
         - 'frontend/'
     - name: 'Update SSL certs'
-      include: update_ssl_certs.yml
+      include: tasks/update_ssl_certs.yml
     - name: 'Copy nginx config'
       copy:
         src: '{{ nginx_conf_path }}'

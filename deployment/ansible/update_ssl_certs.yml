@@ -12,15 +12,5 @@
         - ssl_full_chain_remote_path
         - ssl_private_key_remote_path
   tasks:
-    - name: 'Create SSL directory'
-      file:
-        path: '{{ ssl_certs_remote_dir }}'
-        state: directory
-    - name: 'Copy SSL private key'
-      copy:
-        src: '{{ ssl_private_key_local_path }}'
-        dest: '{{ ssl_private_key_remote_path }}'
-    - name: 'Copy SSL fullchain'
-      copy:
-        src: '{{ ssl_full_chain_local_path }}'
-        dest: '{{ ssl_full_chain_remote_path }}'
+    - name: 'Update SSL certs'
+      include: tasks/update_ssl_certs.yml
