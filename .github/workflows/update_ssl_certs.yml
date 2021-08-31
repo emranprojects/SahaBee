@@ -1,0 +1,27 @@
+---
+name: Update SSL certs
+on:
+  workflow_dispatch:
+jobs:
+  update-cert-files:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Inflate SSL files
+        working-directory: deployment/ansible/
+        run: |
+          echo "${{ secrets.SSL_FULL_CHAIN }}" > SSL_FULL_CHAIN_FILE
+          echo "${{ secrets.SSL_PRIVATE_KEY }}" > SSL_PRIVATE_KEY_FILE
+      - name: Update SSL files
+        working-directory: deployment/ansible/
+        run: ansible-playbook update_ssl_certs.yml -i inventory.yml --limit production
+            --extra-vars "
+            ansible_host=${{ secrets.SAHABEE_SERVER_IP }}
+            ansible_user=${{ secrets.SAHABEE_SERVER_USER }}
+            sudo_pass=${{ secrets.SAHABEE_SERVER_PASS }}
+            proxy_server_host=${{ secrets.PROXY_SERVER_HOST }}
+            proxy_server_user=${{ secrets.PROXY_SERVER_USER }}
+            proxy_server_pass=${{ secrets.PROXY_SERVER_PASS }}
+            ssl_full_chain_local_path=SSL_FULL_CHAIN_FILE
+            ssl_private_key_local_path=SSL_PRIVATE_KEY_FILE
+            "
