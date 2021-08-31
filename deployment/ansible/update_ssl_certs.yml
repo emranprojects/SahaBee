@@ -11,6 +11,16 @@
         - ssl_certs_remote_dir
         - ssl_full_chain_remote_path
         - ssl_private_key_remote_path
+        - dest_root_dir
   tasks:
     - name: 'Update SSL certs'
       include: tasks/update_ssl_certs.yml
+    - name: 'Restart Service'
+      docker_compose:
+        project_src: '{{ dest_root_dir }}'
+        build: no
+        pull: no
+        state: present
+        restarted: yes
+        services:
+          - nginx
