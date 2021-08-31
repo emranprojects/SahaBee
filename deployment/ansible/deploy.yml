@@ -6,8 +6,8 @@
         that: ({{ item }} is defined) and ({{ item }}|length > 0)
       loop:
         - src_root_dir
-        - ssl_full_chain_file
-        - ssl_private_key_file
+        - ssl_full_chain_local_path
+        - ssl_private_key_local_path
         - nginx_conf_path
         - dest_root_dir
         - docker_hub_username
@@ -52,12 +52,12 @@
     - name: 'Copy SSL private key'
       become: yes
       copy:
-        src: '{{ ssl_private_key_file }}'
+        src: '{{ ssl_private_key_local_path }}'
         dest: /etc/sahabee.ir/ssl-files/privkey.pem
     - name: 'Copy SSL fullchain'
       become: yes
       copy:
-        src: '{{ ssl_full_chain_file }}'
+        src: '{{ ssl_full_chain_local_path }}'
         dest: /etc/sahabee.ir/ssl-files/fullchain.pem
     - name: 'Copy nginx config'
       copy:

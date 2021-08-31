@@ -169,8 +169,8 @@ jobs:
         run: ansible-playbook deploy.yml -i inventory.yml -vvv
           --limit test
           --extra-vars "
-          ssl_full_chain_file=SSL_FULL_CHAIN_FILE
-          ssl_private_key_file=SSL_PRIVATE_KEY_FILE
+          ssl_full_chain_local_path=SSL_FULL_CHAIN_FILE
+          ssl_private_key_local_path=SSL_PRIVATE_KEY_FILE
           docker_hub_password=${{ secrets.DOCKER_HUB_PASSWORD }}
           proxy_server_host=${{ secrets.PROXY_SERVER_HOST }}
           proxy_server_user=${{ secrets.PROXY_SERVER_USER }}
@@ -251,8 +251,8 @@ jobs:
           proxy_server_host=${{ secrets.PROXY_SERVER_HOST }}
           proxy_server_user=${{ secrets.PROXY_SERVER_USER }}
           proxy_server_pass=${{ secrets.PROXY_SERVER_PASS }}
-          ssl_full_chain_file=SSL_FULL_CHAIN_FILE
-          ssl_private_key_file=SSL_PRIVATE_KEY_FILE
+          ssl_full_chain_local_path=SSL_FULL_CHAIN_FILE
+          ssl_private_key_local_path=SSL_PRIVATE_KEY_FILE
           docker_hub_password=${{ secrets.DOCKER_HUB_PASSWORD }}
           api_version=${GITHUB_SHA}
           frontend_version=${GITHUB_SHA}

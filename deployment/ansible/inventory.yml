@@ -19,8 +19,8 @@ all:
     recaptcha_server_key:
     backup_file_remote_path: '/tmp/backup.json'
     backup_file_local_path: './backup.json'
-    ssl_full_chain_file:
-    ssl_private_key_file:
+    ssl_full_chain_local_path:
+    ssl_private_key_local_path:
     api_version:
     frontend_version:
     ansible_sudo_pass: '{{ sudo_pass }}'
