@@ -8,6 +8,9 @@
         - src_root_dir
         - ssl_full_chain_local_path
         - ssl_private_key_local_path
+        - ssl_certs_remote_dir
+        - ssl_full_chain_remote_path
+        - ssl_private_key_remote_path
         - nginx_conf_path
         - dest_root_dir
         - docker_hub_username
@@ -47,18 +50,18 @@
     - name: 'Create SSL directory'
       become: yes
       file:
-        path: /etc/sahabee.ir/ssl-files/
+        path: '{{ ssl_certs_remote_dir }}'
         state: directory
     - name: 'Copy SSL private key'
       become: yes
       copy:
         src: '{{ ssl_private_key_local_path }}'
-        dest: /etc/sahabee.ir/ssl-files/privkey.pem
+        dest: '{{ ssl_private_key_remote_path }}'
     - name: 'Copy SSL fullchain'
       become: yes
       copy:
         src: '{{ ssl_full_chain_local_path }}'
-        dest: /etc/sahabee.ir/ssl-files/fullchain.pem
+        dest: '{{ ssl_full_chain_remote_path }}'
     - name: 'Copy nginx config'
       copy:
         src: '{{ nginx_conf_path }}'

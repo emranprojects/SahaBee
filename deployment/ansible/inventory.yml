@@ -21,6 +21,9 @@ all:
     backup_file_local_path: './backup.json'
     ssl_full_chain_local_path:
     ssl_private_key_local_path:
+    ssl_certs_remote_dir: '/etc/sahabee.ir/ssl-files'
+    ssl_full_chain_remote_path: '{{ ssl_certs_remote_dir }}/fullchain.pem'
+    ssl_private_key_remote_path: '{{ ssl_certs_remote_dir }}/privkey.pem'
     api_version:
     frontend_version:
     ansible_sudo_pass: '{{ sudo_pass }}'
