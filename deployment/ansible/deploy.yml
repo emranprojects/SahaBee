@@ -47,21 +47,8 @@
       loop:
         - 'backend/'
         - 'frontend/'
-    - name: 'Create SSL directory'
-      become: yes
-      file:
-        path: '{{ ssl_certs_remote_dir }}'
-        state: directory
-    - name: 'Copy SSL private key'
-      become: yes
-      copy:
-        src: '{{ ssl_private_key_local_path }}'
-        dest: '{{ ssl_private_key_remote_path }}'
-    - name: 'Copy SSL fullchain'
-      become: yes
-      copy:
-        src: '{{ ssl_full_chain_local_path }}'
-        dest: '{{ ssl_full_chain_remote_path }}'
+    - name: 'Update SSL certs'
+      include: update_ssl_certs.yml
     - name: 'Copy nginx config'
       copy:
         src: '{{ nginx_conf_path }}'
