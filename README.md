@@ -9,3 +9,8 @@ We are currently remote working because of the corona virus. These days it's a r
 I found it boring to fill a timesheet excel every time; so decided to develop a small (yet powerful) API to just call it and get the reports automatically.
 ## Contribution
 Contributions of any kind, especially pull requests, are appreciated.
+
+### Appreciations
+Thanks to those who helped SahaBee through opening PRs, issues and discussions, or giving effective feedbacks; specially:
+- Ali Nosrati (@littleali)
+- Mehran Ghajari
