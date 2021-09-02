@@ -34,8 +34,15 @@ def send_active_timesheets():
 
 def _send_user_timesheet(user):
     j_now = JalaliDateTime.now()
-    EmailMessage('SahaBee User Timesheet',
-                 f'''Hello,
+    receiver_email = settings.TIMESHEETS_RECEIVER_EMAIL
+    if not receiver_email:
+        raise ValueError("No receiver email address.")
+    cc_list = []
+    if user.email:
+        cc_list.append(user.email)
+    if user.detail.manager_email:
+        cc_list.append(user.detail.manager_email)
+    body_text = f'''Hello,
 Here is the timesheet of a user at SahaBee.
 This email is sent automatically, because the user was actively rollcalling at SahaBee during the last few days. 
 
@@ -51,13 +58,13 @@ SahaBee
 -----------------------
 Let the good times roll!
 https://sahabee.ir
-''',
-                 to=[settings.TIMESHEETS_RECEIVER_EMAIL],
-                 cc=[
-                     user.email if user.email else '',
-                     user.detail.manager_name if user.detail.manager_name else '',
-                 ],
-                 attachments=[(f'timesheet-{user.detail.personnel_code}.xlsx',
-                               ExcelConverter.generate_excel_file(user, j_now.year, j_now.month).getvalue(),
-                               'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')]).send()
+'''
+    message = EmailMessage('SahaBee User Timesheet',
+                           body_text,
+                           to=[receiver_email],
+                           cc=cc_list,
+                           attachments=[(f'timesheet-{user.detail.personnel_code}.xlsx',
+                                         ExcelConverter.generate_excel_file(user, j_now.year, j_now.month).getvalue(),
+                                         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')])
+    message.send()
     logging.info(f"Successfully emailed timesheet of '{user.username}' to '{settings.TIMESHEETS_RECEIVER_EMAIL}'.")
