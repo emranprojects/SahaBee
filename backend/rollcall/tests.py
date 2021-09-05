@@ -5,6 +5,7 @@ import openpyxl
 import pytz
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core import mail
 from django.test import TestCase, override_settings
 from persiantools.jdatetime import JalaliDate
 from rest_framework.status import HTTP_201_CREATED, HTTP_401_UNAUTHORIZED, HTTP_200_OK, HTTP_403_FORBIDDEN, \
@@ -18,6 +19,7 @@ from rollcall.excel_converter import ExcelConverter
 
 def create_user(username='default.test.user', is_superuser=False):
     user = User.objects.create(username=username,
+                               email='test@fake.com',
                                first_name=f'{username} firstname',
                                last_name=f'{username} lastname',
                                is_superuser=is_superuser)
@@ -193,7 +195,8 @@ class UserGetTest(APITestCase):
         self.assertEqual(resp.data['id'], self.user.id)
 
 
-@override_settings(EMAIL_ENABLED=True)
+@override_settings(EMAIL_ENABLED=True,
+                   TIMESHEETS_RECEIVER_EMAIL='admin.receiver@fake.com')
 class TimeSheetPeriodicSendTest(TestCase):
     def setUp(self) -> None:
         self.user = create_user()
@@ -202,23 +205,27 @@ class TimeSheetPeriodicSendTest(TestCase):
         Rollout.objects.create(user=self.user)
         Rollout.objects.create(user=self.user)
 
-    def _mock_send_timesheet(self):
-        return mock.patch.object(tasks, '_send_user_timesheet')
-
     def test_active_timesheet_send_happy_path(self):
-        with self._mock_send_timesheet() as mocked_send_timesheet:
-            tasks.send_active_timesheets()
-            mocked_send_timesheet.assert_called_once_with(self.user)
+        tasks.send_active_timesheets()
+        self.assertEqual(len(mail.outbox), 1)
 
     @override_settings(EMAIL_ENABLED=False)
     def test_active_timesheet_shouldnt_send_when_email_disabled(self):
-        with self._mock_send_timesheet() as mocked_send_timesheet:
-            tasks.send_active_timesheets()
-            mocked_send_timesheet.assert_not_called()
+        tasks.send_active_timesheets()
+        self.assertEqual(len(mail.outbox), 0)
 
     def test_active_timesheet_shouldnt_send_when_timesheet_auto_send_disabled(self):
         self.user.detail.enable_timesheet_auto_send = False
         self.user.detail.save()
-        with self._mock_send_timesheet() as mocked_send_timesheet:
-            tasks.send_active_timesheets()
-            mocked_send_timesheet.assert_not_called()
+        tasks.send_active_timesheets()
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_email_is_sent_from_users_address(self):
+        tasks.send_active_timesheets()
+        self.assertEqual(mail.outbox[0].from_email, self.user.email)
+
+    def test_email_should_not_send_when_user_has_no_email(self):
+        self.user.email = ''
+        self.user.save()
+        tasks.send_active_timesheets()
+        self.assertEqual(len(mail.outbox), 0)

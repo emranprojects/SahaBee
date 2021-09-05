@@ -37,16 +37,18 @@ def _send_user_timesheet(user):
     receiver_email = settings.TIMESHEETS_RECEIVER_EMAIL
     if not receiver_email:
         raise ValueError("No receiver email address.")
+    if not user.email:
+        logging.info(f"User ({user.username}) email not found. Emailing the corresponding timesheet ignored.")
+        return
     cc_list = []
     if user.email:
         cc_list.append(user.email)
     if user.detail.manager_email:
         cc_list.append(user.detail.manager_email)
-    body_text = f'''Hello,
-Here is the timesheet of a user at SahaBee.
-This email is sent automatically, because the user was actively rollcalling at SahaBee during the last few days. 
+    body_text = f'''Hello, Here is the timesheet of a user at SahaBee. This email is sent automatically by SahaBee, 
+since the user was actively rollcalling at SahaBee during the last few days. 
 
-User info.:
+User Information:
 First name: {user.first_name}
 Last name: {user.last_name}
 Personnel code: {user.detail.personnel_code}
@@ -61,6 +63,7 @@ https://sahabee.ir
 '''
     message = EmailMessage('SahaBee User Timesheet',
                            body_text,
+                           from_email=user.email,
                            to=[receiver_email],
                            cc=cc_list,
                            attachments=[(f'timesheet-{user.detail.personnel_code}.xlsx',
