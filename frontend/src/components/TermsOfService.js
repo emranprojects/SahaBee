@@ -19,6 +19,11 @@ export default function TermsOfService() {
                         As a facility, SahaBee may try to send the timesheets to the administrative manager, periodically. However, it's the users responsibility to make sure the times are received and correct, finally.
                     </li>
                     <li>
+                        SahaBee emails the timesheets <b>from</b> the user's email address. So it looks like the user himself has sent the timesheet.
+                        It's a facility for the management-side to distinguish users more easily.<br/>
+                        Absolutely, it's explained in the message body that the email is sent automatically by SahaBee.
+                    </li>
+                    <li>
                         The terms of service may change on the future; continuing to use SahaBee (by keeping account or usage) means agreeing on such changes too.
                     </li>
                 </ul>
