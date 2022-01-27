@@ -50,17 +50,23 @@ class UserDetailSerializer(serializers.ModelSerializer):
         fields = ['id', 'personnel_code', 'manager_name', 'manager_email', 'unit', 'enable_timesheet_auto_send']
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserPublicSerializer(serializers.ModelSerializer):
     username = serializers.CharField(validators=[UniqueValidator(queryset=User.objects.all())])
-    password = serializers.CharField(write_only=True,
-                                     style={'input_type': 'password', 'placeholder': 'Password'})
-    email = serializers.EmailField()
-    recaptcha = ReCaptchaV3Field(action="register")
-    detail = UserDetailSerializer(read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'email', 'first_name', 'last_name', 'recaptcha', 'detail']
+        fields = ['id', 'username', 'first_name', 'last_name']
+
+
+class UserSerializer(UserPublicSerializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True,
+                                     style={'input_type': 'password', 'placeholder': 'Password'})
+    recaptcha = ReCaptchaV3Field(action="register")
+    detail = UserDetailSerializer(read_only=True)
+
+    class Meta(UserPublicSerializer.Meta):
+        fields = UserPublicSerializer.Meta.fields + ['password', 'email', 'recaptcha', 'detail']
 
     def validate(self, attrs):
         attrs.pop('recaptcha', None)

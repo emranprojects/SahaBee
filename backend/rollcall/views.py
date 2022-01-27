@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 from rollcall import models
 from rollcall.excel_converter import ExcelConverter
 from rollcall.models import Rollout
-from rollcall.serializers import RolloutSerializer, UserDetailSerializer, UserSerializer
+from rollcall.serializers import RolloutSerializer, UserDetailSerializer, UserSerializer, UserPublicSerializer
 
 
 class UserViewSet(viewsets.GenericViewSet):
@@ -33,6 +33,10 @@ class UserViewSet(viewsets.GenericViewSet):
             return self._update_current_user(request, *args, **kwargs)
         else:
             raise ValueError(f"Unexpected method: {request.method}")
+
+    @action(methods=['GET'], detail=False, url_path="all")
+    def all_users_endpoint(self, request, *args, **kwargs):
+        return Response(UserPublicSerializer(instance=User.objects.all(), many=True).data)
 
     @staticmethod
     def _get_current_user(request, *args, **kwargs):

@@ -195,6 +195,26 @@ class UserGetTest(APITestCase):
         self.assertEqual(resp.data['id'], self.user.id)
 
 
+class AllUsersGetTest(APITestCase):
+    ALL_USERS_API_URL = '/users/all/'
+
+    def setUp(self) -> None:
+        self.authenticated_user = create_user()
+        self.client.force_login(self.authenticated_user)
+
+    def test_can_get_all_users(self):
+        create_user(username='user1')
+        resp = self.client.get(AllUsersGetTest.ALL_USERS_API_URL)
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        self.assertEqual(len(resp.data), 2)
+
+    def test_should_not_return_detail_field_of_others(self):
+        create_user(username='user1')
+        resp = self.client.get(AllUsersGetTest.ALL_USERS_API_URL)
+        user1 = next(user for user in resp.data if user['username'] == 'user1')
+        self.assertIsNone(user1.get('detail'))
+
+
 @override_settings(EMAIL_ENABLED=True,
                    TIMESHEETS_RECEIVER_EMAIL='admin.receiver@fake.com')
 class TimeSheetPeriodicSendTest(TestCase):
