@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
 from drf_recaptcha.fields import ReCaptchaV3Field
+from persiantools.jdatetime import JalaliDateTime
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
@@ -29,7 +30,7 @@ class RolloutSerializer(serializers.ModelSerializer):
         return self.context["request"].user
 
     def _validate_time(self, time: datetime):
-        current_rollouts_count = utils.get_rollouts_of_day(time.date(), self._user).count()
+        current_rollouts_count = utils.get_rollouts_of_day(time, self._user).count()
         if current_rollouts_count >= settings.MAX_ROLLOUTS_PER_DAY:
             raise serializers.ValidationError(
                 f"Too many rollouts for this single day! (max rollouts per day: {settings.MAX_ROLLOUTS_PER_DAY})")
