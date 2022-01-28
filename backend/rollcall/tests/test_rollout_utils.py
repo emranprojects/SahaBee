@@ -45,7 +45,7 @@ class DayRolloutsTest(RolloutUtilsTest):
         self.assertEqual(len(today_rollouts), 3)
 
 
-class UserCheckinStatusTest(RolloutUtilsTest):
+class SingleUserCheckinStatusTest(RolloutUtilsTest):
     def _test_user_has_correct_checkin_status(self, rollouts_count: int, should_be_checked_in: bool):
         for _ in range(rollouts_count):
             self._create_rollout()
@@ -72,3 +72,20 @@ class UserCheckinStatusTest(RolloutUtilsTest):
 
     def test_user_with_6_rollout_should_be_reported_checked_out(self):
         self._test_user_has_correct_checkin_status(rollouts_count=6, should_be_checked_in=False)
+
+
+class AllUsersCheckinStatusesTest(RolloutUtilsTest):
+    def test_current_user_exists_in_checkin_statuses(self):
+        statuses = RolloutUtils.get_all_users_checkin_statuses()
+        self.assertEqual(len(statuses), 1)
+
+    def test_user_without_rollout_should_be_reported_checked_out(self):
+        statuses = RolloutUtils.get_all_users_checkin_statuses()
+        self.assertFalse(statuses[self.user.pk])
+
+    def test_another_user_with_1_rollout_should_be_reported_checked_in(self):
+        user2 = utils.create_user(username='user2')
+        self._create_rollout(user=user2)
+        statuses = RolloutUtils.get_all_users_checkin_statuses()
+        self.assertFalse(statuses[self.user.pk])
+        self.assertTrue(statuses[user2.pk])

@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from rollcall import models
 from rollcall.excel_converter import ExcelConverter
 from rollcall.models import Rollout
+from rollcall.rollout_utils import RolloutUtils
 from rollcall.serializers import RolloutSerializer, UserDetailSerializer, UserSerializer, UserPublicSerializer
 
 
@@ -38,6 +39,10 @@ class UserViewSet(viewsets.GenericViewSet):
     def all_users_endpoint(self, request, *args, **kwargs):
         all_users = User.objects.prefetch_related('detail').all()
         return Response(UserPublicSerializer(instance=all_users, many=True).data)
+
+    @action(methods=['GET'], detail=False, url_path="checkin-statuses")
+    def all_users_checkin_status_endpoint(self, request, *args, **kwargs):
+        return Response(RolloutUtils.get_all_users_checkin_statuses())
 
     @staticmethod
     def _get_current_user(request, *args, **kwargs):

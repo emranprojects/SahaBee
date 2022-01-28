@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 from typing import Dict, Optional
 
 from django.contrib.auth.models import User
@@ -32,10 +32,18 @@ class RolloutUtils:
         return today_rollouts.count() % 2 == 1
 
     @staticmethod
-    def are_checked_in() -> Dict[int, bool]:
+    def get_all_users_checkin_statuses() -> Dict[int, bool]:
         """
         :return: {user_id: is_checked_in} dictionary
         """
         today_rollouts = RolloutUtils.get_rollouts_of_day(timezone.now())
-        users_rollouts_count = today_rollouts.values('user_id').annotate(rollouts_count=Count('user_id')).order_by()
-        return users_rollouts_count
+        user_rollout_counts_query = today_rollouts.values('user_id').annotate(rollouts_count=Count('user_id')).order_by()
+        user_rollout_counts = {item['user_id']: item['rollouts_count'] for item in user_rollout_counts_query}
+        user_ids = User.objects.values_list('id', flat=True)
+        for user_id in user_ids:
+            if user_id not in user_rollout_counts.keys():
+                user_rollout_counts[user_id] = 0
+        is_checked_ins = {}
+        for user_id, rollouts_count in user_rollout_counts.items():
+            is_checked_ins[user_id] = rollouts_count % 2 == 1
+        return is_checked_ins
