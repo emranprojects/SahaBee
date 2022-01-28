@@ -8,9 +8,10 @@ from persiantools.jdatetime import JalaliDateTime
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-from rollcall import utils
 from rollcall.models import Rollout, UserDetail
 from django.contrib.auth.models import User
+
+from rollcall.rollout_utils import RolloutUtils
 
 
 class RolloutSerializer(serializers.ModelSerializer):
@@ -30,7 +31,7 @@ class RolloutSerializer(serializers.ModelSerializer):
         return self.context["request"].user
 
     def _validate_time(self, time: datetime):
-        current_rollouts_count = utils.get_rollouts_of_day(time, self._user).count()
+        current_rollouts_count = RolloutUtils.get_rollouts_of_day(time, self._user).count()
         if current_rollouts_count >= settings.MAX_ROLLOUTS_PER_DAY:
             raise serializers.ValidationError(
                 f"Too many rollouts for this single day! (max rollouts per day: {settings.MAX_ROLLOUTS_PER_DAY})")
