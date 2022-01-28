@@ -77,7 +77,7 @@
       become: yes
       shell: systemctl daemon-reload && service docker restart && sleep 3
     - name: 'Start socks proxy'
-      shell: nohup sshpass -p {{ proxy_server_pass }} ssh -o StrictHostKeyChecking=no -D 0.0.0.0:9000 -N {{ proxy_server_user }}@{{ proxy_server_host }} & echo $! > /tmp/proxy.pid
+      shell: nohup sshpass -p {{ proxy_server_pass }} ssh -o StrictHostKeyChecking=no -D 0.0.0.0:9000 -N {{ proxy_server_user }}@{{ proxy_server_host }} &
     - name: 'Pull images'
       docker_compose:
         project_src: '{{ dest_root_dir }}'
@@ -92,9 +92,10 @@
     - name: 'Stop socks proxy'
       become: yes
       shell: >
-        pid=$(cat /tmp/proxy.pid) &&
+        pid=$(netstat -ptl | grep 0.0.0.0:9000 | tr -s ' ' | cut -d ' ' -f 7 | cut -d / -f 1) &&
         echo "Socks proxy pid: $pid" &&
-        kill $pid
+        [ -z "$pid" ] ||
+        kill -9 $pid
     - name: 'Restart Docker'
       become: yes
       shell: systemctl daemon-reload && service docker restart && sleep 3
