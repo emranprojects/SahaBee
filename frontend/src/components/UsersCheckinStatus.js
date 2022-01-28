@@ -36,7 +36,7 @@ export default function UsersCheckinStatus() {
     let userComponents = []
     for (let user of users.sort((u1, u2) => isCheckedIns[u1.id] ? -1 : 1)) {
         userComponents.push(<UserStatus key={user.id} username={user.username}
-                                        name={user.first_name + user.last_name}
+                                        name={`${user.first_name} ${user.last_name}`}
                                         is_checked_in={isCheckedIns[user.id]}/>)
     }
 
