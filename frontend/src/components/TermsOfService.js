@@ -13,7 +13,7 @@ export default function TermsOfService() {
                         SahaBee is a free and open-source facility to help people manage their work time-sheets and hence is not responsible for any data-loss, data-corruption, unavailability, leakage, etc. while trying it's best to avoid such failures.
                     </li>
                     <li>
-                        SahaBee can use the statistical data of the users in any way.
+                        SahaBee can use public data of the users in any way. Determining what data has public nature is on SahaBee.
                     </li>
                     <li>
                         As a facility, SahaBee may try to send the timesheets to the administrative manager, periodically. However, it's the users responsibility to make sure the times are received and correct, finally.

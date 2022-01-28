@@ -11,6 +11,7 @@ import React, {useState} from "react";
 import utils from "../utils";
 import UserProfile from "./UserProfile";
 import RolloutEditPage from "./RolloutEditPage";
+import UsersCheckinStatus from "./UsersCheckinStatus";
 
 export default function Router() {
 
@@ -38,6 +39,9 @@ export default function Router() {
                     </Route>
                     <Route path={appPaths.addRollout}>
                         <RolloutEditPage/>
+                    </Route>
+                    <Route path={appPaths.usersCheckinStatus}>
+                        <UsersCheckinStatus/>
                     </Route>
                     <Route path="/">
                         <LandingPage/>

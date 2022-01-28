@@ -34,6 +34,9 @@ export default function Navbar() {
                                     <a href={appPaths.userProfile} className="btn btn-dark">Profile</a>
                                 </Nav.Item>
                                 <Nav.Item>
+                                    <a href={appPaths.usersCheckinStatus} className="btn btn-dark">Coworkers</a>
+                                </Nav.Item>
+                                <Nav.Item>
                                     <a href="/" className="btn btn-dark" onClick={() => logout(loginContext)}>
                                         <abbr title="Logout"><FontAwesomeIcon icon={faSignOutAlt}/></abbr>
                                     </a>

@@ -11,6 +11,12 @@ class ApiUrls {
     get selfUser() {
         return `${this._users}self/`
     }
+    get allUsers() {
+        return `${this._users}all/`
+    }
+    get usersCheckinStatuses() {
+        return `${this._users}checkin-statuses/`
+    }
     get register() {
         return `${this._users}register/`
     }

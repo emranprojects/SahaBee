@@ -17,6 +17,9 @@ class AppPaths {
     get addRollout(){
         return "/add-rollout"
     }
+    get usersCheckinStatus(){
+        return "/users-checkin-status"
+    }
 }
 
 const appPaths = new AppPaths()
