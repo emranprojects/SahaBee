@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime
 
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
@@ -7,6 +7,7 @@ from drf_recaptcha.fields import ReCaptchaV3Field
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
+from rollcall import utils
 from rollcall.models import Rollout, UserDetail
 from django.contrib.auth.models import User
 
@@ -27,14 +28,8 @@ class RolloutSerializer(serializers.ModelSerializer):
     def _user(self):
         return self.context["request"].user
 
-    def _validate_time(self, time):
-        day_first_time = time.replace(hour=0, minute=0, second=0, microsecond=0)
-        day_last_time = day_first_time + timedelta(days=1)
-        current_rollouts_count = Rollout.objects \
-            .filter(user=self._user) \
-            .filter(time__gte=day_first_time) \
-            .filter(time__lt=day_last_time) \
-            .count()
+    def _validate_time(self, time: datetime):
+        current_rollouts_count = utils.get_rollouts_of_day(time.date(), self._user).count()
         if current_rollouts_count >= settings.MAX_ROLLOUTS_PER_DAY:
             raise serializers.ValidationError(
                 f"Too many rollouts for this single day! (max rollouts per day: {settings.MAX_ROLLOUTS_PER_DAY})")
