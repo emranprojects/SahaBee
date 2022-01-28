@@ -36,7 +36,8 @@ class UserViewSet(viewsets.GenericViewSet):
 
     @action(methods=['GET'], detail=False, url_path="all")
     def all_users_endpoint(self, request, *args, **kwargs):
-        return Response(UserPublicSerializer(instance=User.objects.all(), many=True).data)
+        all_users = User.objects.prefetch_related('detail').all()
+        return Response(UserPublicSerializer(instance=all_users, many=True).data)
 
     @staticmethod
     def _get_current_user(request, *args, **kwargs):
