@@ -14,7 +14,10 @@ from sahabee.celery import app
 
 
 @app.task(name=constants.TASK_SEND_ACTIVE_TIMESHEETS)
-def send_active_timesheets():
+def send_active_timesheets_if_today_is_appropriate_day_of_month():
+    if not _is_today_1st_11th_or_21st_day_of_jalali_month():
+        logging.info("Sending active timesheets ignored, since today is not an appropriate date.")
+        return
     if not settings.EMAIL_ENABLED:
         logging.info("Sending active timesheets ignored, since email is not enabled.")
         return
@@ -30,6 +33,11 @@ def send_active_timesheets():
     for user in users:
         logging.debug(f"Going to send the timesheet of user: {user.username}")
         _send_user_timesheet(user)
+
+
+def _is_today_1st_11th_or_21st_day_of_jalali_month() -> bool:
+    current_day = JalaliDateTime(timezone.now()).day
+    return current_day in [1, 11, 21]
 
 
 def _send_user_timesheet(user):
