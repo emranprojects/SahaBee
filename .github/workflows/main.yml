@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
 env:
   API_IMAGE_NAME: "registry.gitlab.com/emran.bm/sahabee/api"
   FRONTEND_IMAGE_NAME: "registry.gitlab.com/emran.bm/sahabee/frontend"
