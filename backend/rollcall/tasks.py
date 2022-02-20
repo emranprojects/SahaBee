@@ -53,6 +53,13 @@ def _send_user_timesheet(user):
         cc_list.append(user.email)
     if user.detail.manager_email:
         cc_list.append(user.detail.manager_email)
+
+    if j_now.day == 1:
+        # The timesheet of the previous month should be sent in the first day of each month.
+        report_jdatetime = j_now - timedelta(days=1)
+    else:
+        report_jdatetime = j_now
+    timesheet_file = ExcelConverter.generate_excel_file(user, report_jdatetime.year, report_jdatetime.month).getvalue()
     body_text = f'''Hello, Here is the timesheet of a user at SahaBee. This email is sent automatically by SahaBee, 
 since the user was actively rollcalling at SahaBee during the last few days. 
 
@@ -75,7 +82,7 @@ https://sahabee.ir
                            to=[receiver_email],
                            cc=cc_list,
                            attachments=[(f'timesheet-{user.detail.personnel_code}.xlsx',
-                                         ExcelConverter.generate_excel_file(user, j_now.year, j_now.month).getvalue(),
+                                         timesheet_file,
                                          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')])
     message.send()
     logging.info(f"Successfully emailed timesheet of '{user.username}' to '{settings.TIMESHEETS_RECEIVER_EMAIL}'.")
