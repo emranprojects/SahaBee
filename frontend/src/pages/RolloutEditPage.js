@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import EditCard from "./EditCard";
+import EditCard from "../components/EditCard";
 import moment from "jalali-moment";
 import utils, {DateFormat} from "../utils";
 import apiURLs from "../apiURLs";

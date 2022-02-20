@@ -3,10 +3,10 @@ import {Redirect} from "react-router-dom"
 import utils from "../utils";
 import appPaths from "../appPaths";
 import {Container, Row} from "react-bootstrap";
-import RolloutsList from "./RoulloutsList";
-import RolloutCard from "./RolloutCard";
+import RolloutsList from "../components/RoulloutsList";
+import RolloutCard from "../components/RolloutCard";
 import {useState} from "react";
-import TimesheetDownloadCard from "./TimesheetDownloadCard";
+import TimesheetDownloadCard from "../components/TimesheetDownloadCard";
 
 export default function Dashboard() {
     const [lastAddedRolloutId, setLastAddedRolloutId] = useState()

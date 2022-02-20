@@ -6,7 +6,7 @@ import {ToastContainer} from 'react-toastify';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 
-import Router from "./components/Router";
+import Router from "./Router";
 
 
 ReactDOM.render(

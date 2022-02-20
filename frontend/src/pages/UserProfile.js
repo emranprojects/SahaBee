@@ -5,7 +5,7 @@ import appPaths from "../appPaths";
 import {Form, FormCheck} from "react-bootstrap";
 import apiURLs from "../apiURLs";
 import {toast} from "react-toastify";
-import EditCard from "./EditCard";
+import EditCard from "../components/EditCard";
 import FormCheckInput from "react-bootstrap/FormCheckInput";
 import FormCheckLabel from "react-bootstrap/FormCheckLabel";
 

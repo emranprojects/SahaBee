@@ -1,5 +1,5 @@
 import {Button, Card, Container, Form, Row} from "react-bootstrap";
-import {HCenter} from "./HCenter";
+import {HCenter} from "../components/HCenter";
 import {useState} from "react";
 import appPaths from "../appPaths";
 import {

@@ -5,13 +5,13 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import {HCenter} from "./HCenter";
+import {HCenter} from "../components/HCenter";
 import apiURLs from "../apiURLs"
 import {Redirect} from "react-router-dom";
 import utils from "../utils";
 import appPaths from "../appPaths";
 import {toast} from 'react-toastify';
-import LoginContext from "./LoginContext";
+import LoginContext from "../components/LoginContext";
 
 export default function Login() {
     const [username, setUsername] = useState("")

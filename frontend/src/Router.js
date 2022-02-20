@@ -1,17 +1,17 @@
 import {BrowserRouter, Route, Switch} from "react-router-dom";
-import appPaths from "../appPaths";
-import Navbar from "./Navbar";
-import Login from "./Login";
-import Register from "./Register";
-import Dashboard from "./Dashboard";
-import TermsOfService from "./TermsOfService";
-import LandingPage from "./LandingPage";
-import LoginContext from "./LoginContext";
+import appPaths from "./appPaths";
+import Navbar from "./components/Navbar";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import TermsOfService from "./pages/TermsOfService";
+import LandingPage from "./pages/LandingPage";
+import LoginContext from "./components/LoginContext";
 import React, {useState} from "react";
-import utils from "../utils";
-import UserProfile from "./UserProfile";
-import RolloutEditPage from "./RolloutEditPage";
-import UsersCheckinStatus from "./UsersCheckinStatus";
+import utils from "./utils";
+import UserProfile from "./pages/UserProfile";
+import RolloutEditPage from "./pages/RolloutEditPage";
+import UsersCheckinStatus from "./pages/UsersCheckinStatus";
 
 export default function Router() {
 
