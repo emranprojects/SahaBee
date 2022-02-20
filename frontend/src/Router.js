@@ -12,6 +12,7 @@ import utils from "./utils";
 import UserProfile from "./pages/UserProfile";
 import RolloutEditPage from "./pages/RolloutEditPage";
 import UsersCheckinStatus from "./pages/UsersCheckinStatus";
+import OAuthLogin from "./pages/OAuthLogin";
 
 export default function Router() {
 
@@ -24,6 +25,9 @@ export default function Router() {
                 <Switch>
                     <Route path={appPaths.login}>
                         <Login/>
+                    </Route>
+                    <Route path={appPaths.oAuthLogin}>
+                        <OAuthLogin/>
                     </Route>
                     <Route path={appPaths.register}>
                         <Register/>

@@ -2,6 +2,9 @@ class AppPaths {
     get login() {
         return "/login"
     }
+    get oAuthLogin() {
+        return "/oauth-login"
+    }
     get register() {
         return "/register"
     }
