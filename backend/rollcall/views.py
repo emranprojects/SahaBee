@@ -1,12 +1,19 @@
+import random
+import string
+
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.files import File
 from django.http import HttpResponse
 from rest_framework import permissions, authentication, filters
 from rest_framework import viewsets
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN, HTTP_200_OK
+from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN, HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
 
 from rollcall import models
 from rollcall.excel_converter import ExcelConverter
@@ -18,6 +25,29 @@ from rollcall.serializers import RolloutSerializer, UserDetailSerializer, UserSe
 class UserViewSet(viewsets.GenericViewSet):
     queryset = User.objects.all()
     permission_classes = [permissions.IsAuthenticated]
+
+    @action(methods=['POST'], detail=False, url_path="google-user-login", permission_classes=[])
+    def google_user_login(self, request, *args, **kwargs):
+        google_user_id_token = request.data.get('google_user_id_token')
+        try:
+            google_user_info = id_token.verify_oauth2_token(google_user_id_token,
+                                                            google_requests.Request(),
+                                                            settings.GOOGLE_CLIENT_ID)
+            if google_user_info['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+                raise ValueError('Wrong issuer!')
+            if not google_user_info['email_verified']:
+                raise ValueError('Email not verified!')
+            email = google_user_info['email']
+            user, newly_created = User.objects.get_or_create(email=email, defaults={
+                'first_name': google_user_info.get('given_name'),
+                'last_name': google_user_info.get('family_name'),
+                'username': 'google-user-' + ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+            })
+            token = Token.objects.get(user=user)
+            return Response({'username': user.username,
+                             'token': token.key})
+        except ValueError as e:
+            return Response({'error': str(e)}, status=HTTP_400_BAD_REQUEST)
 
     @action(methods=['POST'], detail=False, url_path="register", permission_classes=[])
     def register(self, request, *args, **kwargs):

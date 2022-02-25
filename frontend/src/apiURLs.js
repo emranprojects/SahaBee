@@ -8,6 +8,9 @@ class ApiUrls {
     get _users() {
         return `${this.BASE_URL}/users/`
     }
+    get googleUserLogin() {
+        return `${this._users}google-user-login/`
+    }
     get selfUser() {
         return `${this._users}self/`
     }

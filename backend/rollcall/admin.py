@@ -10,5 +10,5 @@ class RolloutAdmin(admin.ModelAdmin):
 
 @admin.register(UserDetail)
 class UserDetailAdmin(admin.ModelAdmin):
-    fields = ('user', 'personnel_code', 'unit', 'manager_name', 'manager_email', 'enable_timesheet_auto_send')
+    fields = ('user', 'work_email', 'personnel_code', 'unit', 'manager_name', 'manager_email', 'enable_timesheet_auto_send')
     list_display = ('user', 'personnel_code', 'enable_timesheet_auto_send')

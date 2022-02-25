@@ -9,3 +9,6 @@ drf-recaptcha==2.0.4
 drf-spectacular==0.17.2
 celery==5.2.2
 django-celery-beat==2.2.1
+google-auth==2.6.0
+requests==2.27.1
+django-test-migrations==1.2.0

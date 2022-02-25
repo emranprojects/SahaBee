@@ -12,6 +12,7 @@ import utils from "../utils";
 import appPaths from "../appPaths";
 import {toast} from 'react-toastify';
 import LoginContext from "../components/LoginContext";
+import OAuthLoginBtn from "../components/OAuthLoginBtn";
 
 export default function Login() {
     const [username, setUsername] = useState("")
@@ -69,6 +70,13 @@ export default function Login() {
                                     </Form.Group>
                                     <Button type="submit" variant="primary">Login</Button>
                                     <Row className="mb-3"/>
+                                    {window.AppConfig.GOOGLE_OAUTH_ENABLED ?
+                                        <>
+                                            OR
+                                            <Row className="mb-3"/>
+                                            <OAuthLoginBtn onLoggedIn={() => setLoggedIn(true)}/>
+                                            <Row className="mb-3"/>
+                                        </> : ""}
                                     <Form.Label>New to SahaBee? <a href={appPaths.register}>create an
                                         account</a>.</Form.Label>
                                 </Form>

@@ -13,7 +13,7 @@ export default function UserProfile() {
     const [userId, setUserId] = useState()
     const [userDetailId, setUserDetailId] = useState()
     const [username, setUsername] = useState("")
-    const [email, setEmail] = useState("")
+    const [workEmail, setWorkEmail] = useState("")
     const [firstname, setFirstname] = useState("")
     const [lastname, setLastname] = useState("")
     const [personnelCode, setPersonnelCode] = useState("")
@@ -41,9 +41,9 @@ export default function UserProfile() {
     function inflateStates(user) {
         setUserId(user.id)
         setUsername(user.username)
-        setEmail(user.email)
         setFirstname(user.first_name)
         setLastname(user.last_name)
+        setWorkEmail(user.detail.work_email)
         setUserDetailId(user.detail.id)
         setPersonnelCode(user.detail.personnel_code)
         setUnit(user.detail.unit)
@@ -56,10 +56,10 @@ export default function UserProfile() {
         return {
             id: userId,
             username,
-            email,
             first_name: firstname,
             last_name: lastname,
             detail: {
+                work_email: workEmail,
                 id: userDetailId,
                 personnel_code: personnelCode,
                 unit,
@@ -82,7 +82,7 @@ export default function UserProfile() {
     }
 
     const footerHint = <span className="text-muted">
-        * It's highly recommended to provide work emails for the corresponding fields. Email addresses are used to inform the communications between SahaBee and the company (mainly by CCing them).<br/>
+        * It's highly recommended to provide work-domain emails for the corresponding fields. Email addresses are used to inform the communications between SahaBee and the company (mainly by CCing them).<br/>
         ** Active timesheets are the ones that have been filled recently.
     </span>
 
@@ -94,9 +94,9 @@ export default function UserProfile() {
                 <EditCard.Input title="@"
                                 value={username}
                                 setValueFunc={setUsername}/>
-                <EditCard.Input title="Email*"
-                                value={email}
-                                setValueFunc={setEmail}/>
+                <EditCard.Input title="Work Email*"
+                                value={workEmail}
+                                setValueFunc={setWorkEmail}/>
                 <EditCard.Input title="Firstname"
                                 value={firstname}
                                 setValueFunc={setFirstname}/>

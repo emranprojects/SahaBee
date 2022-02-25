@@ -44,7 +44,8 @@ class RolloutSerializer(serializers.ModelSerializer):
 class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserDetail
-        fields = ['id', 'personnel_code', 'manager_name', 'manager_email', 'unit', 'enable_timesheet_auto_send']
+        fields = ['id', 'work_email', 'personnel_code', 'manager_name', 'manager_email', 'unit',
+                  'enable_timesheet_auto_send']
 
 
 class UserPublicSerializer(serializers.ModelSerializer):

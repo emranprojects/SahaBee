@@ -19,6 +19,7 @@ class UserDetail(models.Model):
     user = models.OneToOneField(User,
                                 on_delete=models.CASCADE,
                                 related_name='detail')
+    work_email = models.EmailField(unique=False, null=False, blank=True, default='')
     personnel_code = models.CharField(max_length=10)
     manager_name = models.CharField(max_length=NAME_MAX_LENGTH)
     manager_email = models.EmailField(unique=False, null=False, blank=True, default='')
