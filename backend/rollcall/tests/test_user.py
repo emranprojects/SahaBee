@@ -1,9 +1,9 @@
 from django.contrib.auth.models import User
 from django.test import TestCase
-from rest_framework.status import HTTP_200_OK
+from rest_framework.status import HTTP_200_OK, HTTP_401_UNAUTHORIZED
 from rest_framework.test import APITestCase
 
-from rollcall.models import UserDetail
+from rollcall.models import UserDetail, Rollout
 from rollcall.tests import utils
 
 SELF_USER_API_URL = '/users/self/'
@@ -75,7 +75,6 @@ class UserGetAPITest(APITestCase):
 
 
 class AllUsersGetAPITest(APITestCase):
-
     def setUp(self) -> None:
         self.authenticated_user = utils.create_user()
         self.client.force_login(self.authenticated_user)
@@ -91,3 +90,30 @@ class AllUsersGetAPITest(APITestCase):
         resp = self.client.get(ALL_USERS_API_URL)
         user1 = next(user for user in resp.data if user['username'] == 'user1')
         self.assertIsNone(user1.get('detail'))
+
+
+class UserDeleteAPITest(APITestCase):
+    def setUp(self) -> None:
+        self.user = utils.create_user()
+        self.client.force_login(self.user)
+
+    def test_delete_returns_401_when_not_logged_in(self):
+        self.client.logout()
+        resp = self.client.delete(SELF_USER_API_URL)
+        self.assertEqual(resp.status_code, HTTP_401_UNAUTHORIZED)
+
+    def test_can_delete_self(self):
+        self.assertTrue(User.objects.filter(id=self.user.pk).exists())
+        resp = self.client.delete(SELF_USER_API_URL)
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        self.assertFalse(User.objects.filter(id=self.user.pk).exists())
+
+    def test_user_is_not_authenticated_anymore_after_getting_deleted(self):
+        resp = self.client.delete(SELF_USER_API_URL)
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        resp = self.client.get(SELF_USER_API_URL)
+        self.assertEqual(resp.status_code, HTTP_401_UNAUTHORIZED)
+
+    def test_can_delete_self_when_having_rollouts(self):
+        rollout = Rollout.objects.create(user=self.user)
+        self.test_can_delete_self()

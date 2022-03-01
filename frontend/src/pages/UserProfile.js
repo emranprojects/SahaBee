@@ -2,12 +2,12 @@ import React, {useState} from "react";
 import utils from "../utils";
 import {Redirect} from "react-router-dom";
 import appPaths from "../appPaths";
-import {Form, FormCheck} from "react-bootstrap";
+import {Button, Container, Form, FormControl, InputGroup, Row} from "react-bootstrap";
 import apiURLs from "../apiURLs";
 import {toast} from "react-toastify";
 import EditCard from "../components/EditCard";
-import FormCheckInput from "react-bootstrap/FormCheckInput";
-import FormCheckLabel from "react-bootstrap/FormCheckLabel";
+import TitledCard from "../components/TitledCard";
+import Modal from 'react-modal';
 
 export default function UserProfile() {
     const [userId, setUserId] = useState()
@@ -24,10 +24,11 @@ export default function UserProfile() {
     const [authorized, setAuthorized] = useState(true)
     const [enableTimesheetAutoSend, setEnableTimesheetAutoSend] = useState(false)
 
+    Modal.setAppElement('#root')
+    utils.useEffectAsync(fetchUser, [])
+
     if (!utils.isLoggedIn() || !authorized)
         return <Redirect to={appPaths.login}/>
-
-    utils.useEffectAsync(fetchUser, [])
 
     async function fetchUser() {
         const resp = await utils.get(apiURLs.selfUser, () => setAuthorized(false))
@@ -124,6 +125,78 @@ export default function UserProfile() {
                     />
                 </EditCard.InputCell>
             </EditCard>
+            <DangerZone username={username} onNotAuthorized={() => setAuthorized(false)}/>
         </>
     )
+}
+
+function DangerZone({username, onNotAuthorized}) {
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    const [usernameInputValue, setUsernameInputValue] = useState("")
+
+    function closeModal() {
+        setIsDeleteModalOpen(false)
+        setUsernameInputValue("")
+    }
+
+    async function deleteAccount() {
+        const resp = await utils.delete(apiURLs.selfUser,
+            () => {
+                toast.error("Not logged in! Please login again!")
+                onNotAuthorized()
+            })
+        if (resp.status === 200) {
+            toast.success("Account deleted successfully!")
+            onNotAuthorized()
+        } else
+            toast.error(`Unexpected status code: ${resp.status}`)
+    }
+
+    return <Container>
+        <Row className="mb-5"/>
+        <TitledCard title="Danger Zone">
+                    <span className="m-3">
+                        To delete your account and its data click on the below button.<br/>
+                        Note that this action can not be undone!
+                    </span>
+            <Button className="btn-danger" onClick={() => setIsDeleteModalOpen(true)}>Delete Account</Button>
+            <Modal
+                isOpen={isDeleteModalOpen}
+                onRequestClose={closeModal}
+                contentLabel="Delete Account"
+                style={{
+                    content: {
+                        top: '50%',
+                        left: '50%',
+                        right: 'auto',
+                        bottom: 'auto',
+                        maxWidth: '400pt',
+                        marginRight: '-50%',
+                        transform: 'translate(-50%, -50%)',
+                    },
+                }}
+            >
+                <b>This action can not be undone!</b><br/>
+                If you're sure about deleting the account and all its data,
+                please enter your username and press delete button.
+                <InputGroup>
+                    <InputGroup.Prepend>
+                        <InputGroup.Text>
+                            Your Username
+                        </InputGroup.Text>
+                    </InputGroup.Prepend>
+                    <FormControl
+                        value={usernameInputValue}
+                        onChange={e => setUsernameInputValue(e.target.value)}/>
+                </InputGroup>
+                <Button className="w-50 mt-3 btn-secondary"
+                        onClick={closeModal}>Cancel</Button>
+                <Button className="w-25 btn-danger mt-3 float-right"
+                        disabled={usernameInputValue !== username}
+                        onClick={deleteAccount}>
+                    Delete
+                </Button>
+            </Modal>
+        </TitledCard>
+    </Container>
 }

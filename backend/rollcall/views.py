@@ -56,12 +56,14 @@ class UserViewSet(viewsets.GenericViewSet):
         serializer.save()
         return Response(serializer.data, status=HTTP_201_CREATED)
 
-    @action(methods=['GET', 'PUT'], detail=False, url_path="self")
+    @action(methods=['GET', 'PUT', 'DELETE'], detail=False, url_path="self")
     def self_user_endpoint(self, request, *args, **kwargs):
         if request.method == "GET":
             return self._get_current_user(request, *args, **kwargs)
         elif request.method == "PUT":
             return self._update_current_user(request, *args, **kwargs)
+        elif request.method == "DELETE":
+            return self._delete_current_user(request, *args, **kwargs)
         else:
             raise ValueError(f"Unexpected method: {request.method}")
 
@@ -89,6 +91,11 @@ class UserViewSet(viewsets.GenericViewSet):
         user_detail_serializer.is_valid(raise_exception=True)
         user_serializer.save()
         user_detail_serializer.save()
+        return Response(status=HTTP_200_OK)
+
+    @staticmethod
+    def _delete_current_user(request, *args, **kwargs):
+        request.user.delete()
         return Response(status=HTTP_200_OK)
 
 
