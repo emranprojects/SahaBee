@@ -40,7 +40,7 @@ class ExcelConverter:
     def generate_excel_file(user: User, j_year: int, j_month: int) -> BytesIO:
         date_from = JalaliDateTime(year=j_year, month=j_month, day=1).to_gregorian()
         next_j_month = j_month % 12 + 1
-        date_to = JalaliDateTime(year=j_year, month=next_j_month, day=1).to_gregorian()
+        date_to = JalaliDateTime(year=j_year + (1 if next_j_month == 1 else 0), month=next_j_month, day=1).to_gregorian()
         rollouts = Rollout.objects \
             .filter(user=user) \
             .filter(time__gte=date_from,
