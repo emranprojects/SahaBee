@@ -10,7 +10,7 @@ jobs:
   restore-production-backup:
     runs-on: ubuntu-20.04
     container:
-      image: spy86/ansible:latest
+      image: willhallonline/ansible:2.9-alpine-3.13
     steps:
       - uses: actions/checkout@v2
       - name: Download backup
