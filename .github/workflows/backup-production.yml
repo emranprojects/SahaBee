@@ -11,13 +11,12 @@ jobs:
   backup-production:
     runs-on: ubuntu-20.04
     container:
-      image: spy86/ansible:latest
+      image: willhallonline/ansible:2.9-alpine-3.13
     steps:
       - uses: actions/checkout@v2
       - name: Backup
         working-directory: deployment/ansible/
         run: ansible-playbook backup.yml -i inventory.yml --limit production
-            -vvv
             --extra-vars "
             ansible_host=${{ secrets.SAHABEE_SERVER_IP }}
             ansible_user=${{ secrets.SAHABEE_SERVER_USER }}

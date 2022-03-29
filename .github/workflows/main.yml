@@ -227,7 +227,7 @@ jobs:
     needs:
       - release
     container:
-      image: spy86/ansible:latest
+      image: willhallonline/ansible:2.9-alpine-3.13
     environment:
       name: production
       url: https://sahabee.ir
