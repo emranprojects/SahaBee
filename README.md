@@ -14,3 +14,4 @@ Contributions of any kind, especially pull requests, are appreciated.
 Thanks to those who helped SahaBee through opening PRs, issues and discussions, or giving effective feedbacks; specially:
 - Ali Nosrati (@littleali)
 - Mehran Ghajari
+- Alireza Tabarzadi (@alireza73uk)
