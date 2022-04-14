@@ -72,6 +72,13 @@
     # Ansible 'service' module didn't work after 1 week try!
     - name: Restart docker manually!
       shell: "service docker start"
+    - name: Add docker system prune cronjob
+      cron:
+        name: docker GC
+        minute: 0
+        hour: 2
+        weekday: 0
+        job: "/usr/bin/docker system prune -a"
     - name: Post check
       command: "{{ item }}"
       loop:
