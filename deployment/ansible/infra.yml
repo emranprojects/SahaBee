@@ -40,6 +40,7 @@
         - docker-compose
         - python3-dev
         - sshpass
+        - cron
     - name: Set Shecan
       shell: "echo '### Shecan DNS ###\nnameserver {{ shecan_dns_1 }}\nnameserver {{ shecan_dns_2 }}' > /etc/resolv.conf"
     - name: Add Docker GPG apt Key
