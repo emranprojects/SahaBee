@@ -10,7 +10,7 @@ export default function TermsOfService() {
                 By registering at and continuing to use SahaBee service, you agree that:<br/>
                 <ul>
                     <li>
-                        SahaBee is a free and open-source facility to help people manage their work time-sheets and hence is not responsible for any data-loss, data-corruption, unavailability, leakage, etc. while trying it's best to avoid such failures.
+                        SahaBee is a free and open-source facility to help people manage their work time-sheets and hence is not responsible for any data-loss, data-corruption, unavailability, leakage, etc. while trying its best to avoid such failures.
                     </li>
                     <li>
                         SahaBee can use public data of the users in any way. Determining what data has public nature is on SahaBee.
