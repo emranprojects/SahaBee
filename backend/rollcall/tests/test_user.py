@@ -115,5 +115,5 @@ class UserDeleteAPITest(APITestCase):
         self.assertEqual(resp.status_code, HTTP_401_UNAUTHORIZED)
 
     def test_can_delete_self_when_having_rollouts(self):
-        rollout = Rollout.objects.create(user=self.user)
+        Rollout.objects.create(user=self.user)
         self.test_can_delete_self()
