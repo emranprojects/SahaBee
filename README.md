@@ -8,10 +8,6 @@ A simple API for rollcalling during the remote-work.
 We are currently remote working because of the corona virus. These days it's a regular task for us to report our work-times to the company as a standard excel sheet.  
 I found it boring to fill a timesheet excel every time; so decided to develop a small (yet powerful) API to just call it and get the reports automatically.
 ## Contribution
-Contributions of any kind, especially pull requests, are appreciated.
-
-### Appreciations
-Thanks to those who helped SahaBee through opening PRs, issues and discussions, or giving effective feedbacks; specially:
-- Ali Nosrati (@littleali)
-- Mehran Ghajari
-- Alireza Tabarzadi (@alireza73uk)
+Contributions of any kind, especially pull requests, are appreciated. Feel free to make [Pull Requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests) to this repo.  
+Also, you can take look at [open issues](https://github.com/emranbm/SahaBee/issues); some of them are tagged as `good first issue`, which denotes the issue is a good fit for the first contributions, with much less complications or need of domain knowledge.  
+For more details, see SahaBee's [contributing guide](https://github.com/emranbm/SahaBee/blob/master/CONTRIBUTING.md).  
