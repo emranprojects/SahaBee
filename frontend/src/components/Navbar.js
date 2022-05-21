@@ -48,7 +48,7 @@ export default function Navbar() {
                         }
                         <Nav.Item className="ml-auto">
                             <abbr title="GitHub repo">
-                            <a href="https://github.com/emranbm/SahaBee" target="_blank"
+                            <a href="https://github.com/emranprojects/SahaBee" target="_blank"
                                className="btn btn-dark"><img src={githubIcon}/></a>
                             </abbr>
                         </Nav.Item>
