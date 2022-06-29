@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 env:
   API_IMAGE_NAME: "registry.gitlab.com/emran.bm/sahabee/api"
   FRONTEND_IMAGE_NAME: "registry.gitlab.com/emran.bm/sahabee/frontend"
