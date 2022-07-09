@@ -42,15 +42,10 @@ def _is_today_1st_11th_or_21st_day_of_jalali_month() -> bool:
 
 def _send_user_timesheet(user):
     j_now = JalaliDateTime.now()
-    receiver_email = settings.TIMESHEETS_RECEIVER_EMAIL
-    if not receiver_email:
-        raise ValueError("No receiver email address.")
     if not user.detail.work_email:
         logging.info(f"User ({user.username}) work email not found. Emailing the corresponding timesheet ignored.")
         return
-    cc_list = [user.detail.work_email]
-    if user.detail.manager_email:
-        cc_list.append(user.detail.manager_email)
+    receiver_email = user.detail.work_email
 
     if j_now.day == 1:
         # The timesheet of the previous month should be sent in the first day of each month.
@@ -58,8 +53,8 @@ def _send_user_timesheet(user):
     else:
         report_jdatetime = j_now
     timesheet_file = ExcelConverter.generate_excel_file(user, report_jdatetime.year, report_jdatetime.month).getvalue()
-    body_text = f'''Hello, Here is the timesheet of a user at SahaBee. This email is sent automatically by SahaBee, 
-since the user was actively rollcalling at SahaBee during the last few days. 
+    body_text = f'''Hello, Here is the timesheet of you at SahaBee. As soon as possible, forward this email to the Edari
+    This email is sent automatically by SahaBee, since the user was actively rollcalling at SahaBee during the last few days.
 
 User Information:
 First name: {user.first_name}
@@ -76,9 +71,8 @@ https://sahabee.ir
 '''
     message = EmailMessage('SahaBee User Timesheet',
                            body_text,
-                           from_email=user.detail.work_email,
-                           to=[receiver_email],
-                           cc=cc_list,
+                           from_email='sahabee@mymail.sahab.ir',
+                           to=receiver_email,
                            attachments=[(f'timesheet-{user.detail.personnel_code}.xlsx',
                                          timesheet_file,
                                          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')])
