@@ -53,8 +53,8 @@ def _send_user_timesheet(user):
     else:
         report_jdatetime = j_now
     timesheet_file = ExcelConverter.generate_excel_file(user, report_jdatetime.year, report_jdatetime.month).getvalue()
-    body_text = f'''Hello, Here is the timesheet of you at SahaBee. As soon as possible, forward this email to the Edari
-    This email is sent automatically by SahaBee, since the user was actively rollcalling at SahaBee during the last few days.
+    body_text = f'''Hello, Here is the timesheet of you at SahaBee. As soon as possible, forward this email to the Office
+    This email is sent automatically, since you have actively roll-calling at SahaBee during the last few days.
 
 User Information:
 First name: {user.first_name}
@@ -71,8 +71,7 @@ https://sahabee.ir
 '''
     message = EmailMessage('SahaBee User Timesheet',
                            body_text,
-                           from_email='sahabee@mymail.sahab.ir',
-                           to=receiver_email,
+                           to=[receiver_email],
                            attachments=[(f'timesheet-{user.detail.personnel_code}.xlsx',
                                          timesheet_file,
                                          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')])
