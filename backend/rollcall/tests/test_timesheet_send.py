@@ -41,10 +41,6 @@ class TimeSheetPeriodicSendTest(TestCase):
         tasks.send_active_timesheets_if_today_is_appropriate_day_of_month()
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_email_is_sent_from_users_work_email_address(self):
-        tasks.send_active_timesheets_if_today_is_appropriate_day_of_month()
-        self.assertEqual(mail.outbox[0].from_email, self.user.detail.work_email)
-
     def test_email_should_not_send_when_user_has_no_work_email(self):
         self.user.detail.work_email = ''
         self.user.detail.save()
