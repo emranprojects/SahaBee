@@ -1,6 +1,7 @@
 ---
 - hosts: all
   become: yes
+  # gather_facts: false
   pre_tasks:
     - name: Check mandatory variables
       assert:
@@ -43,19 +44,21 @@
         - cron
     - name: Set Shecan
       shell: "echo '### Shecan DNS ###\nnameserver {{ shecan_dns_1 }}\nnameserver {{ shecan_dns_2 }}' > /etc/resolv.conf"
-    - name: Add Docker GPG apt Key
-      apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
-    - name: Add Docker Repository
-      apt_repository:
-        repo: deb https://download.docker.com/linux/ubuntu bionic stable
-        state: present
-    - name: Update apt and install docker-ce
-      apt:
-        update_cache: yes
-        name: docker-ce
-        state: latest
+    # - name: Add Docker GPG apt Key
+    #   apt_key:
+    #     url: https://download.docker.com/linux/ubuntu/gpg
+    #     state: present
+    #     validate_certs: false
+
+    # - name: Add Docker Repository
+    #   apt_repository:
+    #     repo: deb https://download.docker.com/linux/ubuntu bionic stable
+    #     state: present
+    # - name: Update apt and install docker-ce
+    #   apt:
+    #     update_cache: yes
+    #     name: docker-ce
+    #     state: latest
     - name: Install ansible docker_compose module dependencies
       pip:
         name:

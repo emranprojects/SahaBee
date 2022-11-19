@@ -36,7 +36,8 @@ all:
           ansible_host:
           ansible_user:
           sudo_pass:
-          ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o ProxyCommand="sshpass -p {{ proxy_server_pass }} ssh -o StrictHostKeyChecking=no -W %h:%p {{ proxy_server_user }}@{{ proxy_server_host }}"'
+          ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+          # -o ProxyCommand="sshpass -p {{ proxy_server_pass }} ssh -o StrictHostKeyChecking=no -W %h:%p {{ proxy_server_user }}@{{ proxy_server_host }}"'
     test:
       hosts:
         test1:

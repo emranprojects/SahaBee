@@ -2,6 +2,7 @@
 name: Setup Infra
 on:
   workflow_dispatch:
+  push:
 jobs:
   setup-infra:
     runs-on: ubuntu-20.04
