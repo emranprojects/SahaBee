@@ -2,6 +2,7 @@
 name: Setup Infra
 on:
   workflow_dispatch:
+  push:
 jobs:
   setup-infra:
     runs-on: ubuntu-20.04
@@ -11,13 +12,20 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - working-directory: deployment/ansible/
-        run: ansible-playbook infra.yml -i inventory.yml
-          --limit production
-          --extra-vars "
-          ansible_host=${{ secrets.SAHABEE_SERVER_IP }}
-          ansible_user=${{ secrets.SAHABEE_SERVER_USER }}
-          sudo_pass=${{ secrets.SAHABEE_SERVER_PASS }}
-          proxy_server_host=${{ secrets.PROXY_SERVER_HOST }}
-          proxy_server_user=${{ secrets.PROXY_SERVER_USER }}
-          proxy_server_pass=${{ secrets.PROXY_SERVER_PASS }}
-          "
+        run: echo ${{ secrets.SAHABEE_SERVER_IP }} ;
+          echo ${{ secrets.SAHABEE_SERVER_USER }} ;
+          echo ${{ secrets.SAHABEE_SERVER_PASS }} ;
+          echo ${{ secrets.PROXY_SERVER_HOST }} ;
+          echo ${{ secrets.PROXY_SERVER_USER }} ;
+          echo ${{ secrets.PROXY_SERVER_PASS }} ;
+
+        # ansible-playbook infra.yml -i inventory.yml
+        #   --limit production
+        #   --extra-vars "
+        #   ansible_host=${{ secrets.SAHABEE_SERVER_IP }}
+        #   ansible_user=${{ secrets.SAHABEE_SERVER_USER }}
+        #   sudo_pass=${{ secrets.SAHABEE_SERVER_PASS }}
+        #   proxy_server_host=${{ secrets.PROXY_SERVER_HOST }}
+        #   proxy_server_user=${{ secrets.PROXY_SERVER_USER }}
+        #   proxy_server_pass=${{ secrets.PROXY_SERVER_PASS }}
+        #   "
